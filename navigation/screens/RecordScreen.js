@@ -1,55 +1,12 @@
-import * as React from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, Button } from "react-native";
 import { Audio } from "expo-av";
-
-// import AudioRecorderPlayer, {
-//   AVEncoderAudioQualityIOSType,
-//   AVEncodingOption,
-//   AudioEncoderAndroidType,
-//   AudioSet,
-//   AudioSourceAndroidType,
-//   PlayBackType,
-//   RecordBackType,
-// } from "react-native-audio-recorder-player";
+import * as FileSystem from "expo-file-system";
+import Recording from "../../components/Recording";
 
 export default function RecordScreen({ navigation }) {
-  const [recording, setRecording] = React.useState();
-  async function startRecording() {
-    try {
-      console.log("Requesting permissions..");
-      await Audio.requestPermissionsAsync();
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: true,
-        playsInSilentModeIOS: true,
-      });
-      console.log("Starting recording..");
-      const recording = new Audio.Recording();
-      await recording.prepareToRecordAsync(
-        Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
-      );
-      await recording.startAsync();
-      setRecording(recording);
-      console.log("Recording started");
-    } catch (err) {
-      console.error("Failed to start recording", err);
-    }
-  }
-  async function stopRecording() {
-    console.log("Stopping recording..");
-    setRecording(undefined);
-    await recording.stopAndUnloadAsync();
-    const uri = recording.getURI();
-    console.log("Recording stopped and stored at", uri);
-  }
 
-  return (
-    <View style={styles.container}>
-      <Button
-        title={recording ? "Stop Recording" : "Start Recording"}
-        onPress={recording ? stopRecording : startRecording}
-      />
-    </View>
-  );
+  return <Recording></Recording>
 }
 
 const styles = StyleSheet.create({
@@ -59,4 +16,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#ecf0f1",
     padding: 10,
   },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  fill: {
+    flex: 1,
+    margin: 16
+  },
+  button: {
+    margin: 16
+  }
 });
