@@ -11,3 +11,4 @@ export const THUMB_1 = new Icon(require("../assets/images/thumb_1.png"), 18, 19)
 export const THUMB_2 = new Icon(require("../assets/images/thumb_2.png"), 15, 19);
 export const RECORD_BUTTON = new Icon(require("../assets/images/record/record_button.png"), 70, 119);
 export const PLAY_BUTTON = new Icon(require("../assets/images/record/play_button.png"), 34, 51);
+export const MORE_BUTTON = new Icon(require("../assets/images/more_button.png"), 40, 40);

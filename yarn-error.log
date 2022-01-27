@@ -1,5 +1,5 @@
 Arguments: 
-  /Users/minseok/.nvm/versions/node/v16.13.1/bin/node /usr/local/Cellar/yarn/1.22.17_2/libexec/bin/yarn.js add expo-asset
+  /Users/minseok/.nvm/versions/node/v16.13.1/bin/node /usr/local/Cellar/yarn/1.22.17_2/libexec/bin/yarn.js add react-native-meterial-dropdown
 
 PATH: 
   /Users/minseok/.nvm/versions/node/v16.13.1/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/VMware Fusion.app/Contents/Public:/opt/X11/bin:/Library/Apple/usr/bin:/Applications/Visual Studio Code.app/Contents/Resources/app/bin
@@ -14,7 +14,17 @@ Platform:
   darwin x64
 
 Trace: 
-  Error: EACCES: permission denied, unlink '/Users/minseok/Projects/ReactNativeWorkspace/NameRecorder/node_modules/.yarn-integrity'
+  Error: https://registry.yarnpkg.com/react-native-meterial-dropdown: Not found
+      at Request.params.callback [as _callback] (/usr/local/Cellar/yarn/1.22.17_2/libexec/lib/cli.js:67029:18)
+      at Request.self.callback (/usr/local/Cellar/yarn/1.22.17_2/libexec/lib/cli.js:140883:22)
+      at Request.emit (node:events:390:28)
+      at Request.<anonymous> (/usr/local/Cellar/yarn/1.22.17_2/libexec/lib/cli.js:141855:10)
+      at Request.emit (node:events:390:28)
+      at IncomingMessage.<anonymous> (/usr/local/Cellar/yarn/1.22.17_2/libexec/lib/cli.js:141777:12)
+      at Object.onceWrapper (node:events:509:28)
+      at IncomingMessage.emit (node:events:402:35)
+      at endReadableNT (node:internal/streams/readable:1343:12)
+      at processTicksAndRejections (node:internal/process/task_queues:83:21)
 
 npm manifest: 
   {
@@ -30,12 +40,15 @@ npm manifest:
     },
     "dependencies": {
       "@react-native-community/masked-view": "^0.1.11",
+      "@react-native-community/slider": "^4.1.12",
       "@react-navigation/bottom-tabs": "^6.0.9",
       "@react-navigation/native": "^6.0.6",
       "@react-navigation/stack": "^6.0.11",
       "expo": "~44.0.0",
+      "expo-asset": "^8.4.5",
       "expo-av": "^10.2.0",
       "expo-file-system": "^13.2.0",
+      "expo-font": "^10.0.4",
       "expo-media-library": "~14.0.0",
       "expo-permissions": "^13.1.0",
       "expo-status-bar": "~1.2.0",
@@ -1486,6 +1499,11 @@ Lockfile:
     resolved "https://registry.npmjs.org/@react-native-community/masked-view/-/masked-view-0.1.11.tgz"
     integrity sha512-rQfMIGSR/1r/SyN87+VD8xHHzDYeHaJq6elOSCAD+0iLagXkSI2pfA0LmSXP21uw5i3em7GkkRjfJ8wpqWXZNw==
   
+  "@react-native-community/slider@^4.1.12":
+    version "4.1.12"
+    resolved "https://registry.yarnpkg.com/@react-native-community/slider/-/slider-4.1.12.tgz#279ff7bbe487af92ad95ec758a029a54569e2a62"
+    integrity sha512-CiuLZ2orueBiWHYxfaJF57jQY6HY2Q3z5pdAE4MKH8EqIImr/jgDJrJ/UxOVZHK1Ng9P+XlGIKfVIcuWZ6guuA==
+  
   "@react-native/assets@1.0.0":
     version "1.0.0"
     resolved "https://registry.npmjs.org/@react-native/assets/-/assets-1.0.0.tgz"
@@ -2645,7 +2663,7 @@ Lockfile:
     resolved "https://registry.npmjs.org/expo-application/-/expo-application-4.0.1.tgz"
     integrity sha512-yZM/SrpWdi84m5+5F3VDfhrMZOz/uKwXcgBhOP1wzfXt0otGSRW1V5tM+a0sgaKZsDRCGojTU7Jm73BVwwVrwg==
   
-  expo-asset@~8.4.5:
+  expo-asset@^8.4.5, expo-asset@~8.4.5:
     version "8.4.5"
     resolved "https://registry.npmjs.org/expo-asset/-/expo-asset-8.4.5.tgz"
     integrity sha512-4E+VzFdgSjeCC+x80VuL+moY04U19SRV6vrL8DekQSyPbwkNR1QdvSx/7O7XTOspB9duwebQ1ue7JHFWOwyaMQ==
@@ -2692,7 +2710,7 @@ Lockfile:
       "@expo/config-plugins" "^4.0.2"
       uuid "^3.4.0"
   
-  expo-font@~10.0.4:
+  expo-font@^10.0.4, expo-font@~10.0.4:
     version "10.0.4"
     resolved "https://registry.npmjs.org/expo-font/-/expo-font-10.0.4.tgz"
     integrity sha512-ieEsT6tD6yD6qT7WUzzJ5el0UvACr53RqICu0GI9GUiWuwDFPM2Oi5WfWwYFFStCRuaP6kEtpkJDUZ9cjT5F+w==
@@ -4719,7 +4737,7 @@ Lockfile:
   
   react-native-vector-icons@^9.0.0:
     version "9.0.0"
-    resolved "https://registry.npmjs.org/react-native-vector-icons/-/react-native-vector-icons-9.0.0.tgz"
+    resolved "https://registry.yarnpkg.com/react-native-vector-icons/-/react-native-vector-icons-9.0.0.tgz#ab38ec6941f3f340d39846f1e8300e59863e2fb1"
     integrity sha512-qKX5d5/TafHmI4B7UOSZCL3BAGh7ZfF30iLwRgxBkKfZl2lKSuHp8Ottj9OyWh9b5fFtlg+LtyvZrns3g2kh+w==
     dependencies:
       lodash.frompairs "^4.0.1"

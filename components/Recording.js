@@ -2,21 +2,26 @@ import React from "react";
 import {
   Dimensions,
   Image,
-  Slider,
   StyleSheet,
   Text,
   TouchableHighlight,
   View,
+  ScrollView,
+  FlatList,
 } from "react-native";
+import Slider from "@react-native-community/slider";
 import { Audio } from "expo-av";
 import * as FileSystem from "expo-file-system";
 import * as Font from "expo-font";
-import * as Permissions from "expo-permissions";
 import * as Icons from "./Icons.js";
-// const { width: DEVICE_WIDTH, height: DEVICE_HEIGHT } = Dimensions.get("window");
+import RecordCard from "./RecordCard.js";
+
+import * as MediaLibrary from "expo-media-library";
+
 const DEVICE_WIDTH = Dimensions.get("window").width;
-const DEVICE_HEIGHT = Dimensions.get("window").height-70;
-const BACKGROUND_COLOR = "#FFF8ED";
+const DEVICE_HEIGHT = Dimensions.get("window").height - 70;
+// const BACKGROUND_COLOR = "#FFF8ED";
+const BACKGROUND_COLOR = "white";
 const LIVE_COLOR = "#FF0000";
 const DISABLED_OPACITY = 0.5;
 const RATE_SCALE = 3.0;
@@ -24,7 +29,7 @@ export default class Recording extends React.Component {
   constructor(props) {
     super(props);
     this._askForPermissions = async () => {
-      const response = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
+      const response = await Audio.requestPermissionsAsync();
       this.setState({
         haveRecordingPermissions: response.status === "granted",
       });
@@ -41,7 +46,7 @@ export default class Recording extends React.Component {
           rate: status.rate,
           muted: status.isMuted,
           volume: status.volume,
-          shouldCorrectPitch: status.shouldCorrectPitch,
+          //   shouldCorrectPitch: status.shouldCorrectPitch,
           isPlaybackAllowed: true,
         });
       } else {
@@ -102,21 +107,6 @@ export default class Recording extends React.Component {
         this.sound.setVolumeAsync(value);
       }
     };
-    this._trySetRate = async (rate, shouldCorrectPitch) => {
-      if (this.sound != null) {
-        try {
-          await this.sound.setRateAsync(rate, shouldCorrectPitch);
-        } catch (error) {
-          // Rate changing could not be performed, possibly because the client's Android API is too old.
-        }
-      }
-    };
-    this._onRateSliderSlidingComplete = async (value) => {
-      this._trySetRate(value * RATE_SCALE, this.state.shouldCorrectPitch);
-    };
-    this._onPitchCorrectionPressed = () => {
-      this._trySetRate(this.state.rate, !this.state.shouldCorrectPitch);
-    };
     this._onSeekSliderValueChange = (value) => {
       if (this.sound != null && !this.isSeeking) {
         this.isSeeking = true;
@@ -151,7 +141,9 @@ export default class Recording extends React.Component {
       isPlaying: false,
       isRecording: false,
       fontLoaded: false,
-      shouldCorrectPitch: true,
+      currentRecord: "",
+      recordList: null,
+      //   shouldCorrectPitch: true,
       volume: 1.0,
       rate: 1.0,
     };
@@ -173,7 +165,20 @@ export default class Recording extends React.Component {
       this.setState({ fontLoaded: true });
     })();
     this._askForPermissions();
+    this.ensureDirExists();
   }
+
+  async ensureDirExists() {
+    const dir = FileSystem.documentDirectory + "expoTest/";
+    const dirInfo = await FileSystem.getInfoAsync(dir);
+    if (!dirInfo.exists) {
+      console.log("directory doesn't exist, creating...");
+      await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
+    } else {
+      console.log("directory alreay exists");
+    }
+  }
+
   async _stopPlaybackAndBeginRecording() {
     this.setState({
       isLoading: true,
@@ -231,7 +236,8 @@ export default class Recording extends React.Component {
       return;
     }
     const info = await FileSystem.getInfoAsync(this.recording.getURI() || "");
-    console.log(`FILE INFO: ${JSON.stringify(info)}`);
+    console.log(this.recording.getURI())
+    await FileSystem.copyAsync({from: this.recording.getURI(), to: FileSystem.documentDirectory +"expoTest/file3.caf"})
     await Audio.setAudioModeAsync({
       allowsRecordingIOS: false,
       interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
@@ -247,7 +253,7 @@ export default class Recording extends React.Component {
         isMuted: this.state.muted,
         volume: this.state.volume,
         rate: this.state.rate,
-        shouldCorrectPitch: this.state.shouldCorrectPitch,
+        // shouldCorrectPitch: this.state.shouldCorrectPitch,
       },
       this._updateScreenForSoundStatus
     );
@@ -255,7 +261,89 @@ export default class Recording extends React.Component {
     this.setState({
       isLoading: false,
     });
+    this.state.currentRecord = `${info.uri}`;
+    console.log('recording stop')
+
   }
+
+  // // 녹음된 폴더에 있는 파일들 이름 읽어오기
+  // async _getRecordList() {
+  //   const recordList = await FileSystem.readDirectoryAsync(
+  //     "file:///var/mobile/Containers/Data/Application/5681A78C-ADC6-4C85-816A-C4544B9E549E/Library/Caches/ExponentExperienceData/%2540sms0430%252FNameRecorder/AV/" ||
+  //       ""
+  //   );
+  //   const record_arr = Object.values(recordList);
+  //   const recordListObj = [];
+  //   record_arr.map((e)=>{
+  //     FileSystem.getInfoAsync("file:///var/mobile/Containers/Data/Application/5681A78C-ADC6-4C85-816A-C4544B9E549E/Library/Caches/ExponentExperienceData/%2540sms0430%252FNameRecorder/AV/"+e || "")
+  //     .then((result)=>{
+  //       // console.log(result)
+  //       recordListObj.push(result)
+  //     })
+  //   })
+  //   this.setState({recordList: recordListObj})
+
+  //   // const bbb = await MediaLibrary.getAssetsAsync({mediaType: 'video'});
+  //   // console.log(bbb.assets)
+
+    
+  //   return;
+  // }
+
+  // //특정 파일 선택
+  // async _getSpecifyRecordFile(file) {
+  //   this.setState({
+  //     isLoading: true,
+  //   });
+  //   try {
+  //     await this.recording.stopAndUnloadAsync();
+  //   } catch (error) {
+  //     // On Android, calling stop before any data has been collected results in
+  //     // an E_AUDIO_NODATA error. This means no audio data has been written to
+  //     // the output file is invalid.
+  //     if (error.code === "E_AUDIO_NODATA") {
+  //       console.log(
+  //         `Stop was called too quickly, no data has yet been received (${error.message})`
+  //       );
+  //     } else {
+  //       console.log("STOP ERROR: ", error.code, ergror.name, error.message);
+  //     }
+  //     this.setState({
+  //       isLoading: false,
+  //     });
+  //     return;
+  //   }
+  //   const info = await FileSystem.getInfoAsync(
+  //     "file:///var/mobile/Containers/Data/Application/5681A78C-ADC6-4C85-816A-C4544B9E549E/Library/Caches/ExponentExperienceData/%2540sms0430%252FNameRecorder/AV/" +
+  //       file || ""
+  //   );
+  //   // console.log(`FILE INFO: ${JSON.stringify(info)}`);
+  //   await Audio.setAudioModeAsync({
+  //     allowsRecordingIOS: false,
+  //     interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
+  //     playsInSilentModeIOS: true,
+  //     shouldDuckAndroid: true,
+  //     interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
+  //     playThroughEarpieceAndroid: false,
+  //     staysActiveInBackground: true,
+  //   });
+
+  //   const { sound, status } = await this.recording.createNewLoadedSoundAsync(
+  //     {
+  //       isLooping: true,
+  //       isMuted: this.state.muted,
+  //       volume: this.state.volume,
+  //       rate: this.state.rate,
+  //       currentRecord: file,
+  //     },
+  //     this._updateScreenForSoundStatus
+  //   );
+  //   this.sound = sound;
+  //   this.setState({
+  //     isLoading: false,
+  //   });
+  // }
+
   _getSeekSliderPosition() {
     if (
       this.sound != null &&
@@ -332,6 +420,13 @@ export default class Recording extends React.Component {
             },
           ],
         },
+        React.createElement(
+          Text,
+          {
+            style: [styles.liveText, { fontFamily: "cutive-mono-regular" }],
+          },
+          this.state.currentRecord
+        ),
         React.createElement(View, null),
         React.createElement(
           View,
@@ -340,7 +435,7 @@ export default class Recording extends React.Component {
           React.createElement(
             TouchableHighlight,
             {
-              underlayColor: "white",
+              underlayColor: BACKGROUND_COLOR,
               style: styles.wrapper,
               onPress: this._onRecordPressed,
               disabled: this.state.isLoading,
@@ -388,6 +483,7 @@ export default class Recording extends React.Component {
         ),
         React.createElement(View, null)
       ),
+      // Play / Stop / etc Buttons
       React.createElement(
         View,
         {
@@ -491,53 +587,20 @@ export default class Recording extends React.Component {
           ),
           React.createElement(View, null)
         ),
-        React.createElement(
-          View,
-          {
-            style: [
-              styles.buttonsContainerBase,
-              styles.buttonsContainerBottomRow,
-            ],
-          },
-          React.createElement(Text, { style: styles.timestamp }, "Rate:"),
-          React.createElement(Slider, {
-            style: styles.rateSlider,
-            trackImage: Icons.TRACK_1.module,
-            thumbImage: Icons.THUMB_1.module,
-            value: this.state.rate / RATE_SCALE,
-            onSlidingComplete: this._onRateSliderSlidingComplete,
-            disabled: !this.state.isPlaybackAllowed || this.state.isLoading,
-          }),
-          React.createElement(
-            TouchableHighlight,
-            {
-              underlayColor: BACKGROUND_COLOR,
-              style: styles.wrapper,
-              onPress: this._onPitchCorrectionPressed,
-              disabled: !this.state.isPlaybackAllowed || this.state.isLoading,
-            },
-            React.createElement(
-              Text,
-              { style: [{ fontFamily: "cutive-mono-regular" }] },
-              "PC: ",
-              this.state.shouldCorrectPitch ? "yes" : "no"
-            )
-          )
-        ),
+        React.createElement(View, {
+          style: [
+            styles.buttonsContainerBase,
+            styles.buttonsContainerBottomRow,
+          ],
+        }),
         React.createElement(View, null)
       ),
-    //   3번째 컨테이너 
-      React.createElement(
-        View,
-        {
-          style: [
-            styles.halfScreenContainer,
-          ],
-        },
-      )
     );
   }
 }
+
+
+
 const styles = StyleSheet.create({
   emptyContainer: {
     alignSelf: "stretch",
@@ -552,7 +615,7 @@ const styles = StyleSheet.create({
     backgroundColor: BACKGROUND_COLOR,
     minHeight: DEVICE_HEIGHT,
     maxHeight: DEVICE_HEIGHT,
-    paddingBottom: 70
+    paddingBottom: 70,
   },
   noPermissionsText: {
     textAlign: "center",
@@ -567,6 +630,10 @@ const styles = StyleSheet.create({
     // minHeight: DEVICE_HEIGHT / 2.0,
     // maxHeight: DEVICE_HEIGHT / 2.0,
     // backgroundColor: "black",
+  },
+  recordListContianer: {
+    flex: 3,
+    flexDirection: "column",
   },
   recordingContainer: {
     flex: 1,
