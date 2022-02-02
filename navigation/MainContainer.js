@@ -1,20 +1,17 @@
 import * as React from "react";
-import { View, Text } from "react-native-web";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "react-native-vector-icons/Ionicons";
 // Screens
 import HomeScreen from "./screens/HomeScreen";
-import SettingsScreen from "./screens/SettingsScreen";
-import RecordScreen from "./screens/RecordScreen";
-import Record2 from "./screens/Record2";
+import RecordListscreen from "./screens/RecordListScreen";
+import RecordingScreen from "./screens/RecordingScreen";
 
 // Screen names
 const homeName = "Home";
-const settingsName = "Settings";
-const recordName = "Record";
-const record2 = "Record2";
+const recordListName = "RecordList";
+const recordName = "Recording";
 
 const Tab = createBottomTabNavigator();
 
@@ -30,26 +27,23 @@ export default function MainContainer() {
 
               if (rn === homeName) {
                 iconName = focused ? "home" : "home-outline";
-              } else if (rn === settingsName) {
+              } else if (rn === recordListName) {
                 iconName = focused ? "settings" : "settings-outline";
               } else if (rn === recordName) {
                 iconName = focused ? "record" : "record-outline";
-              }else if (rn === record2) {
-                iconName = focused ? "record" : "record-outline";
               }
-
               return <Ionicons name={iconName} size={size} color={color} />;
             },
             tabBarActiveTintColor: "tomato",
             tabBarInactiveTintColor: "grey",
             tabBarLabelStyle: { paddingBottom: 10, fontSize: 10 },
             tabBarStyle: { padding: 10, height: 70 },
+            tabBarHideOnKeyboard: true,
           })}
         >
           <Tab.Screen name={homeName} component={HomeScreen} />
-          <Tab.Screen name={settingsName} component={SettingsScreen} />
-          <Tab.Screen name={recordName} component={RecordScreen} />
-          <Tab.Screen name={record2} component={Record2} />
+          <Tab.Screen name={recordListName} component={RecordListscreen} />
+          <Tab.Screen name={recordName} component={RecordingScreen} />
         </Tab.Navigator>
       </NavigationContainer>
   );

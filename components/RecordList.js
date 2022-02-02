@@ -6,18 +6,14 @@ import {
   Text,
   TouchableHighlight,
   View,
-  ScrollView,
   FlatList,
+  TouchableOpacity,
 } from "react-native";
-import Slider from "@react-native-community/slider";
 import { Audio } from "expo-av";
 import * as FileSystem from "expo-file-system";
 import * as Font from "expo-font";
 import * as Icons from "./Icons.js";
-import { Button } from "react-native-web";
 import RecordCard from "./RecordCard.js";
-
-import * as MediaLibrary from "expo-media-library";
 
 const DEVICE_WIDTH = Dimensions.get("window").width;
 const DEVICE_HEIGHT = Dimensions.get("window").height - 70;
@@ -25,8 +21,8 @@ const BACKGROUND_COLOR = "#FFF8ED";
 const LIVE_COLOR = "#FF0000";
 const DISABLED_OPACITY = 0.5;
 const RATE_SCALE = 3.0;
-
-export default class RecordListScreen extends React.Component {
+const DirName = "expoTest3/";
+export default class RecordList extends React.Component {
   constructor(props) {
     super(props);
     this._askForPermissions = async () => {
@@ -164,7 +160,7 @@ export default class RecordListScreen extends React.Component {
   }
 
   async ensureDirExists() {
-    const dir = FileSystem.documentDirectory + "expoTest/";
+    const dir = FileSystem.documentDirectory + DirName;
     const dirInfo = await FileSystem.getInfoAsync(dir);
     if (!dirInfo.exists) {
       console.log("directory doesn't exist, creating...");
@@ -175,23 +171,29 @@ export default class RecordListScreen extends React.Component {
   }
 
   async _getRecordList() {
+    console.log("getRecordList")
     const recordList = await FileSystem.readDirectoryAsync(
-      FileSystem.documentDirectory + "expoTest/"
+      FileSystem.documentDirectory + DirName
     );
     const soundList = await Promise.all(Object.values(recordList).map((e) => {
       const soundObj = new Audio.Sound();
+      console.log(e)
       return soundObj
-        .loadAsync({ uri: FileSystem.documentDirectory + "expoTest/" + e })
+        .loadAsync({ uri: FileSystem.documentDirectory + DirName + encodeURI(e) })
     }));
-    // this.setState({ recordList:  soundList });
     this.audioList = soundList;
-    console.log(this.audioList)
+    this.setState({audioList: soundList})
+  }
+
+  _updateRecordList(soundList) {
+    console.log("update RecordList and Rerendering")
+    this.audioList = soundList;
+    this.setState({audioList: soundList});
   }
   render() {
     return React.createElement(
       View,
       { style: styles.container },
-
       //   list of record
       React.createElement(
         View,
@@ -199,19 +201,19 @@ export default class RecordListScreen extends React.Component {
           style: [styles.recordListContianer],
         },
         React.createElement(FlatList, {
-          style: { backgroundColor: "white" },
           data: this.audioList,
-          renderItem: ({ item }) => <Text>{this.audioList[item].uri}</Text>,
+          keyExtractor: (item) => item.uri,
+          renderItem: ({ item }) => <RecordCard item={item} updateList={this._updateRecordList.bind(this)}/>,
         })
       )
     );
+    
   }
 }
 
 const styles = StyleSheet.create({
   emptyContainer: {
     alignSelf: "stretch",
-    backgroundColor: BACKGROUND_COLOR,
   },
   container: {
     flex: 1,
@@ -219,7 +221,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     alignSelf: "stretch",
-    backgroundColor: BACKGROUND_COLOR,
     minHeight: DEVICE_HEIGHT,
     maxHeight: DEVICE_HEIGHT,
     paddingBottom: 70,
@@ -234,9 +235,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     alignSelf: "stretch",
-    // minHeight: DEVICE_HEIGHT / 2.0,
-    // maxHeight: DEVICE_HEIGHT / 2.0,
-    // backgroundColor: "black",
   },
   recordListContianer: {
     flex: 3,
@@ -342,5 +340,30 @@ const styles = StyleSheet.create({
   },
   rateSlider: {
     width: DEVICE_WIDTH / 2.0,
+  },
+  menuTab: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: DEVICE_WIDTH * 0.35,
+    height: 40,
+    borderBottomColor: "grey",
+    borderBottomWidth: 3,
+    // paddingVertical: 5
+  },
+  menuTabActive: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: DEVICE_WIDTH * 0.35,
+    height: 40,
+    borderBottomColor: "orange",
+    borderBottomWidth: 3,
+    // paddingVertical: 5
+  },
+  menuTabText: {
+    fontSize: 20,
+  },
+  menuTabTextActive: {
+    fontSize: 20,
+    color: "orange",
   },
 });
