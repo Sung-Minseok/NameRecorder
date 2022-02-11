@@ -18,10 +18,12 @@ import RecordCard from "./RecordCard.js";
 const DEVICE_WIDTH = Dimensions.get("window").width;
 const DEVICE_HEIGHT = Dimensions.get("window").height - 70;
 const BACKGROUND_COLOR = "#FFF8ED";
+const GROUNDCOLOR = "#0bcacc";
+const POINTCOLOR = "#ff6781";
 const LIVE_COLOR = "#FF0000";
 const DISABLED_OPACITY = 0.5;
 const RATE_SCALE = 3.0;
-const DirName = "expoTest3/";
+const DirName = "expoTest4/";
 export default class RecordList extends React.Component {
   constructor(props) {
     super(props);
@@ -155,40 +157,39 @@ export default class RecordList extends React.Component {
       this.setState({ fontLoaded: true });
     })();
     this._askForPermissions();
-    this.ensureDirExists();
     this._getRecordList();
   }
 
-  async ensureDirExists() {
-    const dir = FileSystem.documentDirectory + DirName;
-    const dirInfo = await FileSystem.getInfoAsync(dir);
-    if (!dirInfo.exists) {
-      console.log("directory doesn't exist, creating...");
-      await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
-    } else {
-      console.log("directory alreay exists");
-    }
-  }
-
   async _getRecordList() {
-    console.log("getRecordList")
+    console.log("getRecordList");
     const recordList = await FileSystem.readDirectoryAsync(
       FileSystem.documentDirectory + DirName
     );
-    const soundList = await Promise.all(Object.values(recordList).map((e) => {
-      const soundObj = new Audio.Sound();
-      console.log(e)
-      return soundObj
-        .loadAsync({ uri: FileSystem.documentDirectory + DirName + encodeURI(e) })
-    }));
+    const soundList = await Promise.all(
+      Object.values(recordList).map((e) => {
+        const soundObj = new Audio.Sound();
+        console.log(e);
+        return soundObj.loadAsync({
+          uri: FileSystem.documentDirectory + DirName + encodeURI(e),
+        });
+      })
+    );
     this.audioList = soundList;
-    this.setState({audioList: soundList})
+    this.setState({ audioList: soundList });
   }
 
   _updateRecordList(soundList) {
-    console.log("update RecordList and Rerendering")
+    console.log("update RecordList and Rerendering");
     this.audioList = soundList;
-    this.setState({audioList: soundList});
+    this.setState({ audioList: soundList });
+  }
+
+  _setChangeVolume(value) {
+    if (value > 8) value = 8;
+    if (value < 0) value = -1;
+    this.setState({
+      volume: value,
+    });
   }
   render() {
     return React.createElement(
@@ -203,11 +204,45 @@ export default class RecordList extends React.Component {
         React.createElement(FlatList, {
           data: this.audioList,
           keyExtractor: (item) => item.uri,
-          renderItem: ({ item }) => <RecordCard item={item} updateList={this._updateRecordList.bind(this)}/>,
-        })
+          renderItem: ({ item }) => (
+            <RecordCard
+              item={item}
+              updateList={this._updateRecordList.bind(this)}
+              // volume = {this.state.volume/10}
+            />
+          ),
+        }),
+        React.createElement(
+          TouchableOpacity,
+          {
+            onPress: () => {
+              this._getRecordList();
+            },
+            style: { position: "absolute", bottom: 5, right: 10 },
+          },
+          React.createElement(
+            View,
+            {
+              style: {
+                backgroundColor: GROUNDCOLOR,
+                borderRadius: 50,
+                borderWidth: 1,
+                borderColor: "grey",
+                width: 50,
+                height: 50,
+                justifyContent: "center",
+                alignItems: "center",
+              },
+            },
+            // <Text style={{ color: "white", fontSize: 17 }}>새로고침</Text>
+            <Image
+              style={{ tintColor: "white" }}
+              source={Icons.REFRESH_ICON.module}
+            ></Image>
+          )
+        )
       )
     );
-    
   }
 }
 
@@ -216,130 +251,23 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
   },
   container: {
-    flex: 1,
+    // flex: 1,
     flexDirection: "column",
     justifyContent: "space-between",
     alignItems: "center",
     alignSelf: "stretch",
-    minHeight: DEVICE_HEIGHT,
-    maxHeight: DEVICE_HEIGHT,
-    paddingBottom: 70,
+    minHeight: DEVICE_HEIGHT - 120,
+    maxHeight: DEVICE_HEIGHT - 120,
+    // paddingBottom: 10,
   },
   noPermissionsText: {
     textAlign: "center",
   },
-  wrapper: {},
-  halfScreenContainer: {
-    flex: 1,
-    flexDirection: "column",
-    justifyContent: "space-between",
-    alignItems: "center",
-    alignSelf: "stretch",
-  },
   recordListContianer: {
     flex: 3,
     flexDirection: "column",
-  },
-  recordingContainer: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    alignSelf: "stretch",
-    minHeight: Icons.RECORD_BUTTON.height,
-    maxHeight: Icons.RECORD_BUTTON.height,
-    // backgroundColor: "red"
-  },
-  recordingDataContainer: {
-    flex: 1,
-    flexDirection: "column",
-    justifyContent: "space-between",
-    alignItems: "center",
-    minHeight: Icons.RECORD_BUTTON.height,
-    maxHeight: Icons.RECORD_BUTTON.height,
-    minWidth: Icons.RECORD_BUTTON.width * 3.0,
-    maxWidth: Icons.RECORD_BUTTON.width * 3.0,
-    // backgroundColor: "blue"
-  },
-  recordingDataRowContainer: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    minHeight: Icons.RECORDING.height,
-    maxHeight: Icons.RECORDING.height,
-  },
-  playbackContainer: {
-    flex: 1,
-    flexDirection: "column",
-    justifyContent: "space-between",
-    alignItems: "center",
-    alignSelf: "stretch",
-    minHeight: Icons.THUMB_1.height * 2.0,
-    maxHeight: Icons.THUMB_1.height * 2.0,
-  },
-  playbackSlider: {
-    alignSelf: "stretch",
-  },
-  liveText: {
-    color: LIVE_COLOR,
-  },
-  recordingTimestamp: {
-    paddingLeft: 20,
-  },
-  playbackTimestamp: {
-    textAlign: "right",
-    alignSelf: "stretch",
-    paddingRight: 20,
-  },
-  image: {
-    backgroundColor: BACKGROUND_COLOR,
-  },
-  textButton: {
-    backgroundColor: BACKGROUND_COLOR,
-    padding: 10,
-  },
-  buttonsContainerBase: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  buttonsContainerTopRow: {
-    maxHeight: Icons.MUTED_BUTTON.height,
-    alignSelf: "stretch",
-    paddingRight: 20,
-  },
-  playStopContainer: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    minWidth: ((Icons.PLAY_BUTTON.width + Icons.STOP_BUTTON.width) * 3.0) / 2.0,
-    maxWidth: ((Icons.PLAY_BUTTON.width + Icons.STOP_BUTTON.width) * 3.0) / 2.0,
-  },
-  volumeContainer: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    minWidth: DEVICE_WIDTH / 2.0,
-    maxWidth: DEVICE_WIDTH / 2.0,
-  },
-  volumeSlider: {
-    width: DEVICE_WIDTH / 2.0 - Icons.MUTED_BUTTON.width,
-  },
-  buttonsContainerBottomRow: {
-    maxHeight: Icons.THUMB_1.height,
-    alignSelf: "stretch",
-    paddingRight: 20,
-    paddingLeft: 20,
-  },
-  timestamp: {
-    fontFamily: "cutive-mono-regular",
-  },
-  rateSlider: {
-    width: DEVICE_WIDTH / 2.0,
+    width: DEVICE_WIDTH,
+    paddingHorizontal:10
   },
   menuTab: {
     alignItems: "center",

@@ -7,19 +7,26 @@ import {
   TouchableHighlight,
   View,
   TouchableOpacity,
+  Modal,
 } from "react-native";
+import Slider from "@react-native-community/slider";
 import { Audio } from "expo-av";
 import * as Filesystem from "expo-file-system";
 import * as Font from "expo-font";
 import * as Icons from "./Icons.js";
 import OptionsMenu from "react-native-option-menu";
 import TextTicker from "react-native-text-ticker";
-import { withSafeAreaInsets } from "react-native-safe-area-context";
-import { isLoaded } from "expo-font";
+
+import DeleteModal from "../components/RecordListDeleteModal.js";
+import ModifyModal from "../components/RecordListModifyModal.js";
 
 const DEVICE_WIDTH = Dimensions.get("window").width;
 const DEVICE_HEIGHT = Dimensions.get("window").height;
-const DirName = "expoTest3/";
+const GROUNDCOLOR = "#0bcacc";
+const POINTCOLOR = "#ff6781";
+const BACKGROUNDCOLOR = "#F4ECE6";
+
+const DirName = "expoTest4/";
 const RecordCard = (props) => {
   const [soundObj, setSoundObj] = useState(null);
   const [playbackObj, setPlaybackObj] = useState(null);
@@ -29,6 +36,13 @@ const RecordCard = (props) => {
   const [fileDuration, setFileDuration] = useState("");
   const [fileUri, setFileUri] = useState("");
   const [isFontLoading, setIsFontLoading] = useState(false);
+  const [active, setActive] = useState(false);
+  const [volume, setVolume] = useState(3);
+  const [soundPosition, setSoundPosition] = useState(null);
+  const [soundDuration, setSoundDuration] = useState(null);
+  const [modifyModalVisible, setModifyModalVisible] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [value, setValue]= useState("");
 
   const _loadFont = async () => {
     await Font.loadAsync({
@@ -53,7 +67,8 @@ const RecordCard = (props) => {
     );
     let size = (info.size / 1000000).toString();
     setFileSize(size.slice(0, -4) + "Mb");
-    setFileName(decodeURI(name));
+    setFileName(decodeURI(name).slice(0,-4));
+    // setValue(fileName);
     setFileDuration(_getMMSSFromMillis(props.item.durationMillis));
     setFileUri(Filesystem.documentDirectory + DirName + name);
   };
@@ -61,26 +76,34 @@ const RecordCard = (props) => {
   _loadFont();
 
   const _playButtonPressed = async () => {
-    console.log(props.item);
+    // console.log(props.item);
     if (soundObj === null) {
       const playbackObj = new Audio.Sound();
       Audio.setAudioModeAsync({
         allowsRecordingIOS: false,
-        interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
+        interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_MIX_WITH_OTHERS,
         playsInSilentModeIOS: true,
         shouldDuckAndroid: true,
-        interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
+        interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DUCK_OTHERS,
         playThroughEarpieceAndroid: false,
         staysActiveInBackground: true,
+        playThroughEarpieceAndroid: false,
       });
       await playbackObj.loadAsync(
         { uri: fileUri },
         { shouldPlay: true },
         { isLooping: true }
       );
+      await playbackObj.setVolumeAsync(volume < 0 ? 0 : volume / 10);
       const status = await playbackObj.setIsLoopingAsync(true);
+      console.log(status);
       console.log("start playing");
-      return setPlaybackObj(playbackObj), setSoundObj(status);
+      return (
+        setPlaybackObj(playbackObj),
+        setSoundObj(status),
+        setSoundDuration(status.durationMillis),
+        setSoundPosition(2)
+      );
     }
 
     if (soundObj.isLoaded) {
@@ -93,7 +116,7 @@ const RecordCard = (props) => {
 
   const _modifyFile = async () => {
     console.log(props.item);
-    const newURI = Filesystem.documentDirectory + DirName + "file4.caf";
+    const newURI = Filesystem.documentDirectory + DirName + value+".caf";
     if (fileUri === newURI) {
       return console.log("이미 존재하는 파일 이름입니다.");
     }
@@ -102,14 +125,24 @@ const RecordCard = (props) => {
       to: newURI,
     });
     _updateList();
+    setModifyModalVisible(false);
     console.log("edit file name");
   };
+
+  const _onPressModify = () => {
+    setValue(fileName);
+    setModifyModalVisible(true);
+  }
+  
+  
 
   const _deleteFile = async () => {
     await Filesystem.deleteAsync(fileUri);
     _updateList();
+    setDeleteModalVisible(false);
     console.log("delete file successfully");
   };
+
 
   const _updateList = async () => {
     const recordList = await Filesystem.readDirectoryAsync(
@@ -125,7 +158,8 @@ const RecordCard = (props) => {
     );
     props.updateList(soundList);
   };
-  const OFFSET = DEVICE_HEIGHT/20;
+
+  const OFFSET = DEVICE_HEIGHT / 20;
   const _getMMSSFromMillis = (millis) => {
     const totalSeconds = millis / 1000;
     const milliSeconds = millis % 1000;
@@ -146,89 +180,316 @@ const RecordCard = (props) => {
       padWithZero(milliSeconds).slice(0, 2)
     );
   };
+  const _itemOnClick = () => {
+    setActive(!active);
+  };
+
+  const _volumeChange = (value) => {
+    if (value < 0) value = -1;
+    if (value > 8) value = 8;
+    setVolume(value);
+    if (value < 0) value = 0;
+    playbackObj.setVolumeAsync(value / 10);
+  };
+
+  const _getSliderPosition = () => {
+    console.log("sliderposition");
+    if (soundObj != null && soundPosition != null && soundDuration != null) {
+      console.log("soundposition : " + soundPosition);
+
+      return soundPosition / soundObj.durationMillis;
+    }
+    return 0;
+  };
 
   if (!isFontLoading) {
     return <View></View>;
   }
 
   return (
-    <View style={styles.card_container}>
-      <TouchableOpacity onPressOut={() => _playButtonPressed(props.item)}>
-        <View style={{width: DEVICE_HEIGHT/35, height: DEVICE_HEIGHT/15, alignContent: 'center', justifyContent: 'center'}}>
+    <View
+      style={{
+        // flex: 1,
+        alignItems: "flex-start",
+        justifyContent: "space-between",
+        flexDirection: "column",
+        backgroundColor: "white",
+        borderRadius: 5,
+        borderBottomWidth: 1,
+        borderColor: "#C5C7C9",
+        width: DEVICE_WIDTH * 0.95,
+        height: active ? DEVICE_HEIGHT * 0.17 : DEVICE_HEIGHT * 0.1,
+        paddingHorizontal: 5,
+        paddingTop: 10,
+      }}
+    >
+      <View
+        style={{
+          // flex: 1,
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexDirection: "row",
+        }}
+      >
+        <View
+          style={{
+            width: DEVICE_HEIGHT / 35,
+            height: DEVICE_HEIGHT / 15,
+            alignContent: "center",
+            justifyContent: "center",
+          }}
+        >
           <View
             style={{
               // borderWidth: 1,
               width: DEVICE_HEIGHT / 15,
               height: DEVICE_HEIGHT / 35,
               borderRadius: 5,
-              backgroundColor: soundObj === null ? "grey" : "#2D89DF",
+              backgroundColor: soundObj === null ? "grey" : POINTCOLOR,
               alignItems: "center",
               justifyContent: "center",
               flexDirection: "row",
-              transform: [{ rotate: "270deg" }, {translateX : 0}, {translateY: -DEVICE_HEIGHT/50}],
+              transform: [
+                { rotate: "270deg" },
+                { translateX: 0 },
+                { translateY: -DEVICE_HEIGHT * 0.02 },
+              ],
             }}
           >
             <Text
               style={{
                 color: "white",
-                // width: DEVICE_HEIGHT / 15,
                 fontFamily: "SquareRound",
-                // transform: [{ rotate: "-90deg" }],
               }}
             >
-              {soundObj === null ? "Stop" : "Play"}
+              {soundObj === null ? "정지중" : "재생중"}
             </Text>
           </View>
         </View>
-      </TouchableOpacity>
-      <View style={styles.card_recordinfo}>
-        <View style={{ flexDirection: "row" }}>
-          <View style={{ width: DEVICE_WIDTH / 2 }}>
-            <TextTicker
-              style={{ fontSize: 22, fontFamily: "SquareRound" }}
-              duration={10000}
-              roop
-              bounce
-              repeatSpacer={50}
-              marqueeDelay={1000}
-            >
-              {fileName}
-            </TextTicker>
+        <View style={styles.card_recordinfo}>
+          <View style={{ flexDirection: "row" }}>
+            <TouchableOpacity onPress={() => _itemOnClick()}>
+              <View style={{ width: DEVICE_WIDTH * 0.6 }}>
+                <TextTicker
+                  style={{ fontSize: 20, fontFamily: "SquareRound" }}
+                  duration={10000}
+                  roop
+                  bounce
+                  repeatSpacer={50}
+                  marqueeDelay={1000}
+                >
+                  {fileName}
+                </TextTicker>
+              </View>
+            </TouchableOpacity>
+            <View style={styles.card_buttonContainer}></View>
+            <OptionsMenu
+              button={require("../assets/images/more_button.png")}
+              buttonStyle={{
+                width: 20,
+                height: 20,
+                // margin: 0,
+                resizeMode: "contain",
+              }}
+              destructiveIndex={1}
+              options={["수정", "삭제", "취소"]}
+              actions={[() => _onPressModify(), () => setDeleteModalVisible(true)]}
+            />
           </View>
-          <View style={styles.card_buttonContainer}>
-            {/* <Text>Play</Text>
-            <Text>Stop</Text> */}
-          </View>
-          <OptionsMenu
-            button={require("../assets/images/more_button.png")}
-            buttonStyle={{
-              width: 20,
-              height: 20,
-              // margin: 0,
-              resizeMode: "contain",
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              paddingTop: 10,
+              // borderWidth: 2,
             }}
-            destructiveIndex={1}
-            options={["수정", "삭제", "취소"]}
-            actions={[() => _modifyFile(), () => _deleteFile()]}
-          />
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            paddingTop: 10
-            // borderWidth: 2,
-          }}
-        >
-          <Text style={{ color: "#6B747B", fontFamily: "SquareRound" }}>
-            {fileDate}
-          </Text>
-          <Text style={{ flex: 1, paddingLeft: 20, color: "#6B747B" }}>
-            {fileSize}
-          </Text>
-          <Text style={{ color: "#6B747B" }}>{fileDuration}</Text>
+          >
+            <Text style={{ color: "#6B747B", fontFamily: "SquareRound" }}>
+              {fileDate}
+            </Text>
+            <Text
+              style={{
+                flex: 1,
+                paddingLeft: 20,
+                color: "#6B747B",
+                fontFamily: "SquareRound",
+              }}
+            >
+              {fileSize}
+            </Text>
+            <Text style={{ color: "#6B747B", fontFamily: "SquareRound" }}>
+              {fileDuration}
+            </Text>
+          </View>
         </View>
       </View>
+
+      {active && (
+        <View
+          style={{
+            height: DEVICE_HEIGHT * 0.07,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            alignContent: "center",
+            paddingBottom: 20,
+          }}
+        >
+          <View
+            style={{
+              flex: 1.5,
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              // borderWidth: 1,
+              height: DEVICE_HEIGHT * 0.05,
+              borderRadius: 5,
+            }}
+          >
+            {/* <View
+              style={styles.volumeSliderContainer}
+            >
+              <Slider
+                thumbImage= {Icons.THUMB_2.module}
+                minimumTrackTintColor={POINTCOLOR}
+                maximumTrackTintColor="grey"
+                value={_getSliderPosition()}
+                disabled={soundObj == null}
+                style={{ alignSelf: "stretch" }}
+                minimumValue={0}
+                maximumValue={1}
+              ></Slider>
+            </View> */}
+
+            {/* 볼륨 , 재생 버튼 */}
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                // marginLeft: 30,
+                // borderWidth: 1,
+              }}
+            >
+              <TouchableOpacity
+                onPressOut={() => _playButtonPressed(props.item)}
+                style={styles.button}
+              >
+                <Text
+                  style={{
+                    color: "white",
+                    fontSize: 18,
+                    fontFamily: "SquareRound",
+                  }}
+                >
+                  {soundObj == null ? "재생" : "정지"}
+                </Text>
+              </TouchableOpacity>
+              <View style={{ flex: 1 }}></View>
+              <TouchableOpacity
+                disabled={soundObj == null}
+                onPress={() => {
+                  _volumeChange(volume - 1);
+                }}
+                style={{
+                  // flex: 1,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <View
+                  style={{
+                    borderWidth: 1,
+                    width: 30,
+                    height: 30,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: 5,
+                    backgroundColor: 'grey',
+                    borderColor: "grey",
+                  }}
+                >
+                  <Image
+                    style={{ tintColor: "white" }}
+                    source={Icons.VOLUME_MINUS.module}
+                  ></Image>
+                </View>
+              </TouchableOpacity>
+              <View
+                style={{
+                  // flex: 1,
+                  alignSelf: "center",
+                  justifyContent: "center",
+                  margin: 5,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 22,
+                    alignSelf: "center",
+                    fontFamily: "SquareRound",
+                    // color: 'white',
+                  }}
+                >
+                  볼륨 : {volume}
+                </Text>
+              </View>
+              <TouchableOpacity
+                disabled={soundObj == null}
+                onPress={() => {
+                  _volumeChange(volume + 1);
+                }}
+                style={{
+                  // flex: 1,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <View
+                  style={{
+                    borderWidth: 1,
+                    width: 30,
+                    height: 30,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: 5,
+                    backgroundColor: 'grey',
+                    borderColor: "grey",
+                    alignContent: "center",
+                  }}
+                >
+                  <Image
+                    style={{ tintColor: "white" }}
+                    source={Icons.VOLUME_PLUS.module}
+                  ></Image>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
+      <Modal
+        visible={deleteModalVisible}
+        useNativeDriver={true}
+        hideModalContentWhileAnimating={true}
+        transparent={true}
+      >
+        <DeleteModal 
+        onPressCancle={() => setDeleteModalVisible(false)}
+        onPressConfirm={() => _deleteFile()} />
+      </Modal>
+      <Modal
+        visible={modifyModalVisible}
+        useNativeDriver={true}
+        hideModalContentWhileAnimating={true}
+        transparent={true}
+      >
+        <ModifyModal 
+        onPressCancle={() => setModifyModalVisible(false)}
+        onPressConfirm={() => _modifyFile()}
+        value={value}
+        onChangeText={(text)=>setValue(text)} />
+      </Modal>
     </View>
   );
 };
@@ -240,12 +501,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     flexDirection: "row",
-    backgroundColor: "white",
+    backgroundColor: BACKGROUNDCOLOR,
     borderRadius: 5,
     borderBottomWidth: 1,
     borderColor: "#C5C7C9",
-    height: DEVICE_HEIGHT / 9,
     width: DEVICE_WIDTH - 40,
+    height: RecordCard.active ? DEVICE_HEIGHT / 7 : DEVICE_HEIGHT / 9,
     paddingHorizontal: 5,
     marginBottom: 5,
   },
@@ -260,5 +521,28 @@ const styles = StyleSheet.create({
   card_buttonContainer: {
     flex: 1,
     alignItems: "center",
+  },
+  button: {
+    // height: DEVICE_HEIGHT * 0.05,
+    height: 30,
+    flex: 1,
+    backgroundColor: GROUNDCOLOR,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "grey",
+    borderRadius: 7,
+    margin: 5,
+
+    // borderWidth: 1
+  },
+  volumeSliderContainer: {
+    alignSelf: "stretch",
+    justifyContent: "space-between",
+    alignItems: "center",
+    // paddingHorizontal: 20,
+    // paddingLeft: DEVICE_HEIGHT/50,
+    paddingTop: 10,
+    // paddingRight: 10
   },
 });

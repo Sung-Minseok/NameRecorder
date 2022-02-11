@@ -43,7 +43,7 @@ const RecordModal = (props) => {
             ></TextInput>
           </View>
           <View style={styles.modalButtonContainer}>
-            <TouchableOpacity onPress={() => props.saveRecording()}>
+            <TouchableOpacity onPress={() => props.onPressConfirm()}>
               <View style={styles.button}>
                 <Text style={{ color: "white", fontSize: 17 }}>확인</Text>
               </View>

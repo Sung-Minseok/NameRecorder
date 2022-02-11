@@ -8,6 +8,7 @@ import {
   View,
   Modal,
   TextInput,
+  TouchableOpacity,
   Animated,
 } from "react-native";
 import Slider from "@react-native-community/slider";
@@ -17,13 +18,13 @@ import * as Font from "expo-font";
 import * as Icons from "./Icons.js";
 import RecordModal from "./RecordModal.js";
 const DEVICE_WIDTH = Dimensions.get("window").width;
-const DEVICE_HEIGHT = Dimensions.get("window").height - 70;
-const BACKGROUND_COLOR = "white";
+const DEVICE_HEIGHT = Dimensions.get("window").height;
+const BACKGROUND_COLOR = "#F4ECE6";
 const LIVE_COLOR = "#FF0000";
 const DISABLED_OPACITY = 0.5;
-const RATE_SCALE = 3.0;
-
-const DirName = "expoTest3/";
+const GROUNDCOLOR = "#0bcacc";
+const POINTCOLOR = "#ff6781";
+const DirName = "expoTest4/";
 
 export default class Recording extends React.Component {
   constructor(props) {
@@ -150,8 +151,8 @@ export default class Recording extends React.Component {
       rate: 1.0,
       modalVisible: false,
       fileName: "",
-      animateValue : new Animated.Value(0),
-      animateLoop : false,
+      animateValue: new Animated.Value(0),
+      animateLoop: false,
     };
     this.recordingSettings = Audio.RECORDING_OPTIONS_PRESET_LOW_QUALITY;
     // UNCOMMENT THIS TO TEST maxFileSize:
@@ -167,35 +168,20 @@ export default class Recording extends React.Component {
     (async () => {
       await Font.loadAsync({
         "cutive-mono-regular": require("../assets/fonts/CutiveMono-Regular.ttf"),
+        SquareRound: require("../assets/fonts/NanumSquareRound.otf"),
       });
       this.setState({ fontLoaded: true });
     })();
     this._askForPermissions();
-    this.ensureDirExists();
-    const animation = Animated.timing(
-      this.state.animateValue, {
-        toValue: 1,
-        duration: 1000,
-        delay: 1000,
-        useNativeDriver: false,
-      }
-    );
-    Animated.loop(
-      animation,{
-        iterations: this.state.animateLoop
-      }
-    ).start();
-  }
-
-  async ensureDirExists() {
-    const dir = FileSystem.documentDirectory + DirName;
-    const dirInfo = await FileSystem.getInfoAsync(dir);
-    if (!dirInfo.exists) {
-      console.log("directory doesn't exist, creating...");
-      await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
-    } else {
-      console.log("directory alreay exists");
-    }
+    const animation = Animated.timing(this.state.animateValue, {
+      toValue: 1,
+      duration: 1000,
+      delay: 1000,
+      useNativeDriver: false,
+    });
+    Animated.loop(animation, {
+      iterations: this.state.animateLoop,
+    }).start();
   }
 
   async _stopPlaybackAndBeginRecording() {
@@ -331,7 +317,6 @@ export default class Recording extends React.Component {
 
   _saveButtonPressed() {
     const date = new Date();
-    console.log(date.getFullYear());
     this.setState({
       fileName:
         date.getFullYear() +
@@ -341,8 +326,9 @@ export default class Recording extends React.Component {
         date.getDate() +
         "일 " +
         date.getHours() +
-        ":" +
-        date.getMinutes(),
+        "시" +
+        date.getMinutes() +
+        "분",
     });
 
     this.setState({ modalVisible: true });
@@ -374,15 +360,12 @@ export default class Recording extends React.Component {
     this.setState({ modalVisible: false });
   }
 
-  
-
-
   render() {
     const animationStyles = {
-      borderColor: this.state.animateValue.interpolate({
+      backgroundColor: this.state.animateValue.interpolate({
         inputRange: [0, 1],
-        outputRange: ['#2D89DF', 'red']
-      })
+        outputRange: ["#ffffff", "#ff6781"],
+      }),
     };
 
     if (!this.state.fontLoaded) {
@@ -430,49 +413,84 @@ export default class Recording extends React.Component {
               flexDirection: "column",
               flex: 3,
               justifyContent: "center",
+              alignItems: "center",
+              // borderWidth: 1,
+              marginTop: 50,
+              // height: DEVICE_HEIGHT*0.5,
             },
           },
+
           React.createElement(
             Animated.View,
             {
-              style: 
-                this.state.animateLoop ? [styles.recordButtonContainer, animationStyles] : [styles.recordButtonContainer],
-              
+              // style: this.state.animateLoop
+              //   ? [styles.recordButtonContainer, animationStyles]
+              //   : [styles.recordButtonContainer],
+              style: styles.recordButtonContainer
             },
             React.createElement(
-              TouchableHighlight,
+              View,
               {
-                underlayColor: BACKGROUND_COLOR,
-                style: styles.wrapper,
-                onPress: this._onRecordPressed,
-                disabled: this.state.isLoading,
+                style: {
+                  backgroundColor: "white",
+                  width: DEVICE_WIDTH * 0.52,
+                  height: DEVICE_WIDTH * 0.52,
+                  borderRadius: 300,
+                  borderWidth: 1,
+                  borderColor: "#FA622B",
+                  alignItems: "center",
+                  justifyContent: "center",
+                },
               },
-              React.createElement(Image, {
-                style: styles.image,
-                source: Icons.RECORD_BUTTON.module,
-              })
+              React.createElement(
+                View,
+                {
+                  style: {
+                    backgroundColor: "#B71313",
+                    width: DEVICE_WIDTH * 0.45,
+                    height: DEVICE_WIDTH * 0.45,
+                    borderRadius: 300,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  },
+                },
+                React.createElement(
+                  TouchableHighlight,
+                  {
+                    underlayColor: "BACKGROUND_COLOR",
+                    style: styles.wrapper,
+                    onPress: this._onRecordPressed,
+                    disabled: this.state.isLoading,
+                  },
+                  React.createElement(Image, {
+                    style: { backgroundColor: "transparent" },
+                    source: Icons.RECORD_BUTTON2.module,
+                  })
+                )
+              )
             )
           ),
+          
           React.createElement(
             View,
-            { style: styles.recordingDataContainer },
-            React.createElement(
-              Text,
-              {
-                style: [
-                  styles.recordingTimestamp,
-                  { fontFamily: "cutive-mono-regular" },
-                ],
-              },
-              this._getRecordingTimestamp()
-            )
+            {style: [styles.recordingDataContainer,{ opacity: this.state.isRecording ? 1.0 : 0.0 } ]},
+            React.createElement(Image, {
+              style: {marginHorizontal: 5},
+              source: Icons.RECORDING.module,
+            }),<Text style={{fontFamily: 'SquareRound', fontSize: 17}}>녹음중...</Text>,
           )
         ),
 
         // 컨테이너2
         React.createElement(
           View,
-          { style: { flexDirection: "column", flex: 1 } },
+          {
+            style: {
+              flexDirection: "column",
+              height: DEVICE_HEIGHT * 0.3,
+              // flex: 1
+            },
+          },
 
           // 재생 라인
           React.createElement(
@@ -480,30 +498,104 @@ export default class Recording extends React.Component {
             { style: styles.playbackContainer },
             React.createElement(Slider, {
               style: styles.playbackSlider,
-              trackImage: Icons.TRACK_1.module,
+              // trackImage: Icons.TRACK_1.module,
               thumbImage: Icons.THUMB_1.module,
+              minimumTrackTintColor: GROUNDCOLOR,
+              maximumTrackTintColor: "grey",
               value: this._getSeekSliderPosition(),
               onValueChange: this._onSeekSliderValueChange,
               onSlidingComplete: this._onSeekSliderSlidingComplete,
               disabled: !this.state.isPlaybackAllowed || this.state.isLoading,
             }),
-            React.createElement(
-              Text,
-              {
-                style: [
-                  styles.playbackTimestamp,
-                  { fontFamily: "cutive-mono-regular" },
-                ],
-              },
-              this._getPlaybackTimestamp()
-            )
+            !this.state.isPlaybackAllowed || this.state.isLoading
+              ? React.createElement(
+                    Text,
+                    {
+                      style: [
+                        styles.playbackTimestamp,
+                        { fontFamily: "SquareRound", fontSize: 15 },
+                      ],
+                    },
+                    this._getRecordingTimestamp()
+                  )
+                
+              : React.createElement(
+                  Text,
+                  {
+                    style: [
+                      styles.playbackTimestamp,
+                      { fontFamily: "SquareRound", fontSize: 15 },
+                    ],
+                  },
+                  this._getPlaybackTimestamp()
+                )
           ),
 
-          // 볼륨, 재생, 정지 버튼
+          // 재생, 정지 버튼
           React.createElement(
             View,
             {
-              style: styles.buttonsContainerBase,
+              style: [
+                {
+                  opacity:
+                    !this.state.isPlaybackAllowed && !this.state.isLoading
+                      ? DISABLED_OPACITY
+                      : 1.0,
+                },
+                styles.buttonsContainerBase,
+              ],
+            },
+
+            React.createElement(
+              View,
+              { style: styles.playStopContainer },
+              React.createElement(
+                TouchableHighlight,
+                {
+                  underlayColor: BACKGROUND_COLOR,
+                  style: styles.wrapper,
+                  underlayColor: "white",
+                  onPress: this._onPlayPausePressed,
+                  disabled:
+                    !this.state.isPlaybackAllowed || this.state.isLoading,
+                },
+                React.createElement(Image, {
+                  style: styles.image,
+                  source: this.state.isPlaying
+                    ? Icons.PAUSE_BUTTON.module
+                    : Icons.PLAY_BUTTON.module,
+                })
+              )
+              // React.createElement(
+              //   TouchableHighlight,
+              //   {
+              //     underlayColor: BACKGROUND_COLOR,
+              //     style: styles.wrapper,
+              //     onPress: this._onStopPressed,
+              //     disabled:
+              //       !this.state.isPlaybackAllowed || this.state.isLoading,
+              //   },
+              //   React.createElement(Image, {
+              //     style: styles.image,
+              //     source: Icons.STOP_BUTTON.module,
+              //   })
+              // )
+            )
+          ),
+          // 저장, 볼륨 버튼
+          React.createElement(
+            View,
+            {
+              style: {
+                flexDirection: "row",
+                marginLeft: 10,
+                marginRight: 10,
+                alignItems: "center",
+                justifyContent: "center",
+                position: "absolute",
+                bottom: 10,
+                alignSelf: "center",
+              },
             },
             React.createElement(
               View,
@@ -511,7 +603,7 @@ export default class Recording extends React.Component {
               React.createElement(
                 TouchableHighlight,
                 {
-                  underlayColor: BACKGROUND_COLOR,
+                  underlayColor: "white",
                   style: styles.wrapper,
                   onPress: this._onMutePressed,
                   disabled:
@@ -526,77 +618,99 @@ export default class Recording extends React.Component {
               ),
               React.createElement(Slider, {
                 style: styles.volumeSlider,
-                trackImage: Icons.TRACK_1.module,
+                // trackImage: Icons.TRACK_1.module,
                 thumbImage: Icons.THUMB_2.module,
+                minimumTrackTintColor: GROUNDCOLOR,
+                maximumTrackTintColor: "grey",
                 value: 1,
                 onValueChange: this._onVolumeSliderValueChange,
                 disabled: !this.state.isPlaybackAllowed || this.state.isLoading,
               })
             ),
-
             React.createElement(
               View,
-              { style: styles.playStopContainer },
+              {
+                style: [
+                  {
+                    opacity:
+                      !this.state.isPlaybackAllowed && !this.state.isLoading
+                        ? DISABLED_OPACITY
+                        : 1.0,
+                  },
+                  styles.saveButton,
+                ],
+              },
               React.createElement(
                 TouchableHighlight,
                 {
-                  underlayColor: BACKGROUND_COLOR,
+                  underlayColor: "white",
                   style: styles.wrapper,
-                  onPress: this._onPlayPausePressed,
+                  onPress: () => this._saveButtonPressed(),
                   disabled:
-                    !this.state.isPlaybackAllowed || this.state.isLoading,
+                    !this.state.isPlaybackAllowed && !this.state.isLoading,
                 },
-                React.createElement(Image, {
-                  style: styles.image,
-                  source: this.state.isPlaying
-                    ? Icons.PAUSE_BUTTON.module
-                    : Icons.PLAY_BUTTON.module,
-                })
-              ),
-              React.createElement(
-                TouchableHighlight,
-                {
-                  underlayColor: BACKGROUND_COLOR,
-                  style: styles.wrapper,
-                  onPress: this._onStopPressed,
-                  disabled:
-                    !this.state.isPlaybackAllowed || this.state.isLoading,
-                },
-                React.createElement(Image, {
-                  style: styles.image,
-                  source: Icons.STOP_BUTTON.module,
-                })
+                React.createElement(
+                  View,
+                  {
+                    style: {
+                      borderRadius: 7,
+                      backgroundColor: GROUNDCOLOR,
+                      width: DEVICE_WIDTH * 0.35,
+                      height: DEVICE_WIDTH * 0.12,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    },
+                  },
+                  React.createElement(
+                    Text,
+                    {
+                      style: {
+                        fontSize: 20,
+                        color: "white",
+                        fontFamily: "SquareRound",
+                      },
+                    },
+                    "저장"
+                  )
+                )
               )
             )
           )
-        ),
-
-        // 저장 버튼
+        )
+      ),
+      React.createElement(
+        TouchableHighlight,
+        {
+          underlayColor: BACKGROUND_COLOR,
+          style: {
+            position: "absolute",
+            top: 5,
+            right: 5,
+          },
+          onPress: () => alert("업데이트 예정."),
+        },
         React.createElement(
           View,
           {
-            style: [
-              {
-                opacity:
-                  !this.state.isPlaybackAllowed && !this.state.isLoading
-                    ? DISABLED_OPACITY
-                    : 1.0,
-              },
-              styles.saveButton,
-            ],
+            style: {
+              borderRadius: 7,
+              backgroundColor: GROUNDCOLOR,
+              width: DEVICE_WIDTH * 0.23,
+              height: DEVICE_WIDTH * 0.1,
+              alignItems: "center",
+              justifyContent: "center",
+            },
           },
           React.createElement(
-            TouchableHighlight,
+            Text,
             {
-              underlayColor: BACKGROUND_COLOR,
-              style: styles.wrapper,
-              onPress: () => this._saveButtonPressed(),
-              disabled: !this.state.isPlaybackAllowed && !this.state.isLoading,
+              style: {
+                fontSize: 20,
+                color: "white",
+                fontFamily: "SquareRound",
+              },
             },
-            React.createElement(Image, {
-              style: { width: 300, height: 50 },
-              source: Icons.SAVE_BUTTON.module,
-            })
+            "사용방법"
           )
         )
       ),
@@ -620,32 +734,31 @@ export default class Recording extends React.Component {
   }
 }
 
-
 const styles = StyleSheet.create({
   emptyContainer: {
     alignSelf: "stretch",
-    backgroundColor: BACKGROUND_COLOR,
+    backgroundColor: "white",
   },
   container: {
     flex: 1,
     flexDirection: "column",
-    justifyContent: "space-between",
+    justifyContent: "flex-end",
     alignItems: "center",
     alignSelf: "stretch",
-    backgroundColor: BACKGROUND_COLOR,
-    minHeight: DEVICE_HEIGHT - 100,
-    maxHeight: DEVICE_HEIGHT - 100,
-    // paddingBottom: 70,
+    backgroundColor: "white",
+    height: DEVICE_HEIGHT,
+    // marginBottom: 70,
   },
   recordButtonContainer: {
-    borderWidth: 5,
-    borderColor: "#2D89DF",
     borderRadius: 300,
-    width: DEVICE_WIDTH / 1.5,
-    height: DEVICE_WIDTH / 1.5,
+    width: DEVICE_WIDTH * 0.6,
+    height: DEVICE_WIDTH * 0.6,
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "column",
+    backgroundColor: "#ff6781",
+    borderWidth: 1,
+    borderColor: "#FDB79E",
   },
   noPermissionsText: {
     textAlign: "center",
@@ -674,13 +787,13 @@ const styles = StyleSheet.create({
     // borderWidth:1
   },
   recordingDataContainer: {
-    flex: 1,
-    flexDirection: "column",
+    // flex: 1,
+    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    minHeight: Icons.RECORDING.height,
-    maxHeight: Icons.RECORDING.height,
-    marginTop: 10,
+    // minHeight: Icons.RECORDING.height,
+    // maxHeight: Icons.RECORDING.height,
+    marginTop: 20,
   },
   recordingDataRowContainer: {
     flex: 1,
@@ -688,7 +801,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     minHeight: Icons.RECORDING.height,
     maxHeight: Icons.RECORDING.height,
-    borderWidth: 1,
     marginTop: 10,
   },
   playbackContainer: {
@@ -701,6 +813,7 @@ const styles = StyleSheet.create({
   },
   playbackSlider: {
     alignSelf: "stretch",
+    // borderWidth: 1
   },
   liveText: {
     color: LIVE_COLOR,
@@ -714,23 +827,21 @@ const styles = StyleSheet.create({
     paddingRight: 20,
   },
   image: {
-    backgroundColor: BACKGROUND_COLOR,
-  },
-  textButton: {
-    backgroundColor: BACKGROUND_COLOR,
-    padding: 10,
+    // backgroundColor: 'white',
+    tintColor: GROUNDCOLOR,
   },
   saveButton: {
-    paddingBottom: 20,
+    alignSelf: "center",
   },
   buttonsContainerBase: {
     // flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "center",
     width: DEVICE_WIDTH,
-    paddingTop: 30,
+    // paddingTop: 10,
     paddingHorizontal: 30,
+    // borderWidth:1
   },
   buttonsContainerTopRow: {
     maxHeight: Icons.MUTED_BUTTON.height,
@@ -741,15 +852,15 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    minWidth: ((Icons.PLAY_BUTTON.width + Icons.STOP_BUTTON.width) * 3.0) / 2.0,
-    maxWidth: ((Icons.PLAY_BUTTON.width + Icons.STOP_BUTTON.width) * 3.0) / 2.0,
+    justifyContent: "center",
+    // minWidth: ((Icons.PLAY_BUTTON.width + Icons.STOP_BUTTON.width) * 3.0) / 2.0,
+    // maxWidth: ((Icons.PLAY_BUTTON.width + Icons.STOP_BUTTON.width) * 3.0) / 2.0,
   },
   volumeContainer: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    // justifyContent: "space-between",
     minWidth: DEVICE_WIDTH / 2.0,
     maxWidth: DEVICE_WIDTH / 2.0,
   },

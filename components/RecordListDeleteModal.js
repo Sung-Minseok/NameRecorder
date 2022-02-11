@@ -25,27 +25,16 @@ const RecordModal = (props) => {
     <View style={styles.modalContainer}>
       <View style={styles.modalCon}>
         <View style={styles.modalHeader}>
-          <Text style={{ fontSize: 20, color: "white" }}>파일이름 작성</Text>
+          <Text style={{ fontSize: 20, color: "white" }}>파일 삭제</Text>
         </View>
         <View style={styles.modalContents}>
           <View style={styles.textInputContainer}>
-            <TextInput
-              style={styles.textInput}
-              onChangeText={(text) => {
-                var specialRule = /[`~!@#$%^&*|\\\'\";:\/?]/gi;
-                if (specialRule.test(text)) {
-                  alert("파일명에는 특수문자를 사용할 수 없습니다.");
-                } else {
-                  props.onChangeText(text.trimRight());
-                }
-              }}
-              value={props.value}
-            ></TextInput>
+            <Text>해당 파일을 삭제하시겠습니까?</Text>
           </View>
           <View style={styles.modalButtonContainer}>
-            <TouchableOpacity onPress={() => props.saveRecording()}>
+            <TouchableOpacity onPress={() => props.onPressConfirm()}>
               <View style={styles.button}>
-                <Text style={{ color: "white", fontSize: 17 }}>확인</Text>
+                <Text style={{ color: "white", fontSize: 17 }}>삭제</Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => props.onPressCancle()}>
@@ -138,7 +127,7 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
     // borderColor: 'grey',
     borderRadius: 5,
-    backgroundColor: "grey",
+    backgroundColor: 'grey',
     color: "white",
     alignItems: "center",
     justifyContent: "center",
