@@ -6,16 +6,27 @@ import {
   Dimensions,
   TouchableHighlight,
   Touchable,
+  Alert,
 } from "react-native";
 import * as Font from "expo-font";
 
+// Screen Size
 const DEVICE_WIDTH = Dimensions.get("window").width;
 const DEVICE_HEIGHT = Dimensions.get("window").height;
+
+//colors
 const GROUNDCOLOR = "#0bcacc";
 const POINTCOLOR = "#ff6781";
+
+//redux
+import { useDispatch, useSelector } from "react-redux";
+import { setExampleString } from "../../redux/record";
+import { set } from "react-native-reanimated";
+
 export default function HomeScreen({ navigation }) {
   const [fontLoaded, setFontLoaded] = useState(false);
-
+  const dispatch = useDispatch();
+  const reduxState = useSelector((state)=> state);
   const _loadFont = async () => {
     await Font.loadAsync({
       SquareRound: require("../../assets/fonts/NanumSquareRound.otf"),
@@ -24,7 +35,6 @@ export default function HomeScreen({ navigation }) {
     });
     setFontLoaded(true);
   };
-
   useEffect(() => {
     _loadFont();
   });
@@ -34,7 +44,7 @@ export default function HomeScreen({ navigation }) {
         onPress={() => alert("aaaa")}
         style={{ fontSize: 26, fontWeight: "bold" }}
       >
-        Home Screen(마크들어갈 위치)
+        (로고 상단바 위치)
       </Text>
       <View style={styles.buttonContainer}>
         <View style={styles.menuButton}>
@@ -48,7 +58,7 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.menuButton}>
           <TouchableHighlight
             underlayColor={"transparent"}
-            onPress={() => alert("추후 업데이트")}
+            onPress={() => Alert.alert("추후 업데이트")}
           >
             <Text style={styles.menuText}>오늘의 운세</Text>
           </TouchableHighlight>
@@ -56,7 +66,7 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.menuButton}>
           <TouchableHighlight
             underlayColor={"transparent"}
-            onPress={() => alert("추후 업데이트")}
+            onPress={() => Alert.alert("추후 업데이트")}
           >
             <Text style={styles.menuText}>돋보기 & 손전등</Text>
           </TouchableHighlight>
@@ -64,7 +74,7 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.menuButton}>
           <TouchableHighlight
             underlayColor={"transparent"}
-            onPress={() => alert("추후 업데이트")}
+            onPress={() => Alert.alert("추후 업데이트")}
           >
             <Text style={styles.menuText}>성명학 상담신청</Text>
           </TouchableHighlight>
@@ -72,13 +82,13 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.menuButton}>
           <TouchableHighlight
             underlayColor={"transparent"}
-            onPress={() => alert("추후 업데이트")}
+            onPress={() => Alert.alert("추후 업데이트")}
           >
             <Text style={styles.menuText}>모든 가능하게 하는 힘</Text>
           </TouchableHighlight>
         </View>
       </View>
-      <TouchableHighlight underlayColor={'transparent'} onPress={()=>{alert('업데이트 예정')}} style={styles.menuButton2}>
+      <TouchableHighlight underlayColor={'transparent'} onPress={()=>{Alert.alert("추후 업데이트")}} style={styles.menuButton2}>
         <View>
           <Text style={styles.menuText2}>문의 하기</Text>
         </View>

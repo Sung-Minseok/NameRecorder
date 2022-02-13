@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import {
+  Alert,
   Dimensions,
   Image,
   StyleSheet,
@@ -8,6 +9,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import * as Filesystem from "expo-file-system";
+import { Audio } from "expo-av";
+
+//redux
+import { useSelector, useDispatch } from "react-redux";
+import { setRecordList } from "../redux/record";
 
 const DEVICE_WIDTH = Dimensions.get("window").width;
 const DEVICE_HEIGHT = Dimensions.get("window").height;
@@ -15,10 +22,26 @@ const DEVICE_HEIGHT = Dimensions.get("window").height;
 const GROUNDCOLOR = "#0bcacc";
 const POINTCOLOR = "#ff6781";
 const BACKGROUNDCOLOR = "#F4ECE6";
+const DirName = "expoTest4/";
 
 const RecordModal = (props) => {
-  const _onPress = () => {
-    console.log();
+  //redux
+  const dispatch = useDispatch();
+  const reduxState = useSelector((state) => state);
+
+  const _updateList = async () => {
+    const recordList = await Filesystem.readDirectoryAsync(
+      Filesystem.documentDirectory + DirName
+    );
+    const soundList = await Promise.all(
+      Object.values(recordList).map((e) => {
+        const soundObj = new Audio.Sound();
+        return soundObj.loadAsync({
+          uri: Filesystem.documentDirectory + DirName + e,
+        });
+      })
+    );
+    dispatch(setRecordList(soundList));
   };
 
   return (
@@ -34,7 +57,7 @@ const RecordModal = (props) => {
               onChangeText={(text) => {
                 var specialRule = /[`~!@#$%^&*|\\\'\";:\/?]/gi;
                 if (specialRule.test(text)) {
-                  alert("파일명에는 특수문자를 사용할 수 없습니다.");
+                  Alert.alert("파일명에는 특수문자를 사용할 수 없습니다.");
                 } else {
                   props.onChangeText(text.trimRight());
                 }
@@ -43,7 +66,7 @@ const RecordModal = (props) => {
             ></TextInput>
           </View>
           <View style={styles.modalButtonContainer}>
-            <TouchableOpacity onPress={() => props.saveRecording()}>
+            <TouchableOpacity onPress={() => {props.saveRecording(); _updateList();}}>
               <View style={styles.button}>
                 <Text style={{ color: "white", fontSize: 17 }}>확인</Text>
               </View>

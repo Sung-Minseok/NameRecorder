@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { Component, useEffect, useState } from "react";
 import {
   Dimensions,
   Image,
@@ -16,6 +16,10 @@ import * as Font from "expo-font";
 import * as Icons from "./Icons.js";
 import OptionsMenu from "react-native-option-menu";
 import TextTicker from "react-native-text-ticker";
+
+//redux
+import { useSelector, useDispatch } from "react-redux";
+import { setRecordList } from "../redux/record";
 
 import DeleteModal from "../components/RecordListDeleteModal.js";
 import ModifyModal from "../components/RecordListModifyModal.js";
@@ -42,7 +46,9 @@ const RecordCard = (props) => {
   const [soundDuration, setSoundDuration] = useState(null);
   const [modifyModalVisible, setModifyModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
-  const [value, setValue]= useState("");
+  const [value, setValue] = useState("");
+  const dispatch = useDispatch();
+  const reduxState = useSelector((state) => state);
 
   const _loadFont = async () => {
     await Font.loadAsync({
@@ -67,13 +73,15 @@ const RecordCard = (props) => {
     );
     let size = (info.size / 1000000).toString();
     setFileSize(size.slice(0, -4) + "Mb");
-    setFileName(decodeURI(name).slice(0,-4));
+    setFileName(decodeURI(name).slice(0, -4));
     // setValue(fileName);
     setFileDuration(_getMMSSFromMillis(props.item.durationMillis));
     setFileUri(Filesystem.documentDirectory + DirName + name);
   };
-  _getFileInfo();
-  _loadFont();
+  useEffect(() => {
+    _getFileInfo();
+    _loadFont();
+  });
 
   const _playButtonPressed = async () => {
     // console.log(props.item);
@@ -116,7 +124,8 @@ const RecordCard = (props) => {
 
   const _modifyFile = async () => {
     console.log(props.item);
-    const newURI = Filesystem.documentDirectory + DirName + value+".caf";
+    const newURI = Filesystem.documentDirectory + DirName + encodeURI(value) + ".caf";
+    console.log("new : "+newURI)
     if (fileUri === newURI) {
       return console.log("이미 존재하는 파일 이름입니다.");
     }
@@ -129,12 +138,17 @@ const RecordCard = (props) => {
     console.log("edit file name");
   };
 
-  const _onPressModify = () => {
+  const _onPressModify = async () => {
+    if (soundObj != null) {
+      await playbackObj.setStatusAsync({ shouldPlay: false });
+      const status = await playbackObj.setIsLoopingAsync(false);
+      console.log("stop playing");
+      setPlaybackObj(playbackObj);
+      setSoundObj(null);
+    }
     setValue(fileName);
     setModifyModalVisible(true);
-  }
-  
-  
+  };
 
   const _deleteFile = async () => {
     await Filesystem.deleteAsync(fileUri);
@@ -143,8 +157,19 @@ const RecordCard = (props) => {
     console.log("delete file successfully");
   };
 
+  const _onPressDelete = async () => {
+    if (soundObj != null) {
+      await playbackObj.setStatusAsync({ shouldPlay: false });
+      const status = await playbackObj.setIsLoopingAsync(false);
+      console.log("stop playing");
+      setPlaybackObj(playbackObj);
+      setSoundObj(null);
+    }
+    setDeleteModalVisible(true);
+  };
 
   const _updateList = async () => {
+    console.log('update record list')
     const recordList = await Filesystem.readDirectoryAsync(
       Filesystem.documentDirectory + DirName
     );
@@ -156,7 +181,7 @@ const RecordCard = (props) => {
         });
       })
     );
-    props.updateList(soundList);
+    dispatch(setRecordList(soundList));
   };
 
   const OFFSET = DEVICE_HEIGHT / 20;
@@ -185,7 +210,7 @@ const RecordCard = (props) => {
   };
 
   const _volumeChange = (value) => {
-    if (value < 0) value = -1;
+    if (value < 0) value = -8;
     if (value > 8) value = 8;
     setVolume(value);
     if (value < 0) value = 0;
@@ -239,32 +264,34 @@ const RecordCard = (props) => {
             justifyContent: "center",
           }}
         >
-          <View
-            style={{
-              // borderWidth: 1,
-              width: DEVICE_HEIGHT / 15,
-              height: DEVICE_HEIGHT / 35,
-              borderRadius: 5,
-              backgroundColor: soundObj === null ? "grey" : POINTCOLOR,
-              alignItems: "center",
-              justifyContent: "center",
-              flexDirection: "row",
-              transform: [
-                { rotate: "270deg" },
-                { translateX: 0 },
-                { translateY: -DEVICE_HEIGHT * 0.02 },
-              ],
-            }}
-          >
-            <Text
+          <TouchableOpacity onPressOut={() => _playButtonPressed(props.item)}>
+            <View
               style={{
-                color: "white",
-                fontFamily: "SquareRound",
+                // borderWidth: 1,
+                width: DEVICE_HEIGHT / 15,
+                height: DEVICE_HEIGHT / 35,
+                borderRadius: 5,
+                backgroundColor: soundObj === null ? "grey" : POINTCOLOR,
+                alignItems: "center",
+                justifyContent: "center",
+                flexDirection: "row",
+                transform: [
+                  { rotate: "270deg" },
+                  { translateX: 0 },
+                  { translateY: -DEVICE_HEIGHT * 0.02 },
+                ],
               }}
             >
-              {soundObj === null ? "정지중" : "재생중"}
-            </Text>
-          </View>
+              <Text
+                style={{
+                  color: "white",
+                  fontFamily: "SquareRound",
+                }}
+              >
+                {soundObj === null ? "정지중" : "재생중"}
+              </Text>
+            </View>
+          </TouchableOpacity>
         </View>
         <View style={styles.card_recordinfo}>
           <View style={{ flexDirection: "row" }}>
@@ -293,7 +320,8 @@ const RecordCard = (props) => {
               }}
               destructiveIndex={1}
               options={["수정", "삭제", "취소"]}
-              actions={[() => _onPressModify(), () => setDeleteModalVisible(true)]}
+              actions={[() => _onPressModify(), () => _onPressDelete()]}
+              // actions={[() => alert('asdf'), () => alert('asdfasd')]}
             />
           </View>
           <View
@@ -346,21 +374,6 @@ const RecordCard = (props) => {
               borderRadius: 5,
             }}
           >
-            {/* <View
-              style={styles.volumeSliderContainer}
-            >
-              <Slider
-                thumbImage= {Icons.THUMB_2.module}
-                minimumTrackTintColor={POINTCOLOR}
-                maximumTrackTintColor="grey"
-                value={_getSliderPosition()}
-                disabled={soundObj == null}
-                style={{ alignSelf: "stretch" }}
-                minimumValue={0}
-                maximumValue={1}
-              ></Slider>
-            </View> */}
-
             {/* 볼륨 , 재생 버튼 */}
             <View
               style={{
@@ -372,7 +385,7 @@ const RecordCard = (props) => {
               }}
             >
               <TouchableOpacity
-                onPressOut={() => _playButtonPressed(props.item)}
+                onPressOut={() => _onPressDelete()}
                 style={styles.button}
               >
                 <Text
@@ -382,10 +395,24 @@ const RecordCard = (props) => {
                     fontFamily: "SquareRound",
                   }}
                 >
-                  {soundObj == null ? "재생" : "정지"}
+                  {"녹음 삭제"}
                 </Text>
               </TouchableOpacity>
-              <View style={{ flex: 1 }}></View>
+              <TouchableOpacity
+                onPressOut={() => _onPressModify()}
+                style={styles.button}
+              >
+                <Text
+                  style={{
+                    color: "white",
+                    fontSize: 18,
+                    fontFamily: "SquareRound",
+                  }}
+                >
+                  {"제목 수정"}
+                </Text>
+              </TouchableOpacity>
+              {/* <View style={{ flex: 1 }}></View> */}
               <TouchableOpacity
                 disabled={soundObj == null}
                 onPress={() => {
@@ -405,7 +432,7 @@ const RecordCard = (props) => {
                     alignItems: "center",
                     justifyContent: "center",
                     borderRadius: 5,
-                    backgroundColor: 'grey',
+                    backgroundColor: "grey",
                     borderColor: "grey",
                   }}
                 >
@@ -453,7 +480,7 @@ const RecordCard = (props) => {
                     alignItems: "center",
                     justifyContent: "center",
                     borderRadius: 5,
-                    backgroundColor: 'grey',
+                    backgroundColor: "grey",
                     borderColor: "grey",
                     alignContent: "center",
                   }}
@@ -474,9 +501,10 @@ const RecordCard = (props) => {
         hideModalContentWhileAnimating={true}
         transparent={true}
       >
-        <DeleteModal 
-        onPressCancle={() => setDeleteModalVisible(false)}
-        onPressConfirm={() => _deleteFile()} />
+        <DeleteModal
+          onPressCancle={() => setDeleteModalVisible(false)}
+          onPressConfirm={() => _deleteFile()}
+        />
       </Modal>
       <Modal
         visible={modifyModalVisible}
@@ -484,11 +512,12 @@ const RecordCard = (props) => {
         hideModalContentWhileAnimating={true}
         transparent={true}
       >
-        <ModifyModal 
-        onPressCancle={() => setModifyModalVisible(false)}
-        onPressConfirm={() => _modifyFile()}
-        value={value}
-        onChangeText={(text)=>setValue(text)} />
+        <ModifyModal
+          onPressCancle={() => setModifyModalVisible(false)}
+          onPressConfirm={() => _modifyFile()}
+          value={value}
+          onChangeText={(text) => setValue(text)}
+        />
       </Modal>
     </View>
   );

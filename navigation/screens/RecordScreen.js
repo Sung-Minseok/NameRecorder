@@ -46,13 +46,15 @@ export default function RecordScreen({ navigation }) {
     } else {
       console.log("directory alreay exists");
     }
-  }
+  };
 
-  React.useEffect(()=>{
+  React.useEffect(() => {
     ensureDirExists();
     _loadFont();
-  })
-
+  });
+  if(!fontLoaded){
+    return <View></View>
+  }
   return (
     <TabView
       navigationState={{ index, routes }}
@@ -67,11 +69,11 @@ export default function RecordScreen({ navigation }) {
             border: "none",
           }}
           labelStyle={{
-            fontFamily: 'SquareRound',
-            fontSize: 18
+            fontFamily: "SquareRound",
+            fontSize: 18,
           }}
           style={{
-            backgroundColor: 'white',
+            backgroundColor: "white",
             fontWeight: "bold",
             shadowOffset: { height: 1, width: 0 },
             shadowColor: "black",

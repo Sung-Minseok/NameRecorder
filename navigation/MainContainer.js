@@ -16,6 +16,7 @@ const BACKGROUNDCOLOR = "#F4ECE6";
 // Screen names
 const homeName = "홈";
 const recordName = "녹음";
+const settingName = "설정";
 
 const Tab = createBottomTabNavigator();
 
@@ -30,18 +31,6 @@ export default function MainContainer() {
             headerStyle: {
               backgroundColor: GROUNDCOLOR,
             },
-            // tabBarIcon: ({ focused, color, size }) => {
-            //   let iconName;
-            //   let rn;
-
-            //   if (rn === homeName) {
-            //     iconName = focused ? "home" : "home-outline";
-            //   } else if (rn === recordName) {
-            //     iconName = focused ? "home" : "home-outline";
-            //   }
-            //   return <Ionicons name={iconName} size={size} color={color} />;
-
-            // },
             tabBarInactiveBackgroundColor: GROUNDCOLOR,
             tabBarActiveBackgroundColor: GROUNDCOLOR,
             tabBarActiveTintColor: "white",
@@ -59,6 +48,7 @@ export default function MainContainer() {
         >
           <Tab.Screen name={homeName} component={HomeScreen} />
           <Tab.Screen name={recordName} component={RecordScreen} />
+          <Tab.Screen name={settingName} component={RecordScreen} />
         </Tab.Navigator>
       </NavigationContainer>
   );

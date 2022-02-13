@@ -17,6 +17,10 @@ import * as FileSystem from "expo-file-system";
 import * as Font from "expo-font";
 import * as Icons from "./Icons.js";
 import RecordModal from "./RecordModal.js";
+
+import * as actions from '../redux/record';
+import { connect } from "react-redux";
+
 const DEVICE_WIDTH = Dimensions.get("window").width;
 const DEVICE_HEIGHT = Dimensions.get("window").height;
 const BACKGROUND_COLOR = "#F4ECE6";
@@ -26,7 +30,7 @@ const GROUNDCOLOR = "#0bcacc";
 const POINTCOLOR = "#ff6781";
 const DirName = "expoTest4/";
 
-export default class Recording extends React.Component {
+class Recording extends React.Component {
   constructor(props) {
     super(props);
     this._askForPermissions = async () => {
@@ -153,6 +157,7 @@ export default class Recording extends React.Component {
       fileName: "",
       animateValue: new Animated.Value(0),
       animateLoop: false,
+      recordList: null,
     };
     this.recordingSettings = Audio.RECORDING_OPTIONS_PRESET_LOW_QUALITY;
     // UNCOMMENT THIS TO TEST maxFileSize:
@@ -360,13 +365,19 @@ export default class Recording extends React.Component {
     this.setState({ modalVisible: false });
   }
 
+  //redux function
+  _setRecordList = (list) => {
+    this.setState(()=>{
+      return{
+        recordList: list,
+      }
+    });
+  }
+
   render() {
-    const animationStyles = {
-      backgroundColor: this.state.animateValue.interpolate({
-        inputRange: [0, 1],
-        outputRange: ["#ffffff", "#ff6781"],
-      }),
-    };
+    const {recordList} = this.state;
+    const {setStoreRecordList, _setRecordList} = this.props;
+    
 
     if (!this.state.fontLoaded) {
       return React.createElement(View, { style: styles.emptyContainer });
@@ -733,6 +744,18 @@ export default class Recording extends React.Component {
     );
   }
 }
+
+
+//redux setting
+const mapStateToProps = (state) => ({
+  storeRecordList: state.record.recordListState,
+});
+const mapDispatchToProps = (dispatch) => ({
+  setStoreRecordList: (list) => dispatch(actions.setRecordList(list)),
+});
+export default connect(mapStateToProps, mapDispatchToProps)(Recording);
+
+
 
 const styles = StyleSheet.create({
   emptyContainer: {

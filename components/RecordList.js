@@ -168,7 +168,7 @@ export default class RecordList extends React.Component {
     const soundList = await Promise.all(
       Object.values(recordList).map((e) => {
         const soundObj = new Audio.Sound();
-        console.log(e);
+        // console.log(e);
         return soundObj.loadAsync({
           uri: FileSystem.documentDirectory + DirName + encodeURI(e),
         });

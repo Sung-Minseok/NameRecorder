@@ -21,6 +21,7 @@ const TabBar = ({ state, navigation }) => {
           tab={route}
           onPress={() => handlePress(route.name, index)}
           key={route.key}
+          navigation = {navigation}
         />
       ))}
     </View>

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import {
+  Alert,
   Dimensions,
   Image,
   StyleSheet,
@@ -34,7 +35,7 @@ const RecordModal = (props) => {
               onChangeText={(text) => {
                 var specialRule = /[`~!@#$%^&*|\\\'\";:\/?]/gi;
                 if (specialRule.test(text)) {
-                  alert("파일명에는 특수문자를 사용할 수 없습니다.");
+                  Alert.alert("파일명에는 특수문자를 사용할 수 없습니다.");
                 } else {
                   props.onChangeText(text.trimRight());
                 }

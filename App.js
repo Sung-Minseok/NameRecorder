@@ -1,7 +1,11 @@
 import * as React from "react";
-import { Dimensions, View, SafeAreaView } from "react-native";
+import { Dimensions } from "react-native";
 import MainContainer from "./navigation/MainContainer";
-import StackContainer from "./navigation/StackContainer";
+
+//redux
+import { Provider as StoreProvider } from "react-redux";
+import store from "./redux/store";
+
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
 
@@ -10,10 +14,9 @@ const height = Dimensions.get("window").height;
 
 function App() {
   return (
-    // <SafeAreaView style={{ flex: 1 }}>
-    //   <MainContainer />
-    // </SafeAreaView>
+    <StoreProvider store={store}>
       <MainContainer />
+    </StoreProvider>
   );
 }
 
