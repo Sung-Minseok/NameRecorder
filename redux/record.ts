@@ -6,6 +6,8 @@ import {
     SetRecordListAction,
     SetReFreshNumberAction,
     SET_REFRESH_NUMBER,
+    SetTabViewAction,
+    SET_TABVIEW,
 } from './record.type'
 
 //first example state
@@ -13,6 +15,7 @@ export const recordState: RecordState = {
     exampleStringState: "",
     recordListState: null,
     refreshNumberState: 100,
+    tabViewState: null,
 };
 
 
@@ -38,6 +41,13 @@ export const setRefreshNumber = (num: number): SetReFreshNumberAction => {
     }
 }
 
+export const setTabView = (tabview: object): SetTabViewAction => {
+    return {
+        type: SET_TABVIEW,
+        tabViewState: Object,
+    }
+}
+
 
 //reducer
 export const recordReducer = (state = recordState, action): RecordState => {
@@ -48,7 +58,8 @@ export const recordReducer = (state = recordState, action): RecordState => {
             return { ...state, exampleStringState: action.exampleStringState };
         case SET_REFRESH_NUMBER:
             return { ...state, refreshNumberState: action.refreshNumberState };
-
+        case SET_TABVIEW:
+            return { ...state, tabViewState: action.tabViewState };
         default:
             return state;
     }

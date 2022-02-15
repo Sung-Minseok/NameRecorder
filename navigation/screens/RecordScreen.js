@@ -5,6 +5,9 @@ import RecordingScreen from "./RecordingScreen";
 import RecordListscreen from "./RecordListScreen";
 import * as FileSystem from "expo-file-system";
 import * as Font from "expo-font";
+//redux
+import { useSelector, useDispatch } from "react-redux";
+import { setTabView } from "../../redux/record";
 
 const GROUNDCOLOR = "#0bcacc";
 const POINTCOLOR = "#ff6781";
@@ -18,12 +21,28 @@ const renderScene = SceneMap({
   second: SecondRoute,
 });
 
+const renderScene2 = (props) => {
+  // console.log(props)
+  switch (props.route.key) {
+    case 'first':
+      return <RecordListscreen {...props}/>;
+    case 'second':
+      return <RecordingScreen {...props}/>;
+    default:
+      return null;
+  }
+}
+
 export default function RecordScreen({ navigation }) {
+  //redux
+  const dispatch = useDispatch();
+  const reduxState = useSelector((state) => state);
+
   const layout = useWindowDimensions();
 
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    { key: "first", title: "재생목록" },
+    { key: "first", title: "녹음목록" },
     { key: "second", title: "녹음하기" },
   ]);
   const [fontLoaded, setFontLoaded] = React.useState(false);
@@ -58,7 +77,7 @@ export default function RecordScreen({ navigation }) {
   return (
     <TabView
       navigationState={{ index, routes }}
-      renderScene={renderScene}
+      renderScene={renderScene2}
       onIndexChange={setIndex}
       initialLayout={{ width: layout.width }}
       renderTabBar={(props) => (

@@ -6,8 +6,9 @@ const { width } = Dimensions.get("screen");
 
 const TabBar = ({ state, navigation }) => {
   const { routes } = state;
-
+  console.log(routes)
   const handlePress = (activeTab, index) => {
+    console.log(activeTab)
     if (state.index !== index) {
       setSelected(activeTab);
       navigation.navigate(activeTab);

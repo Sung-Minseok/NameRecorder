@@ -10,7 +10,6 @@ import {
   TextInput,
   TouchableOpacity,
   Animated,
-  Alert,
 } from "react-native";
 import Slider from "@react-native-community/slider";
 import { Audio } from "expo-av";
@@ -18,7 +17,7 @@ import * as FileSystem from "expo-file-system";
 import * as Font from "expo-font";
 import * as Icons from "./Icons.js";
 import RecordModal from "./RecordModal.js";
-import BlinkingText from "../components/BlinkingText";
+
 import * as actions from '../redux/record';
 import { connect } from "react-redux";
 
@@ -347,10 +346,10 @@ class Recording extends React.Component {
   async _saveRecording() {
     console.log(
       "filename : " +
-      FileSystem.documentDirectory +
-      DirName +
-      encodeURI(this.state.fileName) +
-      ".caf"
+        FileSystem.documentDirectory +
+        DirName +
+        encodeURI(this.state.fileName) +
+        ".caf"
     );
     if (this.state.fileName.trim() === "") {
       return alert("파일 이름을 입력해주세요!");
@@ -369,14 +368,18 @@ class Recording extends React.Component {
 
   //redux function
   _setRecordList = (list) => {
-    this.setState(() => {
-      return {
+    this.setState(()=>{
+      return{
         recordList: list,
       }
     });
   }
 
   render() {
+    const {recordList} = this.state;
+    const {setStoreRecordList, _setRecordList} = this.props;
+    
+
     if (!this.state.fontLoaded) {
       return React.createElement(View, { style: styles.emptyContainer });
     }
@@ -428,64 +431,65 @@ class Recording extends React.Component {
               // height: DEVICE_HEIGHT*0.5,
             },
           },
-          React.createElement
-            (TouchableOpacity,
-              {
-                underlayColor: "BACKGROUND_COLOR",
-                style: styles.wrapper,
-                onPress: this._onRecordPressed,
-                disabled: this.state.isLoading,
-              }, React.createElement(
-                Animated.View,
-                {
-                  // style: this.state.animateLoop
-                  //   ? [styles.recordButtonContainer, animationStyles]
-                  //   : [styles.recordButtonContainer],
-                  style: styles.recordButtonContainer
-                },
-                React.createElement(
-                  View,
-                  {
-                    style: {
-                      backgroundColor: "white",
-                      width: DEVICE_WIDTH * 0.52,
-                      height: DEVICE_WIDTH * 0.52,
-                      borderRadius: 300,
-                      borderWidth: 1,
-                      borderColor: "#FA622B",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    },
-                  },
-                  React.createElement(
-                    View,
-                    {
-                      style: {
-                        backgroundColor: "#B71313",
-                        width: DEVICE_WIDTH * 0.45,
-                        height: DEVICE_WIDTH * 0.45,
-                        borderRadius: 300,
-                        alignItems: "center",
-                        justifyContent: "center",
-                      },
-                    },
-                    React.createElement(Image, {
-                      style: { backgroundColor: "transparent", marginTop: 30 },
-                      source: Icons.RECORD_BUTTON2.module,
-                    }),
-                    <Text style={{ color: 'white', fontSize: 20, fontFamily: 'SquareRound', margin: 10 }}>{!this.state.isRecording ? '녹음 시작' : '녹음 완료'}</Text>
-                  )
-                )
-              )),
-
 
           React.createElement(
+            Animated.View,
+            {
+              // style: this.state.animateLoop
+              //   ? [styles.recordButtonContainer, animationStyles]
+              //   : [styles.recordButtonContainer],
+              style: styles.recordButtonContainer
+            },
+            React.createElement(
+              View,
+              {
+                style: {
+                  backgroundColor: "white",
+                  width: DEVICE_WIDTH * 0.52,
+                  height: DEVICE_WIDTH * 0.52,
+                  borderRadius: 300,
+                  borderWidth: 1,
+                  borderColor: "#FA622B",
+                  alignItems: "center",
+                  justifyContent: "center",
+                },
+              },
+              React.createElement(
+                View,
+                {
+                  style: {
+                    backgroundColor: "#B71313",
+                    width: DEVICE_WIDTH * 0.45,
+                    height: DEVICE_WIDTH * 0.45,
+                    borderRadius: 300,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  },
+                },
+                React.createElement(
+                  TouchableHighlight,
+                  {
+                    underlayColor: "BACKGROUND_COLOR",
+                    style: styles.wrapper,
+                    onPress: this._onRecordPressed,
+                    disabled: this.state.isLoading,
+                  },
+                  React.createElement(Image, {
+                    style: { backgroundColor: "transparent" },
+                    source: Icons.RECORD_BUTTON2.module,
+                  })
+                )
+              )
+            )
+          ),
+          
+          React.createElement(
             View,
-            { style: [styles.recordingDataContainer, { opacity: this.state.isRecording ? 1.0 : 0.0 }] },
+            {style: [styles.recordingDataContainer,{ opacity: this.state.isRecording ? 1.0 : 0.0 } ]},
             React.createElement(Image, {
-              style: { marginHorizontal: 5 },
+              style: {marginHorizontal: 5},
               source: Icons.RECORDING.module,
-            }), <BlinkingText text='녹음중 ...' />
+            }),<Text style={{fontFamily: 'SquareRound', fontSize: 17}}>녹음중...</Text>,
           )
         ),
 
@@ -517,26 +521,26 @@ class Recording extends React.Component {
             }),
             !this.state.isPlaybackAllowed || this.state.isLoading
               ? React.createElement(
-                Text,
-                {
-                  style: [
-                    styles.playbackTimestamp,
-                    { fontFamily: "SquareRound", fontSize: 15 },
-                  ],
-                },
-                this._getRecordingTimestamp()
-              )
-
+                    Text,
+                    {
+                      style: [
+                        styles.playbackTimestamp,
+                        { fontFamily: "SquareRound", fontSize: 15 },
+                      ],
+                    },
+                    this._getRecordingTimestamp()
+                  )
+                
               : React.createElement(
-                Text,
-                {
-                  style: [
-                    styles.playbackTimestamp,
-                    { fontFamily: "SquareRound", fontSize: 15 },
-                  ],
-                },
-                this._getPlaybackTimestamp()
-              )
+                  Text,
+                  {
+                    style: [
+                      styles.playbackTimestamp,
+                      { fontFamily: "SquareRound", fontSize: 15 },
+                    ],
+                  },
+                  this._getPlaybackTimestamp()
+                )
           ),
 
           // 재생, 정지 버튼
@@ -558,38 +562,21 @@ class Recording extends React.Component {
               View,
               { style: styles.playStopContainer },
               React.createElement(
-                TouchableOpacity,
+                TouchableHighlight,
                 {
                   underlayColor: BACKGROUND_COLOR,
-                  style: {justifyContent: 'center', alignItems: 'center'},
+                  style: styles.wrapper,
                   underlayColor: "white",
                   onPress: this._onPlayPausePressed,
                   disabled:
                     !this.state.isPlaybackAllowed || this.state.isLoading,
                 },
-                // React.createElement(Image, {
-                //   style: styles.image,
-                //   source: this.state.isPlaying
-                //     ? Icons.PAUSE_BUTTON.module
-                //     : Icons.PLAY_BUTTON.module,
-                // })
-                React.createElement(
-                  View,
-                  {
-                    style: {
-                      borderRadius: 7,
-                      backgroundColor: GROUNDCOLOR,
-                      width: DEVICE_WIDTH * 0.35,
-                      height: DEVICE_WIDTH * 0.12,
-                      alignItems: "center",
-                      justifyContent: "center",
-                    },
-                  },<Text style={{
-                    fontSize: 20,
-                    color: "white",
-                    fontFamily: "SquareRound",
-                  }}>{'재생 하기'}</Text>),
-                
+                React.createElement(Image, {
+                  style: styles.image,
+                  source: this.state.isPlaying
+                    ? Icons.PAUSE_BUTTON.module
+                    : Icons.PLAY_BUTTON.module,
+                })
               )
               // React.createElement(
               //   TouchableHighlight,
@@ -695,7 +682,7 @@ class Recording extends React.Component {
                         fontFamily: "SquareRound",
                       },
                     },
-                    "저   장"
+                    "저장"
                   )
                 )
               )
@@ -712,7 +699,7 @@ class Recording extends React.Component {
             top: 5,
             right: 5,
           },
-          onPress: () => Alert.alert("알림","업데이트 예정."),
+          onPress: () => alert("업데이트 예정."),
         },
         React.createElement(
           View,
@@ -793,8 +780,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "column",
-    // backgroundColor: "#ff6781",
-    backgroundColor: "#B71313",
+    backgroundColor: "#ff6781",
     borderWidth: 1,
     borderColor: "#FDB79E",
   },

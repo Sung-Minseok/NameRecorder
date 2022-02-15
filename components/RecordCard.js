@@ -41,7 +41,7 @@ const RecordCard = (props) => {
   const [fileUri, setFileUri] = useState("");
   const [isFontLoading, setIsFontLoading] = useState(false);
   const [active, setActive] = useState(false);
-  const [volume, setVolume] = useState(3);
+  const [volume, setVolume] = useState(-1);
   const [soundPosition, setSoundPosition] = useState(null);
   const [soundDuration, setSoundDuration] = useState(null);
   const [modifyModalVisible, setModifyModalVisible] = useState(false);
@@ -68,8 +68,8 @@ const RecordCard = (props) => {
     const _date = new Date(info.modificationTime * 1000);
     setFileDate(
       _date.toLocaleDateString("ko") +
-        " " +
-        _date.toLocaleTimeString("en", { hour12: false }).slice(0, 5)
+      " " +
+      _date.toLocaleTimeString("en", { hour12: false }).slice(0, 5)
     );
     let size = (info.size / 1000000).toString();
     setFileSize(size.slice(0, -4) + "Mb");
@@ -104,7 +104,7 @@ const RecordCard = (props) => {
       );
       await playbackObj.setVolumeAsync(volume < 0 ? 0 : volume / 10);
       const status = await playbackObj.setIsLoopingAsync(true);
-      console.log(status);
+      // console.log(status);
       console.log("start playing");
       return (
         setPlaybackObj(playbackObj),
@@ -125,7 +125,7 @@ const RecordCard = (props) => {
   const _modifyFile = async () => {
     console.log(props.item);
     const newURI = Filesystem.documentDirectory + DirName + encodeURI(value) + ".caf";
-    console.log("new : "+newURI)
+    console.log("new : " + newURI)
     if (fileUri === newURI) {
       return console.log("이미 존재하는 파일 이름입니다.");
     }
@@ -177,7 +177,7 @@ const RecordCard = (props) => {
       Object.values(recordList).map((e) => {
         const soundObj = new Audio.Sound();
         return soundObj.loadAsync({
-          uri: Filesystem.documentDirectory + DirName + e,
+          uri: Filesystem.documentDirectory + DirName + encodeURI(e),
         });
       })
     );
@@ -210,7 +210,7 @@ const RecordCard = (props) => {
   };
 
   const _volumeChange = (value) => {
-    if (value < 0) value = -8;
+    if (value <= 0) value = -1;
     if (value > 8) value = 8;
     setVolume(value);
     if (value < 0) value = 0;
@@ -226,12 +226,13 @@ const RecordCard = (props) => {
     }
     return 0;
   };
-
+  
   if (!isFontLoading) {
     return <View></View>;
   }
 
   return (
+    
     <View
       style={{
         // flex: 1,
@@ -258,34 +259,30 @@ const RecordCard = (props) => {
       >
         <View
           style={{
-            width: DEVICE_HEIGHT / 35,
-            height: DEVICE_HEIGHT / 15,
+            // width: DEVICE_HEIGHT / 35,
+            // height: DEVICE_HEIGHT / 15,
             alignContent: "center",
             justifyContent: "center",
+
           }}
         >
           <TouchableOpacity onPressOut={() => _playButtonPressed(props.item)}>
             <View
               style={{
-                // borderWidth: 1,
-                width: DEVICE_HEIGHT / 15,
-                height: DEVICE_HEIGHT / 35,
+                width: DEVICE_WIDTH*0.18,
+                height: DEVICE_HEIGHT*0.066,
                 borderRadius: 5,
                 backgroundColor: soundObj === null ? "grey" : POINTCOLOR,
                 alignItems: "center",
                 justifyContent: "center",
                 flexDirection: "row",
-                transform: [
-                  { rotate: "270deg" },
-                  { translateX: 0 },
-                  { translateY: -DEVICE_HEIGHT * 0.02 },
-                ],
               }}
             >
               <Text
                 style={{
                   color: "white",
                   fontFamily: "SquareRound",
+                  fontSize: 20
                 }}
               >
                 {soundObj === null ? "정지중" : "재생중"}
@@ -294,61 +291,45 @@ const RecordCard = (props) => {
           </TouchableOpacity>
         </View>
         <View style={styles.card_recordinfo}>
-          <View style={{ flexDirection: "row" }}>
-            <TouchableOpacity onPress={() => _itemOnClick()}>
-              <View style={{ width: DEVICE_WIDTH * 0.6 }}>
-                <TextTicker
-                  style={{ fontSize: 20, fontFamily: "SquareRound" }}
-                  duration={10000}
-                  roop
-                  bounce
-                  repeatSpacer={50}
-                  marqueeDelay={1000}
-                >
-                  {fileName}
-                </TextTicker>
-              </View>
-            </TouchableOpacity>
-            <View style={styles.card_buttonContainer}></View>
-            <OptionsMenu
-              button={require("../assets/images/more_button.png")}
-              buttonStyle={{
-                width: 20,
-                height: 20,
-                // margin: 0,
-                resizeMode: "contain",
-              }}
-              destructiveIndex={1}
-              options={["수정", "삭제", "취소"]}
-              actions={[() => _onPressModify(), () => _onPressDelete()]}
-              // actions={[() => alert('asdf'), () => alert('asdfasd')]}
-            />
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              paddingTop: 10,
-              // borderWidth: 2,
-            }}
-          >
-            <Text style={{ color: "#6B747B", fontFamily: "SquareRound" }}>
-              {fileDate}
-            </Text>
-            <Text
+          <TouchableOpacity onPress={() => _itemOnClick()}>
+            <View style={{ flexDirection: "row" }}>
+              <TextTicker
+                style={{ fontSize: 22, fontFamily: "SquareRound", width: DEVICE_WIDTH*0.74-10}}
+                duration={10000}
+                roop
+                bounce
+                repeatSpacer={50}
+                marqueeDelay={1000}
+              >
+                {fileName}
+              </TextTicker>
+            </View>
+            <View
               style={{
-                flex: 1,
-                paddingLeft: 20,
-                color: "#6B747B",
-                fontFamily: "SquareRound",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                paddingTop: 10,
               }}
             >
-              {fileSize}
-            </Text>
-            <Text style={{ color: "#6B747B", fontFamily: "SquareRound" }}>
-              {fileDuration}
-            </Text>
-          </View>
+              <Text style={{ color: "#6B747B", fontFamily: "SquareRound", fontSize: 16 }}>
+                {fileDate}
+              </Text>
+              <Text
+                style={{
+                  // flex: 1,
+                  // paddingLeft: 20,
+                  color: "#6B747B",
+                  fontFamily: "SquareRound",
+                  fontSize: 16,
+                }}
+              >
+                {fileSize}
+              </Text>
+              <Text style={{ color: "#6B747B", fontFamily: "SquareRound", fontSize: 16 }}>
+                {fileDuration}
+              </Text>
+            </View>
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -464,7 +445,11 @@ const RecordCard = (props) => {
               <TouchableOpacity
                 disabled={soundObj == null}
                 onPress={() => {
-                  _volumeChange(volume + 1);
+                  if (volume == -1) {
+                    _volumeChange(volume + 2)
+                  } else {
+                    _volumeChange(volume + 1);
+                  }
                 }}
                 style={{
                   // flex: 1,

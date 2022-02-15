@@ -35,7 +35,6 @@ const DirName = "expoTest4/";
 export default function RecordList() {
   const dispatch = useDispatch();
   const reduxState = useSelector((state) => state);
-  const [audioList, setAudioList] = useState([]);
 
   const _getRecordList = async () => {
     console.log("getRecordList");
@@ -51,13 +50,11 @@ export default function RecordList() {
       })
     );
     dispatch(setRecordList(soundList));
-    dispatch(setExampleString("aaaaa"));
   };
 
   useEffect(() => {
     _getRecordList();
   }, []);
-
   return React.createElement(
     View,
     { style: styles.container },
@@ -71,8 +68,10 @@ export default function RecordList() {
         data: reduxState.record.recordListState,
         keyExtractor: (item) => item.uri,
         renderItem: ({ item }) => (
-          <RecordCard item={item} updateList={() => console.log("asdf")} />
+          <RecordCard item={item} />
         ),
+        extraData: reduxState.record.recordListState,
+        
       })
     )
   );

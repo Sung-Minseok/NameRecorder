@@ -14,7 +14,7 @@ import { Audio } from "expo-av";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
-import { setRecordList } from "../redux/record";
+import { setExampleString, setRecordList } from "../redux/record";
 
 const DEVICE_WIDTH = Dimensions.get("window").width;
 const DEVICE_HEIGHT = Dimensions.get("window").height;
@@ -37,11 +37,12 @@ const RecordModal = (props) => {
       Object.values(recordList).map((e) => {
         const soundObj = new Audio.Sound();
         return soundObj.loadAsync({
-          uri: Filesystem.documentDirectory + DirName + e,
+          uri: Filesystem.documentDirectory + DirName + encodeURI(e),
         });
       })
     );
     dispatch(setRecordList(soundList));
+    // reduxState.record.tabViewState.jumpToIndex(1);
   };
 
   return (

@@ -10,7 +10,7 @@ const DEVICE_HEIGHT = Dimensions.get("window").height - 70;
 const GROUNDCOLOR = "#0bcacc";
 const POINTCOLOR = "#ff6781"
 const BACKGROUNDCOLOR = "#F4ECE6"
-export default function RecordingScreen({ navigation }) {
+export default function RecordingScreen(props) {
   return (
     <View
       style={{
@@ -22,7 +22,7 @@ export default function RecordingScreen({ navigation }) {
         paddingTop: 15
       }}
     >
-      <Recording/>
+      <Recording {...props}/>
       {/* <Recording_functional/> */}
     </View>
   );

@@ -18,9 +18,6 @@ const POINTCOLOR = "#ff6781";
 const BACKGROUNDCOLOR = "#F4ECE6";
 
 const RecordModal = (props) => {
-  const _onPress = () => {
-    console.log();
-  };
 
   return (
     <View style={styles.modalContainer}>
