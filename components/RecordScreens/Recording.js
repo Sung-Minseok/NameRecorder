@@ -7,7 +7,6 @@ import {
   TouchableHighlight,
   View,
   Modal,
-  TextInput,
   TouchableOpacity,
   Animated,
   Alert,
@@ -16,10 +15,10 @@ import Slider from "@react-native-community/slider";
 import { Audio } from "expo-av";
 import * as FileSystem from "expo-file-system";
 import * as Font from "expo-font";
-import * as Icons from "./Icons.js";
-import RecordModal from "./RecordModal.js";
-import BlinkingText from "../components/BlinkingText";
-import * as actions from '../redux/record';
+import * as Icons from "../Icons";
+import RecordModal from "./RecordModal";
+import BlinkingText from "../BlinkingText";
+import * as actions from '../../redux/record';
 import { connect } from "react-redux";
 
 const DEVICE_WIDTH = Dimensions.get("window").width;
@@ -173,8 +172,8 @@ class Recording extends React.Component {
   componentDidMount() {
     (async () => {
       await Font.loadAsync({
-        "cutive-mono-regular": require("../assets/fonts/CutiveMono-Regular.ttf"),
-        SquareRound: require("../assets/fonts/NanumSquareRound.otf"),
+        "cutive-mono-regular": require("../../assets/fonts/CutiveMono-Regular.ttf"),
+        SquareRound: require("../../assets/fonts/NanumSquareRound.otf"),
       });
       this.setState({ fontLoaded: true });
     })();

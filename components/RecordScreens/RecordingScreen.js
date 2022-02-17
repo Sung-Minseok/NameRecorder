@@ -1,9 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Button, Dimensions, TouchableOpacity } from "react-native";
-import { Audio } from "expo-av";
-import * as FileSystem from "expo-file-system";
-import Recording from "../../components/Recording";
-import Recording_functional from "../../components/Recording_functional";
+import Recording from "./Recording";
 
 const DEVICE_WIDTH = Dimensions.get("window").width;
 const DEVICE_HEIGHT = Dimensions.get("window").height - 70;
@@ -23,7 +20,6 @@ export default function RecordingScreen(props) {
       }}
     >
       <Recording {...props}/>
-      {/* <Recording_functional/> */}
     </View>
   );
 }

@@ -6,6 +6,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 // Screens
 import HomeScreen from "./screens/HomeScreen";
 import RecordScreen from "./screens/RecordScreen";
+import FingerPrintScreen from "./screens/FingerPrintScreen";
 import TabBar from "./TabBar";
 import Header from "./Header";
 // Colors
@@ -17,6 +18,7 @@ const BACKGROUNDCOLOR = "#F4ECE6";
 const homeName = "홈";
 const recordName = "녹음";
 const settingName = "설정";
+const FingerPrintName = "지문";
 
 const Tab = createBottomTabNavigator();
 
@@ -49,6 +51,7 @@ export default function MainContainer() {
           <Tab.Screen name={homeName} component={HomeScreen} />
           <Tab.Screen name={recordName} component={RecordScreen} />
           <Tab.Screen name={settingName} component={RecordScreen} />
+          <Tab.Screen name={FingerPrintName} component={FingerPrintScreen} />
         </Tab.Navigator>
       </NavigationContainer>
   );

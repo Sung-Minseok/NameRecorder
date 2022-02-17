@@ -1,25 +1,19 @@
 import React, { useState } from "react";
 import {
   Dimensions,
-  Image,
   StyleSheet,
-  Text,
-  TouchableHighlight,
   View,
   FlatList,
-  TouchableOpacity,
 } from "react-native";
 import { Audio } from "expo-av";
 import * as FileSystem from "expo-file-system";
 
 //component
-import * as Font from "expo-font";
-import * as Icons from "./Icons.js";
 import RecordCard from "./RecordCard.js";
 
 //redux
 import { useDispatch, useSelector } from "react-redux";
-import { setExampleString, setRecordList } from "../redux/record";
+import { setExampleString, setRecordList } from "../../redux/record";
 import { useEffect } from "react";
 
 const DEVICE_WIDTH = Dimensions.get("window").width;

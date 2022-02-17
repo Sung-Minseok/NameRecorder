@@ -1,29 +1,26 @@
-import React, { Component, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dimensions,
   Image,
   StyleSheet,
   Text,
-  TouchableHighlight,
   View,
   TouchableOpacity,
   Modal,
   Alert,
 } from "react-native";
-import Slider from "@react-native-community/slider";
 import { Audio } from "expo-av";
 import * as FileSystem from "expo-file-system";
 import * as Font from "expo-font";
-import * as Icons from "./Icons.js";
-import OptionsMenu from "react-native-option-menu";
+import * as Icons from "../../components/Icons";
 import TextTicker from "react-native-text-ticker";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
-import { setRecordList } from "../redux/record";
+import { setRecordList } from "../../redux/record";
 
-import DeleteModal from "../components/RecordListDeleteModal.js";
-import ModifyModal from "../components/RecordListModifyModal.js";
+import DeleteModal from "./RecordListDeleteModal.js";
+import ModifyModal from "./RecordListModifyModal.js";
 
 const DEVICE_WIDTH = Dimensions.get("window").width;
 const DEVICE_HEIGHT = Dimensions.get("window").height;
@@ -55,9 +52,9 @@ const RecordCard = (props) => {
 
   const _loadFont = async () => {
     await Font.loadAsync({
-      SquareRound: require("../assets/fonts/NanumSquareRound.otf"),
-      CutiveMono: require("../assets/fonts/CutiveMono-Regular.ttf"),
-      Jua: require("../assets/fonts/Jua-Regular.ttf"),
+      SquareRound: require("../../assets/fonts/NanumSquareRound.otf"),
+      CutiveMono: require("../../assets/fonts/CutiveMono-Regular.ttf"),
+      Jua: require("../../assets/fonts/Jua-Regular.ttf"),
     });
     setIsFontLoading(true);
   };
@@ -126,14 +123,17 @@ const RecordCard = (props) => {
   };
 
   const _modifyFile = async () => {
-    console.log(props.item);
+    // console.log(props.item);
     let newURI = FileSystem.documentDirectory + DirName + encodeURI(value) + ".caf";
     console.log("new : " + newURI)
     const pattern = /\([0-9]+\)/;
     const pattern2 = /[0-9]+/;
     let file_name = value;
     let fileNum = 0
-    if (fileUri === newURI) {
+    console.log("fileUri         : " +fileUri)
+    // console.log("newURI : "+newURI)
+    console.log("newURI decoding : "+decodeURI(newURI))
+    if (encodeURI(fileUri) ===  encodeURI(newURI)) {
       return Alert.alert("알림", "기존 파일명과 같습니다.")
     }
     console.log("file_name : "+file_name)
@@ -340,7 +340,7 @@ const RecordCard = (props) => {
               <Text style={{ color: "#6B747B", fontFamily: "SquareRound", fontSize: 16 }}>
                 {fileDate}
               </Text>
-              <Text
+              {/* <Text
                 style={{
                   // flex: 1,
                   // paddingLeft: 20,
@@ -350,7 +350,7 @@ const RecordCard = (props) => {
                 }}
               >
                 {fileSize}
-              </Text>
+              </Text> */}
               <Text style={{ color: "#6B747B", fontFamily: "SquareRound", fontSize: 16 }}>
                 {fileDuration}
               </Text>
@@ -398,7 +398,7 @@ const RecordCard = (props) => {
                 <Text
                   style={{
                     color: "white",
-                    fontSize: 18,
+                    fontSize: 16,
                     fontFamily: "SquareRound",
                   }}
                 >
@@ -412,7 +412,7 @@ const RecordCard = (props) => {
                 <Text
                   style={{
                     color: "white",
-                    fontSize: 18,
+                    fontSize: 16,
                     fontFamily: "SquareRound",
                   }}
                 >

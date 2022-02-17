@@ -1,38 +1,37 @@
 import * as React from "react";
 import { View, Text, useWindowDimensions, StyleSheet } from "react-native";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
-import RecordingScreen from "../../components/RecordScreens/RecordingScreen";
-import RecordListscreen from "../../components/RecordScreens/RecordListScreen";
 import * as FileSystem from "expo-file-system";
 import * as Font from "expo-font";
+
+//routes
+import FlashScreen from "../../components/FingerPrintScreens/FlashScreen"
+import AlbumScreen from "../../components/FingerPrintScreens/AlbumScreen";
+import FingerScreen from "../../components/FingerPrintScreens/FingerScreen";
+
 //redux
 import { useSelector, useDispatch } from "react-redux";
 
 const GROUNDCOLOR = "#0bcacc";
 const POINTCOLOR = "#ff6781";
 const BACKGROUNDCOLOR = "#F4ECE6";
-const DirName = "expoTest4/";
-
-const FirstRoute = () => <RecordListscreen />;
-const SecondRoute = () => <RecordingScreen />;
-const renderScene = SceneMap({
-  first: FirstRoute,
-  second: SecondRoute,
-});
+const DirName = "expoTestCamera/";
 
 const renderScene2 = (props) => {
   // console.log(props)
   switch (props.route.key) {
     case 'first':
-      return <RecordListscreen {...props}/>;
+      return <FlashScreen {...props}/>;
     case 'second':
-      return <RecordingScreen {...props}/>;
+      return <AlbumScreen {...props}/>;
+    case 'third':
+      return <FingerScreen {...props}/>;
     default:
       return null;
   }
 }
 
-export default function RecordScreen({ navigation }) {
+export default function FingerPrintScreen({ navigation }) {
   //redux
   const dispatch = useDispatch();
   const reduxState = useSelector((state) => state);
@@ -41,8 +40,9 @@ export default function RecordScreen({ navigation }) {
 
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    { key: "first", title: "녹음목록" },
-    { key: "second", title: "녹음하기" },
+    { key: "first", title: "돋보기/손전등" },
+    { key: "second", title: "사진 확인" },
+    { key: "third", title: "지문 찍기" },
   ]);
   const [fontLoaded, setFontLoaded] = React.useState(false);
 

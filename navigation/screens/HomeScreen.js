@@ -5,7 +5,7 @@ import {
   StyleSheet,
   Dimensions,
   TouchableHighlight,
-  Touchable,
+  TouchableOpacity,
   Alert,
 } from "react-native";
 import * as Font from "expo-font";
@@ -26,7 +26,7 @@ import { set } from "react-native-reanimated";
 export default function HomeScreen({ navigation }) {
   const [fontLoaded, setFontLoaded] = useState(false);
   const dispatch = useDispatch();
-  const reduxState = useSelector((state)=> state);
+  const reduxState = useSelector((state) => state);
   const _loadFont = async () => {
     await Font.loadAsync({
       SquareRound: require("../../assets/fonts/NanumSquareRound.otf"),
@@ -47,52 +47,58 @@ export default function HomeScreen({ navigation }) {
         (로고 상단바 위치)
       </Text>
       <View style={styles.buttonContainer}>
-        <View style={styles.menuButton}>
-          <TouchableHighlight
-            underlayColor={"transparent"}
-            onPress={() => navigation.navigate("녹음")}
-          >
+        <TouchableOpacity
+          underlayColor={"transparent"}
+          onPress={() => navigation.navigate("녹음")}
+        >
+          <View style={styles.menuButton}>
             <Text style={styles.menuText}>녹음기능</Text>
-          </TouchableHighlight>
-        </View>
-        <View style={styles.menuButton}>
-          <TouchableHighlight
-            underlayColor={"transparent"}
-            onPress={() => Alert.alert("추후 업데이트")}
-          >
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          underlayColor={"transparent"}
+          onPress={() => Alert.alert("추후 업데이트")}
+        >
+          <View style={styles.menuButton}>
             <Text style={styles.menuText}>오늘의 운세</Text>
-          </TouchableHighlight>
-        </View>
-        <View style={styles.menuButton}>
-          <TouchableHighlight
-            underlayColor={"transparent"}
-            onPress={() => Alert.alert("추후 업데이트")}
-          >
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          underlayColor={"transparent"}
+          onPress={() => navigation.navigate("지문")}
+        >
+          <View style={styles.menuButton}>
             <Text style={styles.menuText}>돋보기 & 손전등</Text>
-          </TouchableHighlight>
-        </View>
-        <View style={styles.menuButton}>
-          <TouchableHighlight
-            underlayColor={"transparent"}
-            onPress={() => Alert.alert("추후 업데이트")}
-          >
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          underlayColor={"transparent"}
+          onPress={() => Alert.alert("추후 업데이트")}
+        >
+          <View style={styles.menuButton}>
             <Text style={styles.menuText}>성명학 상담신청</Text>
-          </TouchableHighlight>
-        </View>
-        <View style={styles.menuButton}>
-          <TouchableHighlight
-            underlayColor={"transparent"}
-            onPress={() => Alert.alert("추후 업데이트")}
-          >
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          underlayColor={"transparent"}
+          onPress={() => Alert.alert("추후 업데이트")}
+        >
+          <View style={styles.menuButton}>
             <Text style={styles.menuText}>모든 가능하게 하는 힘</Text>
-          </TouchableHighlight>
-        </View>
+          </View>
+        </TouchableOpacity>
       </View>
-      <TouchableHighlight underlayColor={'transparent'} onPress={()=>{Alert.alert("추후 업데이트")}} style={styles.menuButton2}>
+      <TouchableOpacity
+        underlayColor={"transparent"}
+        onPress={() => {
+          Alert.alert("추후 업데이트");
+        }}
+        style={styles.menuButton2}
+      >
         <View>
           <Text style={styles.menuText2}>문의 하기</Text>
         </View>
-      </TouchableHighlight>
+      </TouchableOpacity>
     </View>
   );
 }

@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import {
   Alert,
   Dimensions,
-  Image,
   StyleSheet,
   Text,
   TextInput,

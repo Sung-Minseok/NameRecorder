@@ -7,8 +7,7 @@ import {
   TouchableHighlight,
   TouchableOpacity,
 } from "react-native";
-import RecordList from "../../components/RecordList";
-import RecordList_functional from '../../components/RecordList_functional';
+import RecordList from './RecordList';
 
 const GROUNDCOLOR = "#0bcacc";
 const POINTCOLOR = "#ff6781";
@@ -19,8 +18,7 @@ const DEVICE_HEIGHT = Dimensions.get("window").height - 70;
 export default function RecordListscreen({ navigation }) {
   return (
     <View style={styles.recordListContainer}>
-      {/* <RecordList /> */}
-      <RecordList_functional/>
+      <RecordList/>
     </View>
   );
 }
