@@ -8,10 +8,11 @@ import {
   View,
   TouchableOpacity,
   Modal,
+  Alert,
 } from "react-native";
 import Slider from "@react-native-community/slider";
 import { Audio } from "expo-av";
-import * as Filesystem from "expo-file-system";
+import * as FileSystem from "expo-file-system";
 import * as Font from "expo-font";
 import * as Icons from "./Icons.js";
 import OptionsMenu from "react-native-option-menu";
@@ -47,6 +48,8 @@ const RecordCard = (props) => {
   const [modifyModalVisible, setModifyModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [value, setValue] = useState("");
+  // const [fileNum, setFileNum] = useState(0);
+  // const [modifyFileName, setModifyFileName] = useState("");
   const dispatch = useDispatch();
   const reduxState = useSelector((state) => state);
 
@@ -62,8 +65,8 @@ const RecordCard = (props) => {
   const _getFileInfo = async () => {
     let name_arr = props.item.uri.split("/");
     const name = name_arr[name_arr.length - 1];
-    const info = await Filesystem.getInfoAsync(
-      Filesystem.documentDirectory + DirName + name
+    const info = await FileSystem.getInfoAsync(
+      FileSystem.documentDirectory + DirName + name
     );
     const _date = new Date(info.modificationTime * 1000);
     setFileDate(
@@ -76,7 +79,7 @@ const RecordCard = (props) => {
     setFileName(decodeURI(name).slice(0, -4));
     // setValue(fileName);
     setFileDuration(_getMMSSFromMillis(props.item.durationMillis));
-    setFileUri(Filesystem.documentDirectory + DirName + name);
+    setFileUri(FileSystem.documentDirectory + DirName + name);
   };
   useEffect(() => {
     _getFileInfo();
@@ -124,12 +127,35 @@ const RecordCard = (props) => {
 
   const _modifyFile = async () => {
     console.log(props.item);
-    const newURI = Filesystem.documentDirectory + DirName + encodeURI(value) + ".caf";
+    let newURI = FileSystem.documentDirectory + DirName + encodeURI(value) + ".caf";
     console.log("new : " + newURI)
+    const pattern = /\([0-9]+\)/;
+    const pattern2 = /[0-9]+/;
+    let file_name = value;
+    let fileNum = 0
     if (fileUri === newURI) {
-      return console.log("이미 존재하는 파일 이름입니다.");
+      return Alert.alert("알림", "기존 파일명과 같습니다.")
     }
-    await Filesystem.moveAsync({
+    console.log("file_name : "+file_name)
+    while (await FileSystem.getInfoAsync(newURI).then((e) => {
+      return e.exists;
+    })) {
+      if (file_name.match(pattern) === null) {
+        file_name = file_name+"(1)"
+      } else {
+        fileNum = parseInt(file_name.match(pattern).toString().match(pattern2))
+        fileNum++;
+        file_name = file_name.replace(/\([0-9]+\)/, "(" + fileNum + ")")
+      }
+      newURI = FileSystem.documentDirectory + DirName + encodeURI(file_name) + ".caf"
+      if (!await FileSystem.getInfoAsync(newURI).then((e) => {
+        return e.exists;
+      })) {
+        break;
+      }
+    }
+  
+    await FileSystem.moveAsync({
       from: fileUri,
       to: newURI,
     });
@@ -151,7 +177,7 @@ const RecordCard = (props) => {
   };
 
   const _deleteFile = async () => {
-    await Filesystem.deleteAsync(fileUri);
+    await FileSystem.deleteAsync(fileUri);
     _updateList();
     setDeleteModalVisible(false);
     console.log("delete file successfully");
@@ -170,14 +196,14 @@ const RecordCard = (props) => {
 
   const _updateList = async () => {
     console.log('update record list')
-    const recordList = await Filesystem.readDirectoryAsync(
-      Filesystem.documentDirectory + DirName
+    const recordList = await FileSystem.readDirectoryAsync(
+      FileSystem.documentDirectory + DirName
     );
     const soundList = await Promise.all(
       Object.values(recordList).map((e) => {
         const soundObj = new Audio.Sound();
         return soundObj.loadAsync({
-          uri: Filesystem.documentDirectory + DirName + encodeURI(e),
+          uri: FileSystem.documentDirectory + DirName + encodeURI(e),
         });
       })
     );
@@ -226,13 +252,13 @@ const RecordCard = (props) => {
     }
     return 0;
   };
-  
+
   if (!isFontLoading) {
     return <View></View>;
   }
 
   return (
-    
+
     <View
       style={{
         // flex: 1,
@@ -269,8 +295,8 @@ const RecordCard = (props) => {
           <TouchableOpacity onPressOut={() => _playButtonPressed(props.item)}>
             <View
               style={{
-                width: DEVICE_WIDTH*0.18,
-                height: DEVICE_HEIGHT*0.066,
+                width: DEVICE_WIDTH * 0.18,
+                height: DEVICE_HEIGHT * 0.066,
                 borderRadius: 5,
                 backgroundColor: soundObj === null ? "grey" : POINTCOLOR,
                 alignItems: "center",
@@ -294,7 +320,7 @@ const RecordCard = (props) => {
           <TouchableOpacity onPress={() => _itemOnClick()}>
             <View style={{ flexDirection: "row" }}>
               <TextTicker
-                style={{ fontSize: 22, fontFamily: "SquareRound", width: DEVICE_WIDTH*0.74-10}}
+                style={{ fontSize: 22, fontFamily: "SquareRound", width: DEVICE_WIDTH * 0.74 - 10 }}
                 duration={10000}
                 roop
                 bounce

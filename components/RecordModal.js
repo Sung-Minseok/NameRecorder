@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import * as Filesystem from "expo-file-system";
+import * as FileSystem from "expo-file-system";
 import { Audio } from "expo-av";
 
 //redux
@@ -30,20 +30,22 @@ const RecordModal = (props) => {
   const reduxState = useSelector((state) => state);
 
   const _updateList = async () => {
-    const recordList = await Filesystem.readDirectoryAsync(
-      Filesystem.documentDirectory + DirName
+    console.log('update record list')
+    const recordList = await FileSystem.readDirectoryAsync(
+      FileSystem.documentDirectory + DirName
     );
     const soundList = await Promise.all(
       Object.values(recordList).map((e) => {
         const soundObj = new Audio.Sound();
         return soundObj.loadAsync({
-          uri: Filesystem.documentDirectory + DirName + encodeURI(e),
+          uri: FileSystem.documentDirectory + DirName + encodeURI(e),
         });
       })
     );
     dispatch(setRecordList(soundList));
-    // reduxState.record.tabViewState.jumpToIndex(1);
   };
+
+  
 
   return (
     <View style={styles.modalContainer}>
@@ -67,7 +69,7 @@ const RecordModal = (props) => {
             ></TextInput>
           </View>
           <View style={styles.modalButtonContainer}>
-            <TouchableOpacity onPress={() => {props.saveRecording(); _updateList();}}>
+            <TouchableOpacity onPress={async () => { await props.saveRecording(); _updateList();}}>
               <View style={styles.button}>
                 <Text style={{ color: "white", fontSize: 17 }}>확인</Text>
               </View>
