@@ -130,10 +130,7 @@ const RecordCard = (props) => {
     const pattern2 = /[0-9]+/;
     let file_name = value;
     let fileNum = 0
-    console.log("fileUri         : " +fileUri)
-    // console.log("newURI : "+newURI)
-    console.log("newURI decoding : "+decodeURI(newURI))
-    if (encodeURI(fileUri) ===  encodeURI(newURI)) {
+    if (fileName === value) {
       return Alert.alert("알림", "기존 파일명과 같습니다.")
     }
     console.log("file_name : "+file_name)
@@ -243,15 +240,6 @@ const RecordCard = (props) => {
     playbackObj.setVolumeAsync(value / 10);
   };
 
-  const _getSliderPosition = () => {
-    console.log("sliderposition");
-    if (soundObj != null && soundPosition != null && soundDuration != null) {
-      console.log("soundposition : " + soundPosition);
-
-      return soundPosition / soundObj.durationMillis;
-    }
-    return 0;
-  };
 
   if (!isFontLoading) {
     return <View></View>;
