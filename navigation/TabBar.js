@@ -20,7 +20,7 @@ const TabBar = ({ state, navigation }) => {
       {routes.map((route) => (
         <Tab
           tab={route}
-          onPress={() => handlePress(route.name, index)}
+          onPress={() => handlePress(route.name, route.index)}
           key={route.key}
           navigation = {navigation}
         />
