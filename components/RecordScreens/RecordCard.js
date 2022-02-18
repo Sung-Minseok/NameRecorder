@@ -133,7 +133,6 @@ const RecordCard = (props) => {
     if (fileName === value) {
       return Alert.alert("알림", "기존 파일명과 같습니다.")
     }
-    console.log("file_name : "+file_name)
     while (await FileSystem.getInfoAsync(newURI).then((e) => {
       return e.exists;
     })) {

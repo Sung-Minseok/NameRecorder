@@ -350,7 +350,6 @@ class Recording extends React.Component {
     const pattern2 = /[0-9]+/;
     let file_name = this.state.fileName;
     let fileNum = 0;
-    console.log("file_name : "+file_name)
     
     if (this.state.fileName.trim() === "") {
       return alert("파일 이름을 입력해주세요!");
@@ -359,27 +358,20 @@ class Recording extends React.Component {
     while (await FileSystem.getInfoAsync(newURI).then((e) => {
       return e.exists;
     })) {
-      console.log('while')
       if (file_name.match(pattern) === null) {
         file_name = file_name+"(1)"
       } else {
-        console.log("else1")
         fileNum = parseInt(file_name.match(pattern).toString().match(pattern2))
         fileNum++;
         file_name = file_name.replace(/\([0-9]+\)/, "(" + fileNum + ")")
-        console.log("else2")
       }
-      console.log("bbb")
       newURI = FileSystem.documentDirectory + DirName + encodeURI(file_name) + ".caf"
-      console.log("aaa")
       if (!await FileSystem.getInfoAsync(newURI).then((e) => {
         return e.exists;
       })) {
-        console.log("if문")
         break;
       }
     }
-    console.log("while끝")
 
     await FileSystem.copyAsync({
       from: this.recording.getURI(),
