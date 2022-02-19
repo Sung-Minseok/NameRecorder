@@ -10,6 +10,9 @@ import {
 } from "react-native";
 import * as Font from "expo-font";
 
+//firebase
+import Firebase, {auth} from "../../Firebase";
+
 // Screen Size
 const DEVICE_WIDTH = Dimensions.get("window").width;
 const DEVICE_HEIGHT = Dimensions.get("window").height;
@@ -24,7 +27,10 @@ import { setExampleString } from "../../redux/record";
 import { set } from "react-native-reanimated";
 
 export default function LoginScreen({ navigation }) {
+
+  
   const [fontLoaded, setFontLoaded] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(auth.currentUser)
   const dispatch = useDispatch();
   const reduxState = useSelector((state) => state);
   const _loadFont = async () => {
