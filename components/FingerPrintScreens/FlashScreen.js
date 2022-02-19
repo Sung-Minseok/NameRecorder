@@ -1,29 +1,46 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Button, Dimensions, TouchableOpacity } from "react-native";
-import { Camera } from 'expo-camera';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Button,
+  Dimensions,
+  TouchableOpacity,
+  Platform
+} from "react-native";
+import { Camera } from "expo-camera";
 
 const DEVICE_WIDTH = Dimensions.get("window").width;
 const DEVICE_HEIGHT = Dimensions.get("window").height - 70;
 const GROUNDCOLOR = "#0bcacc";
-const POINTCOLOR = "#ff6781"
+const POINTCOLOR = "#ff6781";
+
 export default function LightScreen(props) {
   const [hasPermission, setHasPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
-  const [flash, setFlash] = useState(Camera.Constants.FlashMode.on);
-
+  const [flash, setFlash] = useState(Camera.Constants.FlashMode.torch);
+  const OS = Platform.OS;
 
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === 'granted');
+      setHasPermission(status === "granted");
     })();
   }, []);
 
   if (hasPermission === null) {
-    return <View />;
+    return (
+      <View>
+        <Text>No access to camera</Text>
+      </View>
+    );
   }
   if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
+    return (
+      <View>
+        <Text>No access to camera</Text>
+      </View>
+    );
   }
   return (
     <View
@@ -32,11 +49,17 @@ export default function LightScreen(props) {
         alignItems: "center",
         justifyContent: "flex-start",
         flexDirection: "column",
-        backgroundColor: 'white',
-        paddingTop: 15
+        backgroundColor: "white",
+        paddingTop: 15,
       }}
     >
-      <Camera style={styles.camera} type={type} flashMode={flash} zoom={0.02} autoFocus={Camera.Constants.AutoFocus.on}>
+      <Camera
+        style={styles.camera}
+        type={type}
+        flashMode={flash}
+        zoom={OS==='android'? 0.6 : 0.03}
+        autoFocus={Camera.Constants.AutoFocus.on}
+      >
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={styles.button}
@@ -46,7 +69,8 @@ export default function LightScreen(props) {
                   ? Camera.Constants.Type.front
                   : Camera.Constants.Type.back
               );
-            }}>
+            }}
+          >
             <Text style={styles.text}> Flip </Text>
           </TouchableOpacity>
         </View>
@@ -55,11 +79,12 @@ export default function LightScreen(props) {
             style={styles.button}
             onPress={() => {
               setFlash(
-                flash === Camera.Constants.FlashMode.on
+                flash === Camera.Constants.FlashMode.torch
                   ? Camera.Constants.FlashMode.off
-                  : Camera.Constants.FlashMode.on
+                  : Camera.Constants.FlashMode.torch
               );
-            }}>
+            }}
+          >
             <Text style={styles.text}> Flash </Text>
           </TouchableOpacity>
         </View>
@@ -76,7 +101,7 @@ const styles = StyleSheet.create({
     // padding: 10,
   },
   camera: {
-    flex:1,
+    flex: 1,
     width: DEVICE_WIDTH,
   },
   row: {

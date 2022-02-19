@@ -7,8 +7,10 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import HomeScreen from "./screens/HomeScreen";
 import RecordScreen from "./screens/RecordScreen";
 import FingerPrintScreen from "./screens/FingerPrintScreen";
+import Login from "./screens/LoginScreen";
 import TabBar from "./TabBar";
 import Header from "./Header";
+import LoginScreen from "./screens/LoginScreen";
 // Colors
 const GROUNDCOLOR = "#0bcacc";
 const POINTCOLOR = "#ff6781";
@@ -52,6 +54,7 @@ export default function MainContainer() {
           <Tab.Screen name={recordName} component={RecordScreen} />
           <Tab.Screen name={settingName} component={RecordScreen} />
           <Tab.Screen name={FingerPrintName} component={FingerPrintScreen} />
+          <Tab.Screen name="로그인" component={LoginScreen} />
         </Tab.Navigator>
       </NavigationContainer>
   );

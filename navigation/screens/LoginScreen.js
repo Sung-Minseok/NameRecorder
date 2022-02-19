@@ -23,7 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setExampleString } from "../../redux/record";
 import { set } from "react-native-reanimated";
 
-export default function HomeScreen({ navigation }) {
+export default function LoginScreen({ navigation }) {
   const [fontLoaded, setFontLoaded] = useState(false);
   const dispatch = useDispatch();
   const reduxState = useSelector((state) => state);
@@ -40,62 +40,7 @@ export default function HomeScreen({ navigation }) {
   });
   return (
     <View style={styles.container}>
-      <Text
-        onPress={() => alert("aaaa")}
-        style={{ fontSize: 26, fontWeight: "bold" }}
-      >
-        (로고 상단바 위치)
-      </Text>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          underlayColor={"transparent"}
-          onPress={() => navigation.navigate("녹음")}
-        >
-          <View style={styles.menuButton}>
-            <Text style={styles.menuText}>녹음기능</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          underlayColor={"transparent"}
-          onPress={() => Alert.alert("추후 업데이트")}
-        >
-          <View style={styles.menuButton}>
-            <Text style={styles.menuText}>오늘의 운세</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          underlayColor={"transparent"}
-          onPress={() => navigation.navigate("지문")}
-        >
-          <View style={styles.menuButton}>
-            <Text style={styles.menuText}>돋보기 & 손전등</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          underlayColor={"transparent"}
-          onPress={() => Alert.alert("추후 업데이트")}
-        >
-          <View style={styles.menuButton}>
-            <Text style={styles.menuText}>성명학 상담신청</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          underlayColor={"transparent"}
-          onPress={() => Alert.alert("추후 업데이트")}
-        >
-          <View style={styles.menuButton}>
-            <Text style={styles.menuText}>모든 가능하게 하는 힘</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          underlayColor={"transparent"}
-          onPress={() => navigation.navigate("로그인")}
-        >
-          <View style={styles.menuButton}>
-            <Text style={styles.menuText}>로그인/회원가입</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
+      <View><Text>로그인/ 회원가입</Text></View>
       <TouchableOpacity
         underlayColor={"transparent"}
         onPress={() => {
