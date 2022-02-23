@@ -20,6 +20,7 @@ const GROUNDCOLOR = "#0bcacc";
 const POINTCOLOR = "#ff6781";
 
 import { auth } from "../../Firebase";
+// import {firebase} from "@react-native-firebase/dynamic-links";
 
 //redux
 import { useDispatch, useSelector } from "react-redux";
