@@ -69,7 +69,7 @@ export default function RecordScreen({ navigation }) {
   React.useEffect(() => {
     ensureDirExists();
     _loadFont();
-  });
+  },[]);
   if(!fontLoaded){
     return <View></View>
   }

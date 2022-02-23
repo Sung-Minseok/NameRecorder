@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "364075813917",
+    "project_id": "namerecorder-2f24c",
+    "storage_bucket": "namerecorder-2f24c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:364075813917:android:25df676e1c5dd6dbeb8af4",
+        "android_client_info": {
+          "package_name": "host.exp.exponent"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "364075813917-rodn980rli6da6ukbd8q3u751bpl8406.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAj2uJrWehb1MqSPb00eFFXk4BR_g4zDJU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "364075813917-rodn980rli6da6ukbd8q3u751bpl8406.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "364075813917-b30bsuh6ph8hr4v35ovrr9qef1jgtehi.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "host.exp.exponent"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -10,7 +10,7 @@ const TabBar = ({ state, navigation }) => {
   const handlePress = (activeTab, index) => {
     // console.log(activeTab)
     if (state.index !== index) {
-      setSelected(activeTab);
+      // setSelected(activeTab);
       navigation.navigate(activeTab);
     }
   };

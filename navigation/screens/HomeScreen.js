@@ -7,6 +7,7 @@ import {
   TouchableHighlight,
   TouchableOpacity,
   Alert,
+  Share,
 } from "react-native";
 import * as Font from "expo-font";
 
@@ -18,6 +19,8 @@ const DEVICE_HEIGHT = Dimensions.get("window").height;
 const GROUNDCOLOR = "#0bcacc";
 const POINTCOLOR = "#ff6781";
 
+import { auth } from "../../Firebase";
+
 //redux
 import { useDispatch, useSelector } from "react-redux";
 import { setExampleString } from "../../redux/record";
@@ -27,6 +30,21 @@ export default function HomeScreen({ navigation }) {
   const [fontLoaded, setFontLoaded] = useState(false);
   const dispatch = useDispatch();
   const reduxState = useSelector((state) => state);
+  // const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    _loadFont();
+    const unsubscribe = auth.getAuth().onAuthStateChanged((authUser) => {
+      //   console.log(authUser)
+      if (!authUser) {
+        navigation.navigate("로그인");
+      }
+    });
+    _getUserName();
+    return unsubscribe;
+  }, []);
+
   const _loadFont = async () => {
     await Font.loadAsync({
       SquareRound: require("../../assets/fonts/NanumSquareRound.otf"),
@@ -35,17 +53,51 @@ export default function HomeScreen({ navigation }) {
     });
     setFontLoaded(true);
   };
-  useEffect(() => {
-    _loadFont();
-  });
+
+  const _logOut = async () => {
+    auth.getAuth().signOut();
+    Alert.alert("로그아웃 완료");
+    console.log("로그아웃");
+  };
+
+  const _getUserName = async () => {
+    let username;
+    if (auth.getAuth().currentUser == null) {
+      username = "로그인을 해주세요.";
+    } else {
+      username = auth.getAuth().currentUser.displayName+"님 로그인.";
+    }
+    console.log(username)
+    setUserName(username)
+  };
+
+  const _share = async () =>{
+    Share.share({
+      message: "share messages"
+    })
+  }
+
   return (
     <View style={styles.container}>
-      <Text
-        onPress={() => alert("aaaa")}
-        style={{ fontSize: 26, fontWeight: "bold" }}
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          width: DEVICE_WIDTH,
+          padding: 10
+        }}
       >
-        (로고 상단바 위치)
-      </Text>
+        <Text
+          onPress={() => alert("aaaa")}
+          style={{ fontSize: 26, fontWeight: "bold" }}
+        >
+          {userName}
+        </Text>
+        <TouchableOpacity onPressOut={() => _logOut()}>
+          <Text>로그아웃</Text>
+        </TouchableOpacity>
+      </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           underlayColor={"transparent"}
@@ -95,6 +147,14 @@ export default function HomeScreen({ navigation }) {
             <Text style={styles.menuText}>로그인/회원가입</Text>
           </View>
         </TouchableOpacity>
+        <TouchableOpacity
+          underlayColor={"transparent"}
+          onPress={() => _share()}
+        >
+          <View style={styles.menuButton}>
+            <Text style={styles.menuText}>앱 공유하기</Text>
+          </View>
+        </TouchableOpacity>
       </View>
       <TouchableOpacity
         underlayColor={"transparent"}
@@ -112,7 +172,7 @@ export default function HomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: "center", justifyContent: "center" },
+  container: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "white" },
   buttonContainer: {
     flex: 1,
     alignItems: "center",

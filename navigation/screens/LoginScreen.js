@@ -7,11 +7,14 @@ import {
   TouchableHighlight,
   TouchableOpacity,
   Alert,
+  TextInput,
 } from "react-native";
 import * as Font from "expo-font";
 
+import Login from "../../components/LoginScreens/Login";
+import Register from "../../components/LoginScreens/Register";
 //firebase
-import Firebase, {auth} from "../../Firebase";
+import Firebase, { auth } from "../../Firebase";
 
 // Screen Size
 const DEVICE_WIDTH = Dimensions.get("window").width;
@@ -27,12 +30,16 @@ import { setExampleString } from "../../redux/record";
 import { set } from "react-native-reanimated";
 
 export default function LoginScreen({ navigation }) {
+  const [init, setInit] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [newAccount, setNewAccount] = useState(false);
 
-  
   const [fontLoaded, setFontLoaded] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(auth.currentUser)
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const dispatch = useDispatch();
   const reduxState = useSelector((state) => state);
+
   const _loadFont = async () => {
     await Font.loadAsync({
       SquareRound: require("../../assets/fonts/NanumSquareRound.otf"),
@@ -43,22 +50,93 @@ export default function LoginScreen({ navigation }) {
   };
   useEffect(() => {
     _loadFont();
-  });
+    auth.getAuth().onAuthStateChanged((user) => {
+      if (user) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+      setInit(true);
+    });
+  }, []);
+
+  const _registerSubmit = async () => {
+    try {
+      if(email=="" || password=="") return alert("아이디/비밀번호를 입력해주세요")
+      let data;
+      console.log("login : " + isLoggedIn);
+      if (newAccount) {
+        data = await auth.createUserWithEmailAndPassword(
+          auth.getAuth(),
+          email,
+          password
+        );
+      } else {
+        data = await auth.signInWithEmailAndPassword(
+          auth.getAuth(),
+          email,
+          password
+        );
+        // setIsLoggedIn(auth.getAuth().currentUser.email);
+      }
+      console.log(data);
+    } catch (error) {
+      alert("error");
+      console.log(error);
+    }
+  };
+
+  const _logOut = async () =>{
+    await auth.getAuth().signOut(auth)
+    setEmail("")
+    setPassword("")
+  }
+
+
   return (
-    <View style={styles.container}>
-      <View><Text>로그인/ 회원가입</Text></View>
-      <TouchableOpacity
-        underlayColor={"transparent"}
-        onPress={() => {
-          Alert.alert("추후 업데이트");
-        }}
-        style={styles.menuButton2}
-      >
-        <View>
-          <Text style={styles.menuText2}>문의 하기</Text>
-        </View>
-      </TouchableOpacity>
-    </View>
+    // <Login/>
+    <Register/>
+    // <View style={styles.container}>
+    //   <Text>현재 유저 : {!isLoggedIn ? "null" : auth.getAuth().currentUser.email}</Text>
+    //   {!isLoggedIn && (
+    //     <View>
+    //       <TextInput
+    //         style={{ width: 200, height: 30, borderWidth: 1 }}
+    //         placeholder="Email"
+    //         onChangeText={(text) => setEmail(text)}
+    //       />
+    //       <TextInput
+    //         style={{ width: 200, height: 30, borderWidth: 1 }}
+    //         placeholder="Password"
+    //         onChangeText={(text) => setPassword(text)}
+    //       />
+    //     </View>
+    //   )}
+
+    //   <View style={{ flexDirection: "row" }}>
+    //     <TouchableOpacity onPress={() => _registerSubmit()}>
+    //       <View style={{ width: 100, height: 30, borderWidth: 1 }}>
+    //         <Text>{newAccount ? "회원가입" : "로그인"}</Text>
+    //       </View>
+    //     </TouchableOpacity>
+    //     <TouchableOpacity onPress={() => _logOut()}>
+    //       <View style={{ width: 100, height: 30, borderWidth: 1 }}>
+    //         <Text>로그아웃</Text>
+    //       </View>
+    //     </TouchableOpacity>
+    //   </View>
+    //   <TouchableOpacity
+    //     underlayColor={"transparent"}
+    //     onPress={() => {
+    //       Alert.alert("추후 업데이트");
+    //     }}
+    //     style={styles.menuButton2}
+    //   >
+    //     <View>
+    //       <Text style={styles.menuText2}>문의 하기</Text>
+    //     </View>
+    //   </TouchableOpacity>
+    // </View>
   );
 }
 

@@ -22,17 +22,31 @@
         "UIBackgroundModes": [
           "audio"
         ]
-      }
+      },
+      "bundleIdentifier": "host.exp.exponent",
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "backgroundColor": "#FFFFFF",
+        "package": "host.exp.exponent",
+        "googleServicesFile": "./google-services.json"
       },
       "package": "com.sms0430.NameRecorder"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "config": {
+        "firebase": {
+          "appId": "1:364075813917:web:f77afe41339389d6eb8af4",
+          "apiKey": "AIzaSyAaXsrdTmrNR-zETyP5R_B1mgSEuxBW0mY",
+          "projectId": "namerecorder-2f24c",
+          "storageBucket": "namerecorder-2f24c.appspot.com",
+          "messagingSenderId": "364075813917",
+          "measurementId": "G-LERBE7RMY0"
+        }
+      }
     }
   }
 }

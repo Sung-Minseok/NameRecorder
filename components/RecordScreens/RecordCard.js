@@ -17,7 +17,7 @@ import TextTicker from "react-native-text-ticker";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
-import { setRecordList } from "../../redux/record";
+import { setRecordList, setRecordUsedCnt } from "../../redux/record";
 
 import DeleteModal from "./RecordListDeleteModal.js";
 import ModifyModal from "./RecordListModifyModal.js";
@@ -203,6 +203,7 @@ const RecordCard = (props) => {
         });
       })
     );
+    dispatch(setRecordUsedCnt(soundList.length));
     dispatch(setRecordList(soundList));
   };
 

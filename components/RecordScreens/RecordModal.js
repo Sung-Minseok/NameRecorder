@@ -14,7 +14,7 @@ import { Audio } from "expo-av";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
-import { setExampleString, setRecordList } from "../../redux/record";
+import { setExampleString, setRecordList, setRecordUsedCnt } from "../../redux/record";
 
 const DEVICE_WIDTH = Dimensions.get("window").width;
 const DEVICE_HEIGHT = Dimensions.get("window").height;
@@ -42,6 +42,7 @@ const RecordModal = (props) => {
         });
       })
     );
+    dispatch(setRecordUsedCnt(soundList.length));
     dispatch(setRecordList(soundList));
   };
 

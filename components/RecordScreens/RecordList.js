@@ -1,19 +1,20 @@
 import React, { useState } from "react";
-import {
-  Dimensions,
-  StyleSheet,
-  View,
-  FlatList,
-} from "react-native";
+import { Dimensions, StyleSheet, View, FlatList, Text } from "react-native";
 import { Audio } from "expo-av";
 import * as FileSystem from "expo-file-system";
 
 //component
 import RecordCard from "./RecordCard.js";
 
+import { auth, db } from "../../Firebase.js";
+
 //redux
 import { useDispatch, useSelector } from "react-redux";
-import { setExampleString, setRecordList } from "../../redux/record";
+import {
+  setExampleString,
+  setRecordList,
+  setRecordUsedCnt,
+} from "../../redux/record";
 import { useEffect } from "react";
 
 const DEVICE_WIDTH = Dimensions.get("window").width;
@@ -30,6 +31,13 @@ export default function RecordList() {
   const dispatch = useDispatch();
   const reduxState = useSelector((state) => state);
 
+  const [reocrdCnt, setRecordCnt] = useState(0);
+
+  useEffect(() => {
+    _getRecordList();
+    _getRecordCount();
+  }, []);
+
   const _getRecordList = async () => {
     console.log("getRecordList");
     const recordList = await FileSystem.readDirectoryAsync(
@@ -43,12 +51,29 @@ export default function RecordList() {
         });
       })
     );
+    dispatch(setRecordUsedCnt(soundList.length));
     dispatch(setRecordList(soundList));
   };
 
-  useEffect(() => {
-    _getRecordList();
-  }, []);
+  const _getRecordCount = async () => {
+    const docRef = db.doc(
+      db.getFirestore(),
+      "users",
+      auth.getAuth().currentUser.email
+    );
+    const docSnap = await db.getDoc(docRef);
+    if (docSnap.exists()) {
+      console.log("Document data:", docSnap.data());
+    } else {
+      // doc.data() will be undefined in this case
+      console.log("No such document!");
+    }
+    const recordNum = docSnap.data().recordNum;
+    const recordUsedNum = reduxState.record.recordUsedCntState;
+    console.log("getRecordCount")
+    setRecordCnt(recordNum);
+  };
+
   return React.createElement(
     View,
     { style: styles.container },
@@ -58,14 +83,37 @@ export default function RecordList() {
       {
         style: [styles.recordListContianer],
       },
+      React.createElement(
+        View,
+        {
+          style: {
+            // width: DEVICE_WIDTH - 30,
+            height: 30,
+            // borderWidth: 2,
+            flexDirection: "row",
+            alignItems: "center",
+            // justifyContent: "center"
+          },
+        },
+        React.createElement(
+          Text,
+          {
+            style: {
+              fontSize: 20,
+              alignSelf: "flex-start",
+              paddingLeft: 10,
+              fontWeight: "bold",
+            },
+          },
+          "사용중인 녹음 파일 : "+reduxState.record.recordUsedCntState+ " / " + reocrdCnt
+        )
+        // React.createElement(Text, {}, "abc"),
+      ),
       React.createElement(FlatList, {
         data: reduxState.record.recordListState,
         keyExtractor: (item) => item.uri,
-        renderItem: ({ item }) => (
-          <RecordCard item={item} />
-        ),
+        renderItem: ({ item }) => <RecordCard item={item} />,
         extraData: reduxState.record.recordListState,
-        
       })
     )
   );

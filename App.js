@@ -17,7 +17,7 @@ const height = Dimensions.get("window").height;
 // 터콰이즈 = "#0bcacc"
 
 function App() {
-  console.log(Firebase)
+  // console.log(Firebase)
   return (
     <StoreProvider store={store}>
       <MainContainer />

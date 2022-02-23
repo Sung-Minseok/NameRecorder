@@ -8,7 +8,11 @@ import {
     SET_REFRESH_NUMBER,
     SetTabViewAction,
     SET_TABVIEW,
+    SET_RECORD_USED_CNT,
+    SetRecordUsedCntAction
 } from './record.type'
+
+
 
 //first example state
 export const recordState: RecordState = {
@@ -16,6 +20,7 @@ export const recordState: RecordState = {
     recordListState: null,
     refreshNumberState: 100,
     tabViewState: null,
+    recordUsedCntState: 0
 };
 
 
@@ -48,6 +53,13 @@ export const setTabView = (tabview: object): SetTabViewAction => {
     }
 }
 
+export const setRecordUsedCnt = (num: number): SetRecordUsedCntAction => {
+    return {
+        type: SET_RECORD_USED_CNT,
+        recordUsedCntState: num,
+    }
+}
+
 
 //reducer
 export const recordReducer = (state = recordState, action): RecordState => {
@@ -60,6 +72,8 @@ export const recordReducer = (state = recordState, action): RecordState => {
             return { ...state, refreshNumberState: action.refreshNumberState };
         case SET_TABVIEW:
             return { ...state, tabViewState: action.tabViewState };
+        case SET_RECORD_USED_CNT:
+            return { ...state, recordUsedCntState: action.recordUsedCntState };
         default:
             return state;
     }
