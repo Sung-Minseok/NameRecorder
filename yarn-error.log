@@ -31,6 +31,8 @@ npm manifest:
     "dependencies": {
       "@react-native-community/masked-view": "^0.1.11",
       "@react-native-community/slider": "4.1.12",
+      "@react-native-firebase/app": "^14.5.0",
+      "@react-native-firebase/dynamic-links": "^14.5.0",
       "@react-navigation/bottom-tabs": "^6.0.9",
       "@react-navigation/native": "^6.0.6",
       "@react-navigation/native-stack": "^6.3.0",
@@ -50,6 +52,7 @@ npm manifest:
       "react": "17.0.1",
       "react-dom": "17.0.1",
       "react-native": "0.64.3",
+      "react-native-elements": "^3.4.2",
       "react-native-gesture-handler": "~2.1.0",
       "react-native-option-menu": "^1.1.3",
       "react-native-pager-view": "5.4.9",
@@ -1262,7 +1265,7 @@ Lockfile:
       xcode "^3.0.1"
       xml2js "0.4.23"
   
-  "@expo/config-plugins@4.0.18":
+  "@expo/config-plugins@4.0.18", "@expo/config-plugins@^4.0.18":
     version "4.0.18"
     resolved "https://registry.yarnpkg.com/@expo/config-plugins/-/config-plugins-4.0.18.tgz#80cf6a3aed83e78f714ad097d80e5a7cca48591a"
     integrity sha512-tW4bnrnKhn+PPHF8wf1KAoubICAVUHW8CcagvyFqaRIzeh6yavMIOsQShxOVTbgx7LzSyymZ1nEs45yCGAiMfA==
@@ -2315,6 +2318,20 @@ Lockfile:
     resolved "https://registry.npmjs.org/@react-native-community/slider/-/slider-4.1.12.tgz"
     integrity sha512-CiuLZ2orueBiWHYxfaJF57jQY6HY2Q3z5pdAE4MKH8EqIImr/jgDJrJ/UxOVZHK1Ng9P+XlGIKfVIcuWZ6guuA==
   
+  "@react-native-firebase/app@^14.5.0":
+    version "14.5.0"
+    resolved "https://registry.yarnpkg.com/@react-native-firebase/app/-/app-14.5.0.tgz#677a3965d172d3bde12690bcc993176943f3a99d"
+    integrity sha512-pMTYZA4gQl/m4+9tYE9/3YpGVfuqePg2RF1Fj+/6EUyt6w8y8ADvJyTXzFmJwEkG5CdyWaqvtEyZmsifInUp3w==
+    dependencies:
+      "@expo/config-plugins" "^4.0.18"
+      opencollective-postinstall "^2.0.1"
+      superstruct "^0.6.2"
+  
+  "@react-native-firebase/dynamic-links@^14.5.0":
+    version "14.5.0"
+    resolved "https://registry.yarnpkg.com/@react-native-firebase/dynamic-links/-/dynamic-links-14.5.0.tgz#a5173796651c080cca52f210c983ff9fa4df3326"
+    integrity sha512-+BqkVDcijnbug/zTQbm3+nlIkr6vLI1Bk+NF2NFCMsp71RR2TCdLAhumrIMpGsJPXMzMDBdrd1BfjTkW9XUV9Q==
+  
   "@react-native/assets@1.0.0":
     version "1.0.0"
     resolved "https://registry.npmjs.org/@react-native/assets/-/assets-1.0.0.tgz"
@@ -2565,6 +2582,21 @@ Lockfile:
     version "1.5.5"
     resolved "https://registry.yarnpkg.com/@types/q/-/q-1.5.5.tgz#75a2a8e7d8ab4b230414505d92335d1dcb53a6df"
     integrity sha512-L28j2FcJfSZOnL1WBjDYp2vUHCeIFlyYI/53EwD/rKUBQ7MtUUfbQWiyKJGpcnv4/WgrhWsFKrcPstcAt/J0tQ==
+  
+  "@types/react-native-vector-icons@^6.4.6":
+    version "6.4.10"
+    resolved "https://registry.yarnpkg.com/@types/react-native-vector-icons/-/react-native-vector-icons-6.4.10.tgz#9bfd6e64dd37b8119425496b5e53ff91d034efa9"
+    integrity sha512-z4sexbuZ7nmYsp7Z9YB5fSQoN3KFn6nZA3QsCkQLOYnVmVlxX4U22v/bM9Xx/6dOA1vClxoRZo2CFDX16uryXQ==
+    dependencies:
+      "@types/react" "*"
+      "@types/react-native" "*"
+  
+  "@types/react-native@*":
+    version "0.66.16"
+    resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.66.16.tgz#fa654d7a611f8c74122b5706958224ebadc82044"
+    integrity sha512-TsMV/4gW9WTu/6Iuyrm8+UaClIcgJ+1FqVUqDgMvp/Ys+cF+q1GFid3ZPYHYmVZTfOoowY+e3Vd8zFufVL7HLQ==
+    dependencies:
+      "@types/react" "*"
   
   "@types/react-native@~0.64.12":
     version "0.64.21"
@@ -4043,6 +4075,16 @@ Lockfile:
       strip-ansi "^6.0.0"
       wrap-ansi "^7.0.0"
   
+  clone-deep@^2.0.1:
+    version "2.0.2"
+    resolved "https://registry.yarnpkg.com/clone-deep/-/clone-deep-2.0.2.tgz#00db3a1e173656730d1188c3d6aced6d7ea97713"
+    integrity sha512-SZegPTKjCgpQH63E+eN6mVEEPdQBOUzjyJm5Pora4lrwWRFS8I0QAxV/KD6vV/i0WuijHZWQC1fMsPEdxfdVCQ==
+    dependencies:
+      for-own "^1.0.0"
+      is-plain-object "^2.0.4"
+      kind-of "^6.0.0"
+      shallow-clone "^1.0.0"
+  
   clone-deep@^4.0.1:
     version "4.0.1"
     resolved "https://registry.npmjs.org/clone-deep/-/clone-deep-4.0.1.tgz"
@@ -4123,7 +4165,7 @@ Lockfile:
       color-name "^1.0.0"
       simple-swizzle "^0.2.2"
   
-  color@^3.0.0, color@^3.1.3:
+  color@^3.0.0, color@^3.1.2, color@^3.1.3:
     version "3.2.1"
     resolved "https://registry.npmjs.org/color/-/color-3.2.1.tgz"
     integrity sha512-aBl7dZI9ENN6fUGC7mWpMTPNHmWUSNan9tuWN6ahh5ZLNk9baLJOnSMlrQkHcrfFgz2/RigjUVAjdx36VcemKA==
@@ -4738,7 +4780,7 @@ Lockfile:
     resolved "https://registry.npmjs.org/deepmerge/-/deepmerge-3.3.0.tgz"
     integrity sha512-GRQOafGHwMHpjPx9iCvTgpu9NojZ49q794EEL94JVEw6VaeA8XTUyBKvAkOOjBX9oJNiV6G3P+T+tihFjo2TqA==
   
-  deepmerge@^4.0.0:
+  deepmerge@^4.0.0, deepmerge@^4.2.2:
     version "4.2.2"
     resolved "https://registry.yarnpkg.com/deepmerge/-/deepmerge-4.2.2.tgz#44d2ea3679b8f4d4ffba33f03d865fc1e7bf4955"
     integrity sha512-FJ3UgI4gIl+PHZm53knsuSFpE+nESMr7M4v9QcgB7S63Kj/6WqMiFQJpBBYz1Pt+66bZpP3Q7Lye0Oo9MPKEdg==
@@ -5949,10 +5991,22 @@ Lockfile:
     resolved "https://registry.npmjs.org/fontfaceobserver/-/fontfaceobserver-2.1.0.tgz"
     integrity sha512-ReOsO2F66jUa0jmv2nlM/s1MiutJx/srhAe2+TE8dJCMi02ZZOcCTxTCQFr3Yet+uODUtnr4Mewg+tNQ+4V1Ng==
   
-  for-in@^1.0.2:
+  for-in@^0.1.3:
+    version "0.1.8"
+    resolved "https://registry.yarnpkg.com/for-in/-/for-in-0.1.8.tgz#d8773908e31256109952b1fdb9b3fa867d2775e1"
+    integrity sha1-2Hc5COMSVhCZUrH9ubP6hn0ndeE=
+  
+  for-in@^1.0.1, for-in@^1.0.2:
     version "1.0.2"
     resolved "https://registry.npmjs.org/for-in/-/for-in-1.0.2.tgz"
     integrity sha1-gQaNKVqBQuwKxybG4iAMMPttXoA=
+  
+  for-own@^1.0.0:
+    version "1.0.0"
+    resolved "https://registry.yarnpkg.com/for-own/-/for-own-1.0.0.tgz#c63332f415cedc4b04dbfe70cf836494c53cb44b"
+    integrity sha1-xjMy9BXO3EsE2/5wz4NklMU8tEs=
+    dependencies:
+      for-in "^1.0.1"
   
   fork-ts-checker-webpack-plugin@4.1.6:
     version "4.1.6"
@@ -7560,7 +7614,7 @@ Lockfile:
     resolved "https://registry.npmjs.org/kind-of/-/kind-of-5.1.0.tgz"
     integrity sha512-NGEErnH6F2vUuXDh+OlbcKW7/wOcfdRHaZ7VWtqCztfHri/++YKmP51OdWeGPuqCOba6kk2OTe5d02VmTB80Pw==
   
-  kind-of@^6.0.0, kind-of@^6.0.2:
+  kind-of@^6.0.0, kind-of@^6.0.1, kind-of@^6.0.2:
     version "6.0.3"
     resolved "https://registry.npmjs.org/kind-of/-/kind-of-6.0.3.tgz"
     integrity sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==
@@ -8406,6 +8460,14 @@ Lockfile:
       for-in "^1.0.2"
       is-extendable "^1.0.1"
   
+  mixin-object@^2.0.1:
+    version "2.0.1"
+    resolved "https://registry.yarnpkg.com/mixin-object/-/mixin-object-2.0.1.tgz#4fb949441dab182540f1fe035ba60e1947a5e57e"
+    integrity sha1-T7lJRB2rGCVA8f4DW6YOGUel5X4=
+    dependencies:
+      for-in "^0.1.3"
+      is-extendable "^0.1.1"
+  
   mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@^0.5.3, mkdirp@^0.5.5, mkdirp@~0.5.1:
     version "0.5.5"
     resolved "https://registry.npmjs.org/mkdirp/-/mkdirp-0.5.5.tgz"
@@ -8868,6 +8930,11 @@ Lockfile:
       define-lazy-prop "^2.0.0"
       is-docker "^2.1.1"
       is-wsl "^2.2.0"
+  
+  opencollective-postinstall@^2.0.1, opencollective-postinstall@^2.0.3:
+    version "2.0.3"
+    resolved "https://registry.yarnpkg.com/opencollective-postinstall/-/opencollective-postinstall-2.0.3.tgz#7a0fff978f6dbfa4d006238fbac98ed4198c3259"
+    integrity sha512-8AV/sCtuzUeTo8gQK5qDZzARrulB3egtLzFgteqB2tcT4Mw7B8Kt7JcDHmltjz6FOAHsvTevk70gZEbhM4ZS9Q==
   
   opn@^5.5.0:
     version "5.5.0"
@@ -10032,6 +10099,20 @@ Lockfile:
       jscodeshift "^0.11.0"
       nullthrows "^1.1.1"
   
+  react-native-elements@^3.4.2:
+    version "3.4.2"
+    resolved "https://registry.yarnpkg.com/react-native-elements/-/react-native-elements-3.4.2.tgz#66602be9c5e0e0a2a831913adec80ff6518d1ee2"
+    integrity sha512-m0eAWOn7JuR1wNTNY0WHuaqst4LI/gFE4N5Bbyfsc4DiryWsMST7aAg5w/Gos4IexWIzhLKCIkPxthND1m/8Xg==
+    dependencies:
+      "@types/react-native-vector-icons" "^6.4.6"
+      color "^3.1.2"
+      deepmerge "^4.2.2"
+      hoist-non-react-statics "^3.3.2"
+      lodash.isequal "^4.5.0"
+      opencollective-postinstall "^2.0.3"
+      react-native-ratings "8.0.4"
+      react-native-size-matters "^0.3.1"
+  
   react-native-gesture-handler@~2.1.0:
     version "2.1.0"
     resolved "https://registry.npmjs.org/react-native-gesture-handler/-/react-native-gesture-handler-2.1.0.tgz"
@@ -10052,6 +10133,13 @@ Lockfile:
     version "5.4.9"
     resolved "https://registry.npmjs.org/react-native-pager-view/-/react-native-pager-view-5.4.9.tgz"
     integrity sha512-D6tzxpwMGdl6CXgtskGWhKRc5cJakCazESRGt7PkqnpyiH3N35ft1KmR82pCSQetAFlytFiToeu3a/dG5CELvA==
+  
+  react-native-ratings@8.0.4:
+    version "8.0.4"
+    resolved "https://registry.yarnpkg.com/react-native-ratings/-/react-native-ratings-8.0.4.tgz#efd5ebad8acc08bf98d34d39b18fb7a6813ef991"
+    integrity sha512-Xczu5lskIIRD6BEdz9A0jDRpEck/SFxRqiglkXi0u67yAtI1/pcJC76P4MukCbT8K4BPVl+42w83YqXBoBRl7A==
+    dependencies:
+      lodash "^4.17.15"
   
   react-native-reanimated@~2.3.1:
     version "2.3.1"
@@ -10078,6 +10166,11 @@ Lockfile:
     dependencies:
       react-freeze "^1.0.0"
       warn-once "^0.1.0"
+  
+  react-native-size-matters@^0.3.1:
+    version "0.3.1"
+    resolved "https://registry.yarnpkg.com/react-native-size-matters/-/react-native-size-matters-0.3.1.tgz#24d0cfc335a2c730f6d58bd7b43ea5a41be4b49f"
+    integrity sha512-mKOfBLIBFBcs9br1rlZDvxD5+mAl8Gfr5CounwJtxI6Z82rGrMO+Kgl9EIg3RMVf3G855a85YVqHJL2f5EDRlw==
   
   react-native-status-bar-height@^2.6.0:
     version "2.6.0"
@@ -10881,6 +10974,15 @@ Lockfile:
       inherits "^2.0.1"
       safe-buffer "^5.0.1"
   
+  shallow-clone@^1.0.0:
+    version "1.0.0"
+    resolved "https://registry.yarnpkg.com/shallow-clone/-/shallow-clone-1.0.0.tgz#4480cd06e882ef68b2ad88a3ea54832e2c48b571"
+    integrity sha512-oeXreoKR/SyNJtRJMAKPDSvd28OqEwG4eR/xc856cRGBII7gX9lvAqDxusPm0846z/w/hWYjI1NpKwJ00NHzRA==
+    dependencies:
+      is-extendable "^0.1.1"
+      kind-of "^5.0.0"
+      mixin-object "^2.0.1"
+  
   shallow-clone@^3.0.0:
     version "3.0.1"
     resolved "https://registry.npmjs.org/shallow-clone/-/shallow-clone-3.0.1.tgz"
@@ -11390,6 +11492,14 @@ Lockfile:
     version "9.2.1"
     resolved "https://registry.npmjs.org/sudo-prompt/-/sudo-prompt-9.2.1.tgz"
     integrity sha512-Mu7R0g4ig9TUuGSxJavny5Rv0egCEtpZRNMrZaYS1vxkiIxGiGUwoezU3LazIQ+KE04hTrTfNPgxU5gzi7F5Pw==
+  
+  superstruct@^0.6.2:
+    version "0.6.2"
+    resolved "https://registry.yarnpkg.com/superstruct/-/superstruct-0.6.2.tgz#c5eb034806a17ff98d036674169ef85e4c7f6a1c"
+    integrity sha512-lvA97MFAJng3rfjcafT/zGTSWm6Tbpk++DP6It4Qg7oNaeM+2tdJMuVgGje21/bIpBEs6iQql1PJH6dKTjl4Ig==
+    dependencies:
+      clone-deep "^2.0.1"
+      kind-of "^6.0.1"
   
   supports-color@^5.3.0:
     version "5.5.0"

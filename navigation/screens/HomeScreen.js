@@ -20,7 +20,6 @@ const GROUNDCOLOR = "#0bcacc";
 const POINTCOLOR = "#ff6781";
 
 import { auth } from "../../Firebase";
-// import {firebase} from "@react-native-firebase/dynamic-links";
 
 //redux
 import { useDispatch, useSelector } from "react-redux";
@@ -33,7 +32,7 @@ export default function HomeScreen({ navigation }) {
   const reduxState = useSelector((state) => state);
   // const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState("");
-
+  
   useEffect(() => {
     _loadFont();
     const unsubscribe = auth.getAuth().onAuthStateChanged((authUser) => {
@@ -45,6 +44,10 @@ export default function HomeScreen({ navigation }) {
     _getUserName();
     return unsubscribe;
   }, []);
+
+  const createLink = async () => [
+    
+  ]
 
   const _loadFont = async () => {
     await Font.loadAsync({

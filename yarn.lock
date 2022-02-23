@@ -5382,6 +5382,11 @@ expo-constants@~13.0.0:
     "@expo/config" "^6.0.6"
     uuid "^3.3.2"
 
+expo-core@~2.0.0:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/expo-core/-/expo-core-2.0.2.tgz#61e1e5cc6c4341a834a0d7f37c68887cee8d971f"
+  integrity sha512-QKkICJ06m/J1PxTJqtVu03+fUXwjLqb2YPF5J9DT7W4EknPq1sHY3ZKJgAr1PhK24fzvVoxWOKqiIstliZdBOA==
+
 expo-error-recovery@~3.0.4:
   version "3.0.4"
   resolved "https://registry.npmjs.org/expo-error-recovery/-/expo-error-recovery-3.0.4.tgz"
@@ -5402,6 +5407,21 @@ expo-file-system@~13.1.4:
   dependencies:
     "@expo/config-plugins" "^4.0.2"
     uuid "^3.4.0"
+
+expo-firebase-app@~2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/expo-firebase-app/-/expo-firebase-app-2.0.0.tgz#1c2158c6423cd2a1bdb7749b96cc52b678126866"
+  integrity sha512-rhKErhQybgL5Vbv8HndYVzwoXikL62iCd5e8k5cZZhs6S0TiWEx0anKhALvI2eCGBzQmYHM2sIzbi8DeUemuCw==
+  dependencies:
+    expo-core "~2.0.0"
+
+expo-firebase-links@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/expo-firebase-links/-/expo-firebase-links-2.0.0.tgz#6b50d8bfa8542ca0a0212c368a1bc36b5119de20"
+  integrity sha512-3VSpQFO2B9yCTg0G7HKkXmc3n07FSGf34caeRK3hVkKA3f0FV1ZGxKCNAsnPSPWo5vij0TSSYNP8ofAnCVEdDw==
+  dependencies:
+    expo-core "~2.0.0"
+    expo-firebase-app "~2.0.0"
 
 expo-font@^10.0.4, expo-font@~10.0.4:
   version "10.0.4"
@@ -12174,8 +12194,10 @@ watchpack@^1.6.1:
   resolved "https://registry.yarnpkg.com/watchpack/-/watchpack-1.7.5.tgz#1267e6c55e0b9b5be44c2023aed5437a2c26c453"
   integrity sha512-9P3MWk6SrKjHsGkLT2KHXdQ/9SNkyoJbabxnKOoJepsvJjJG8uYTR3yTPxPQvNDI3w4Nz1xnE0TLHK4RIVe/MQ==
   dependencies:
+    chokidar "^3.4.1"
     graceful-fs "^4.1.2"
     neo-async "^2.5.0"
+    watchpack-chokidar2 "^2.0.1"
   optionalDependencies:
     chokidar "^3.4.1"
     watchpack-chokidar2 "^2.0.1"
