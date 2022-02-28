@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   Animated,
   Alert,
+  Share,
 } from "react-native";
 import Slider from "@react-native-community/slider";
 import { Audio } from "expo-av";
@@ -91,12 +92,12 @@ class Recording extends React.Component {
       }
     };
     this._onPlayPausePressed = () => {
-      console.log(this.state.isPlaying)
+      console.log(this.state.isPlaying);
       if (this.sound != null) {
         if (this.state.isPlaying) {
           this.sound.pauseAsync();
         } else {
-          if(this._getSeekSliderPosition()==1){
+          if (this._getSeekSliderPosition() == 1) {
             this.sound.stopAsync();
           }
           this.sound.playAsync();
@@ -120,7 +121,7 @@ class Recording extends React.Component {
     };
     this._onSeekSliderValueChange = (value) => {
       if (this.sound != null && !this.isSeeking) {
-        console.log(value)
+        console.log(value);
         this.isSeeking = true;
         this.shouldPlayAtEndOfSeek = this.state.shouldPlay;
         this.sound.pauseAsync();
@@ -194,7 +195,7 @@ class Recording extends React.Component {
     Animated.loop(animation, {
       iterations: this.state.animateLoop,
     }).start();
-    this._getRecordCount()
+    this._getRecordCount();
   }
 
   async _stopPlaybackAndBeginRecording() {
@@ -328,13 +329,11 @@ class Recording extends React.Component {
     return `${this._getMMSSFromMillis(0)}`;
   }
 
- 
-
   async _getRecordCount() {
     const docRef = db.doc(
       db.getFirestore(),
       "users",
-      auth.getAuth().currentUser.email
+      auth.getAuth().currentUser.uid
     );
     const docSnap = await db.getDoc(docRef);
     if (docSnap.exists()) {
@@ -345,8 +344,8 @@ class Recording extends React.Component {
     }
     const recordNum = docSnap.data().recordNum;
     this.setState({
-      recordCount : recordNum
-    })
+      recordCount: recordNum,
+    });
   }
 
   _saveButtonPressed() {
@@ -419,6 +418,59 @@ class Recording extends React.Component {
     this.props.jumpTo("first");
   }
 
+  async _createLink() {
+    if(auth.getAuth().currentUser.isAnonymous){
+      return Alert.alert("비회원 사용자","홈화면에서 [회원가입]을 진행해주세요.")
+    }
+    const UID = auth.getAuth().currentUser.uid;
+    console.log("user : " + UID);
+    try {
+      const payload = {
+        dynamicLinkInfo: {
+          domainUriPrefix: "https://jmwschool.page.link",
+          // link: `https://jmwschool.page.link/newUser/njUdT0j9VuR7cSLCAekUEzAQS6z2`,
+          link: `https://jmwschool.page.link/newUser/${UID}`,
+          androidInfo: {
+            androidPackageName: "host.exp.jmwschool",
+          },
+          iosInfo: {
+            iosBundleId: "host.exp.jmwschool",
+          },
+          // socialMetaTagInfo: {
+          //   socailTitle: 'Test the title',
+          //   socialDescription: 'Testing the description.'
+          // }
+        },
+      };
+      const url = `https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyAj2uJrWehb1MqSPb00eFFXk4BR_g4zDJU`;
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+      // console.log(response.json().then((e)=>console.log(e)))
+      const json = await response.json();
+      const result = await Share.share({
+        message: json.shortLink,
+        url: json.shortLink,
+        title: `Checkout my apps: asdf`,
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          console.log("action if");
+        } else {
+          console.log("action else");
+        }
+      } else if (result.action === Share.dismissedAction) {
+        console.log("dismissed");
+      }
+    } catch (error) {
+      console.log("Linking Errors: " + error);
+    }
+  };
+
   //redux function
   _setRecordList = (list) => {
     this.setState(() => {
@@ -429,7 +481,7 @@ class Recording extends React.Component {
   };
 
   render() {
-    const { storeRecordUsedCnt }= this.props
+    const { storeRecordUsedCnt, storeRecordNum } = this.props;
     if (!this.state.fontLoaded) {
       return React.createElement(View, { style: styles.emptyContainer });
     }
@@ -464,7 +516,19 @@ class Recording extends React.Component {
       },
       React.createElement(
         View,
-        { style: { height: 30, alignSelf: "flex-start", paddingLeft: 20 } },
+        {
+          style: {
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            width: DEVICE_WIDTH,
+            borderBottomWidth: 2,
+            // borderTopWidth: 0,
+            borderColor: "grey",
+            paddingBottom: 10,
+            paddingHorizontal: 15,
+          },
+        },
         React.createElement(
           Text,
           {
@@ -474,8 +538,43 @@ class Recording extends React.Component {
               fontWeight: "bold",
             },
           },
-          "남은 녹음 파일 : " + ((this.state.recordCount - storeRecordUsedCnt)>0 ? (this.state.recordCount - storeRecordUsedCnt) : 0)
+          "사용가능 녹음 파일 : " +
+            (storeRecordNum - storeRecordUsedCnt > 0
+              ? storeRecordNum - storeRecordUsedCnt
+              : 0)
+        ),
+        React.createElement(
+          TouchableOpacity,
+          {
+            underlayColor: "BACKGROUND_COLOR",
+            onPress: () => this._createLink(),
+          },
+          React.createElement(
+            View,
+            {
+              style: {
+                backgroundColor: "white",
+                height: DEVICE_HEIGHT * 0.05,
+                width: DEVICE_WIDTH * 0.25,
+                borderWidth: 2,
+                borderColor: GROUNDCOLOR,
+                borderRadius: 10,
+                alignItems: "center",
+                justifyContent: "center",
+              },
+            },
+            <Text
+              style={{
+                fontSize: 20,
+                color: "black",
+                fontFamily: "SquareRound",
+                fontWeight: "300",
+              }}
+            >
+              공유하기
+            </Text>
           )
+        )
       ),
 
       React.createElement(
@@ -506,11 +605,8 @@ class Recording extends React.Component {
               disabled: this.state.isLoading,
             },
             React.createElement(
-              Animated.View,
+              View,
               {
-                // style: this.state.animateLoop
-                //   ? [styles.recordButtonContainer, animationStyles]
-                //   : [styles.recordButtonContainer],
                 style: styles.recordButtonContainer,
               },
               React.createElement(
@@ -581,7 +677,7 @@ class Recording extends React.Component {
             style: {
               flexDirection: "column",
               height: DEVICE_HEIGHT * 0.3,
-              // flex: 1
+              flex: 2,
             },
           },
 
@@ -599,7 +695,6 @@ class Recording extends React.Component {
               onValueChange: this._onSeekSliderValueChange,
               onSlidingComplete: this._onSeekSliderSlidingComplete,
               disabled: !this.state.isPlaybackAllowed || this.state.isLoading,
-              
             }),
             !this.state.isPlaybackAllowed || this.state.isLoading
               ? React.createElement(
@@ -680,7 +775,7 @@ class Recording extends React.Component {
                     {"재생 하기"}
                   </Text>
                 )
-              ),
+              )
               // React.createElement(
               //   TouchableHighlight,
               //   {
@@ -761,10 +856,13 @@ class Recording extends React.Component {
                   underlayColor: "white",
                   style: styles.wrapper,
                   onPress: () => {
-                    if((this.state.recordCount - storeRecordUsedCnt)<=0){
-                      return Alert.alert("녹음파일 부족","녹음 가능한 파일 개수가 없습니다.\n[공유하기]를 통해 녹음파일을 늘려주세요.")
+                    if (storeRecordNum - storeRecordUsedCnt <= 0) {
+                      return Alert.alert(
+                        "녹음파일 부족",
+                        "녹음 가능한 파일 개수가 없습니다.\n 우측 상단의 [공유하기]버튼을 통해 녹음파일을 늘려주세요."
+                      );
                     }
-                    this._saveButtonPressed()
+                    this._saveButtonPressed();
                   },
                   disabled:
                     !this.state.isPlaybackAllowed && !this.state.isLoading,
@@ -804,8 +902,8 @@ class Recording extends React.Component {
           underlayColor: BACKGROUND_COLOR,
           style: {
             position: "absolute",
-            top: 0,
-            right: 20,
+            top: DEVICE_HEIGHT * 0.09,
+            left: 20,
           },
           onPress: () => Alert.alert("알림", "업데이트 예정."),
         },
@@ -857,7 +955,8 @@ class Recording extends React.Component {
 //redux setting
 const mapStateToProps = (state) => ({
   storeRecordList: state.record.recordListState,
-  storeRecordUsedCnt : state.record.recordUsedCntState,
+  storeRecordUsedCnt: state.record.recordUsedCntState,
+  storeRecordNum: state.record.recordNumState,
 });
 const mapDispatchToProps = (dispatch) => ({
   setStoreRecordList: (list) => dispatch(actions.setRecordList(list)),
@@ -875,7 +974,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "stretch",
     backgroundColor: "white",
-    height: DEVICE_HEIGHT,
+    // height: DEVICE_HEIGHT,
     // marginBottom: 70,
   },
   recordButtonContainer: {

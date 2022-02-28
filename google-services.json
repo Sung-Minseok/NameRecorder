@@ -7,12 +7,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:364075813917:android:25df676e1c5dd6dbeb8af4",
+        "mobilesdk_app_id": "1:364075813917:android:2029df80f62dc671eb8af4",
         "android_client_info": {
-          "package_name": "host.exp.exponent"
+          "package_name": "host.exp.jmwschool"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "364075813917-83f528q912n1ovki80ckg7m761032ji1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "host.exp.jmwschool",
+            "certificate_hash": "6e01122804e66969c04a347a60e5a4490108da4a"
+          }
+        },
         {
           "client_id": "364075813917-rodn980rli6da6ukbd8q3u751bpl8406.apps.googleusercontent.com",
           "client_type": 3
@@ -31,10 +39,10 @@
               "client_type": 3
             },
             {
-              "client_id": "364075813917-b30bsuh6ph8hr4v35ovrr9qef1jgtehi.apps.googleusercontent.com",
+              "client_id": "364075813917-11q2437geiic53kiv2huiq7p3mcqcqfh.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "host.exp.exponent"
+                "bundle_id": "host.exp.jmwschool"
               }
             }
           ]

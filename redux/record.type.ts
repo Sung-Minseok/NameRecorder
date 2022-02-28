@@ -5,6 +5,8 @@ export interface RecordState {
     refreshNumberState : number | null;
     tabViewState : object | null;
     recordUsedCntState : number | null;
+    recordNumState : number | null;
+    currentUserState : string | null;
 }
 
 //action key type
@@ -13,6 +15,8 @@ export const SET_EXAMPLE_STRING = 'SET_EXAMPLE_STRING';
 export const SET_REFRESH_NUMBER = 'SET_REFRESH_NUMBER';
 export const SET_TABVIEW = 'SET_TABVIEW';
 export const SET_RECORD_USED_CNT = 'SET_RECORD_USED_CNT';
+export const SET_CURRENTUSER = 'SET_CURRENTUSER';
+export const SET_RECORD_NUM = 'SET_RECORD_NUM';
 
 //action type
 export interface SetRecordListAction {
@@ -39,4 +43,14 @@ export interface SetRecordUsedCntAction {
     type : typeof SET_RECORD_USED_CNT;
     recordUsedCntState: number | null;
 
+}
+
+export interface SetCurrentUserAction{
+    type: typeof SET_CURRENTUSER;
+    currentUserState: string | null;
+}
+
+export interface SetRecordNumAction{
+    type: typeof SET_RECORD_NUM;
+    recordNumState: number | null;
 }

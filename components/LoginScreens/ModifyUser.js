@@ -1,17 +1,17 @@
 import { sendSignInLinkToEmail } from "firebase/auth";
 import { doc, getFirestore } from "firebase/firestore";
-import React, { useState } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import { Button, Input, Image } from "react-native-elements";
 import { auth, db } from "../../Firebase";
-
 
 //redux
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentUser, setExampleString } from "../../redux/record";
 
-const Register = ({ navigation }) => {
+const ModifyUser = ({ navigation }) => {
 
+  
   const dispatch = useDispatch();
   const reduxState = useSelector((state) => state);
 
@@ -21,48 +21,47 @@ const Register = ({ navigation }) => {
   const [birth, setBirth] = useState("");
   const [phone, setPhone] = useState("");
 
-  const register = async () => {
-    const credential = auth.EmailAuthProvider.credential(email, password);
-    auth
-      .linkWithCredential(auth.getAuth().currentUser, credential)
-      .then(async (usercred) => {
-        const user = usercred.user;
-        console.log("계정 연결 성공", user);
-        auth.updateProfile(user, {
-          displayName: name,
-        });
-        try {
-          const docRef = db.doc(
-            db.getFirestore(),
-            "users",
-            user.uid
-          );
-          const docSnap= await db.getDoc(docRef);
-          
-          db.setDoc(doc(db.getFirestore(), "users", user.uid), {
-            email: user.email,
-            name: name,
-            phoneNum: phone,
-            birth: birth,
-            recordNum: docSnap.data().recordNum,
-          });
-        } catch (error) {
-          console.log("DB Error : " + error);
-        }
-        dispatch(setCurrentUser(name))
-        Alert.alert("알림","회원가입 완료.")
-        navigation.navigate("홈")
-      })
-      .catch((error) => {
-        console.log("계정 연결 오류", error);
-        Alert.alert("회원가입 오류","아이디 형식(이메일)을 확인해주세요.")
+  useEffect(()=>{
+    getInfo()
+  },[])
+
+  const updateInfo = async () => {
+    try {
+      db.updateDoc(doc(db.getFirestore(), "users", user.uid), {
+        email: email,
+        name: name,
+        phoneNum: phone,
+        birth: birth,
       });
+    } catch (error) {
+      console.log("DB Error : " + error);
+    }
+    dispatch(setCurrentUser(name))
+    navigation.navigate("홈");
   };
+
+  const getInfo = async () => {
+    const docRef = db.doc(
+      db.getFirestore(),
+      "users",
+      auth.getAuth().currentUser.uid
+    );
+    const docSnap = await db.getDoc(docRef);
+    if (docSnap.exists()) {
+      console.log("Document data:", docSnap.data());
+    } else {
+      console.log("No such document!");
+    }
+    setEmail(docSnap.data().email)
+    setName(docSnap.data().name)
+    setPhone(docSnap.data().phoneNum)
+    setBirth(docSnap.data().birth)
+  }
 
   return (
     <View style={stlyes.container}>
       <Text style={{ marginBottom: 50, fontSize: 20, fontWeight: "bold" }}>
-        회원가입
+        회원정보 수정
       </Text>
       <View style={stlyes.inputContainer}>
         <Input
@@ -77,12 +76,12 @@ const Register = ({ navigation }) => {
           value={email}
           onChangeText={(text) => setEmail(text)}
         />
-        <Input
+        {/* <Input
           placeholder="비밀번호"
           textContentType="password"
           value={password}
           onChangeText={(text) => setPassword(text)}
-        />
+        /> */}
         <Input
           placeholder="전화번호"
           textContentType="telephoneNumber"
@@ -96,13 +95,13 @@ const Register = ({ navigation }) => {
           onChangeText={(text) => setBirth(text)}
         />
 
-        <Button style={{backgroundColor:"black"}} raised onPress={() => register()} title="회원가입" />
+        <Button raised onPress={() => updateInfo()} title="수정완료" />
       </View>
     </View>
   );
 };
 
-export default Register;
+export default ModifyUser;
 
 const stlyes = StyleSheet.create({
   container: {

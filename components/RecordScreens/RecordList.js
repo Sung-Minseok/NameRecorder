@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Dimensions, StyleSheet, View, FlatList, Text } from "react-native";
+import { Dimensions, StyleSheet, View, FlatList, Text, TouchableOpacity } from "react-native";
 import { Audio } from "expo-av";
 import * as FileSystem from "expo-file-system";
 
@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   setExampleString,
   setRecordList,
+  setRecordNum,
   setRecordUsedCnt,
 } from "../../redux/record";
 import { useEffect } from "react";
@@ -59,7 +60,7 @@ export default function RecordList() {
     const docRef = db.doc(
       db.getFirestore(),
       "users",
-      auth.getAuth().currentUser.email
+      auth.getAuth().currentUser.uid
     );
     const docSnap = await db.getDoc(docRef);
     if (docSnap.exists()) {
@@ -69,46 +70,78 @@ export default function RecordList() {
       console.log("No such document!");
     }
     const recordNum = docSnap.data().recordNum;
-    const recordUsedNum = reduxState.record.recordUsedCntState;
     console.log("getRecordCount")
     setRecordCnt(recordNum);
+    dispatch(setRecordNum(recordNum));
   };
 
   return React.createElement(
     View,
     { style: styles.container },
+    React.createElement(
+      View,
+      {
+        style: {
+          flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            width: DEVICE_WIDTH,
+            borderBottomWidth: 2,
+            // borderTopWidth: 0,
+            borderColor: "grey",
+            paddingBottom: 10,
+            paddingHorizontal: 15,
+        },
+      },
+      React.createElement(
+        Text,
+        {
+          style: {
+            fontSize: 20,
+            fontWeight: "bold",
+          },
+        },
+        "사용중인 녹음 파일 : "+reduxState.record.recordUsedCntState+ " / " + reduxState.record.recordNumState
+      ),
+      React.createElement(
+        TouchableOpacity,
+        {
+          underlayColor: "BACKGROUND_COLOR",
+          onPress: () => _getRecordCount(),
+        },
+        React.createElement(
+          View,
+          {
+            style: {
+              backgroundColor: "white",
+              height: DEVICE_HEIGHT * 0.05,
+              width: DEVICE_WIDTH * 0.25,
+              borderWidth: 2,
+              borderColor: GROUNDCOLOR,
+              borderRadius: 10,
+              alignItems: "center",
+              justifyContent: "center",
+            },
+          },
+          <Text
+            style={{
+              fontSize: 20,
+              color: "black",
+              fontFamily: "SquareRound",
+              fontWeight: "300",
+            }}
+          >
+            새로고침
+          </Text>
+        )
+      )
+    ),
     //   list of record
     React.createElement(
       View,
       {
         style: [styles.recordListContianer],
       },
-      React.createElement(
-        View,
-        {
-          style: {
-            // width: DEVICE_WIDTH - 30,
-            height: 30,
-            // borderWidth: 2,
-            flexDirection: "row",
-            alignItems: "center",
-            // justifyContent: "center"
-          },
-        },
-        React.createElement(
-          Text,
-          {
-            style: {
-              fontSize: 20,
-              alignSelf: "flex-start",
-              paddingLeft: 10,
-              fontWeight: "bold",
-            },
-          },
-          "사용중인 녹음 파일 : "+reduxState.record.recordUsedCntState+ " / " + reocrdCnt
-        )
-        // React.createElement(Text, {}, "abc"),
-      ),
       React.createElement(FlatList, {
         data: reduxState.record.recordListState,
         keyExtractor: (item) => item.uri,

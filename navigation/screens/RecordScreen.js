@@ -8,6 +8,9 @@ import * as Font from "expo-font";
 //redux
 import { useSelector, useDispatch } from "react-redux";
 
+import { auth, db } from "../../Firebase";
+import { setRecordNum } from "../../redux/record";
+
 const GROUNDCOLOR = "#0bcacc";
 const POINTCOLOR = "#ff6781";
 const BACKGROUNDCOLOR = "#F4ECE6";
@@ -66,9 +69,28 @@ export default function RecordScreen({ navigation }) {
     }
   };
 
+  const _getRecordCount = async () => {
+    const docRef = db.doc(
+      db.getFirestore(),
+      "users",
+      auth.getAuth().currentUser.uid
+    );
+    const docSnap = await db.getDoc(docRef);
+    if (docSnap.exists()) {
+      console.log("Document data:", docSnap.data());
+    } else {
+      // doc.data() will be undefined in this case
+      console.log("No such document!");
+    }
+    const recordNum = docSnap.data().recordNum;
+    console.log("getRecordCount")
+    dispatch(setRecordNum(recordNum))
+  };
+
   React.useEffect(() => {
     ensureDirExists();
     _loadFont();
+    _getRecordCount();
   },[]);
   if(!fontLoaded){
     return <View></View>

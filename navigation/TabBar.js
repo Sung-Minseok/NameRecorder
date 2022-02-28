@@ -30,7 +30,7 @@ const TabBar = ({ state, navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {},
+  container: { height: 0},
 });
 
 export default TabBar;

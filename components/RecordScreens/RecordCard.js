@@ -258,7 +258,8 @@ const RecordCard = (props) => {
         borderBottomWidth: 1,
         borderColor: "#C5C7C9",
         width: DEVICE_WIDTH * 0.95,
-        height: active ? DEVICE_HEIGHT * 0.17 : DEVICE_HEIGHT * 0.1,
+        // height: active ? DEVICE_HEIGHT * 0.17 : DEVICE_HEIGHT * 0.1,
+        height: DEVICE_HEIGHT*0.17,
         paddingHorizontal: 5,
         paddingTop: 10,
       }}
@@ -347,7 +348,7 @@ const RecordCard = (props) => {
         </View>
       </View>
 
-      {active && (
+      {true && (
         <View
           style={{
             height: DEVICE_HEIGHT * 0.07,

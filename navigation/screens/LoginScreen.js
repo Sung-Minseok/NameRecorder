@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Alert,
   TextInput,
+  Linking
 } from "react-native";
 import * as Font from "expo-font";
 
@@ -50,6 +51,7 @@ export default function LoginScreen({ navigation }) {
   };
   useEffect(() => {
     _loadFont();
+    _getDynamicLink();
     auth.getAuth().onAuthStateChanged((user) => {
       if (user) {
         setIsLoggedIn(true);
@@ -59,6 +61,13 @@ export default function LoginScreen({ navigation }) {
       setInit(true);
     });
   }, []);
+
+  const _getDynamicLink = () => {
+    console.log('getLink()')
+    Linking.getInitialURL().then((url)=> {
+      console.log(url)
+    })
+  }
 
   const _registerSubmit = async () => {
     try {

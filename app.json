@@ -4,7 +4,7 @@
     "slug": "NameRecorder",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/jmw_icon.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -23,20 +23,20 @@
           "audio"
         ]
       },
-      "bundleIdentifier": "host.exp.exponent",
+      "bundleIdentifier": "host.exp.jmwschool",
       "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/jmw_adapted_icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "host.exp.exponent",
+      "package": "host.exp.jmwschool",
       "googleServicesFile": "./google-services.json",
       "intentFilters" : [
         {
           "action": "VIEW",
-          "autoverify": true,
+          "autoVerify": true,
           "data": [
             {
               "scheme": "https",

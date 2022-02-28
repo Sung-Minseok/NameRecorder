@@ -9,7 +9,11 @@ import {
     SetTabViewAction,
     SET_TABVIEW,
     SET_RECORD_USED_CNT,
-    SetRecordUsedCntAction
+    SetRecordUsedCntAction,
+    SET_CURRENTUSER,
+    SetCurrentUserAction,
+    SET_RECORD_NUM,
+    SetRecordNumAction,
 } from './record.type'
 
 
@@ -20,7 +24,10 @@ export const recordState: RecordState = {
     recordListState: null,
     refreshNumberState: 100,
     tabViewState: null,
-    recordUsedCntState: 0
+    recordUsedCntState: 0,
+    recordNumState: 10,
+    currentUserState: "비회원"
+    
 };
 
 
@@ -60,6 +67,20 @@ export const setRecordUsedCnt = (num: number): SetRecordUsedCntAction => {
     }
 }
 
+export const setCurrentUser = (user: string): SetCurrentUserAction => {
+    return {
+        type: SET_CURRENTUSER,
+        currentUserState: user,
+    }
+}
+
+export const setRecordNum = (num: number): SetRecordNumAction => {
+    return{
+        type: SET_RECORD_NUM,
+        recordNumState: num,
+    }
+}
+
 
 //reducer
 export const recordReducer = (state = recordState, action): RecordState => {
@@ -74,6 +95,10 @@ export const recordReducer = (state = recordState, action): RecordState => {
             return { ...state, tabViewState: action.tabViewState };
         case SET_RECORD_USED_CNT:
             return { ...state, recordUsedCntState: action.recordUsedCntState };
+        case SET_RECORD_NUM:
+            return { ...state, recordNumState: action.recordNumState };
+        case SET_CURRENTUSER:
+            return { ...state, currentUserState: action.currentUserState };
         default:
             return state;
     }
