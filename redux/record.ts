@@ -14,6 +14,8 @@ import {
     SetCurrentUserAction,
     SET_RECORD_NUM,
     SetRecordNumAction,
+    SET_CAMERA_LOAD,
+    SetCameraLoadAction
 } from './record.type'
 
 
@@ -26,7 +28,8 @@ export const recordState: RecordState = {
     tabViewState: null,
     recordUsedCntState: 0,
     recordNumState: 10,
-    currentUserState: "비회원"
+    currentUserState: "비회원",
+    cameraLoadState: false
     
 };
 
@@ -81,6 +84,13 @@ export const setRecordNum = (num: number): SetRecordNumAction => {
     }
 }
 
+export const setCameraLoad = (state: boolean): SetCameraLoadAction => {
+    return{
+        type: SET_CAMERA_LOAD,
+        cameraLoadState: state,
+    }
+}
+
 
 //reducer
 export const recordReducer = (state = recordState, action): RecordState => {
@@ -99,6 +109,8 @@ export const recordReducer = (state = recordState, action): RecordState => {
             return { ...state, recordNumState: action.recordNumState };
         case SET_CURRENTUSER:
             return { ...state, currentUserState: action.currentUserState };
+        case SET_CAMERA_LOAD:
+            return { ...state, cameraLoadState: action.cameraLoadState };
         default:
             return state;
     }

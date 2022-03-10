@@ -16,7 +16,7 @@ TextInput.defaultProps = TextInput.defaultProps || {};
 TextInput.defaultProps.autoCorrect = false;
 TextInput.defaultProps.allowFontScaling = false;
 
-LogBox.ignoreLogs(["Setting a timer","AsyncStorage has been extracted"])
+LogBox.ignoreLogs(["Setting a timer","AsyncStorage has been extracted","Encountered two children with the same key"])
 
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;

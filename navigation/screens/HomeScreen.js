@@ -140,51 +140,6 @@ export default function HomeScreen({ navigation }) {
 		}
 	};
 
-	// const _processUrl2 = async (url) => {
-	// 	console.log("processURL2")
-	// 	console.log("current UID : "+auth.getAuth().currentUser.uid)
-	// 	if (url != null && url.includes("exp://")) {
-	// 		const userUID = "njUdT0j9VuR7cSLCAekUEzAQS6z2";
-	// 		// console.log(userUID);
-	// 		const docRef0 = db.doc(
-	// 			db.getFirestore(),
-	// 			"users",
-	// 			auth.getAuth().currentUser.uid
-	// 		);
-	// 		const docSnap0 = await db.getDoc(docRef0);
-	// 		if (docSnap0.exists() && docSnap0.data().recommended == 0) {
-	// 			console.log("data if문");
-	// 			const docRef = db.doc(db.getFirestore(), "users", userUID);
-	// 			const docSnap = await db.getDoc(docRef);
-	// 			if (docSnap.exists()) {
-	// 				console.log("Document data:", docSnap.data());
-	// 				console.log("Doc exist");
-	// 			} else {
-	// 				// doc.data() will be undefined in this case
-	// 				console.log("No such document!");
-	// 				console.log("DB error", "No such document");
-	// 			}
-	// 			try {
-	// 				db.updateDoc(doc(db.getFirestore(), "users", userUID), {
-	// 					recordNum: docSnap.data().recordNum + 5,
-	// 				});
-	// 				db.updateDoc(
-	// 					doc(
-	// 						db.getFirestore(),
-	// 						"users",
-	// 						auth.getAuth().currentUser.uid
-	// 					),
-	// 					{
-	// 						recommended: 1,
-	// 					}
-	// 				);
-	// 			} catch (error) {
-	// 				console.log("DB Error : " + error);
-	// 			}
-	// 		}
-	// 	}
-	// };
-
 	const createLink = async () => {
 		if (auth.getAuth().currentUser.isAnonymous) {
 			return Alert.alert(
