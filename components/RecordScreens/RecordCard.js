@@ -11,9 +11,12 @@ import {
 } from "react-native";
 import { Audio } from "expo-av";
 import * as FileSystem from "expo-file-system";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Font from "expo-font";
 import * as Icons from "../../components/Icons";
 import TextTicker from "react-native-text-ticker";
+
+
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
@@ -21,6 +24,7 @@ import { setRecordList, setRecordUsedCnt } from "../../redux/record";
 
 import DeleteModal from "./RecordListDeleteModal.js";
 import ModifyModal from "./RecordListModifyModal.js";
+import { getItemFromAsync, setItemToAsync } from "../CustomFunctions";
 
 const DEVICE_WIDTH = Dimensions.get("window").width;
 const DEVICE_HEIGHT = Dimensions.get("window").height;
@@ -81,10 +85,16 @@ const RecordCard = (props) => {
   useEffect(() => {
     _getFileInfo();
     _loadFont();
+    getItemFromAsync('abc').then((e)=>{console.log(e)})
   });
 
   const _playButtonPressed = async () => {
-    // console.log(props.item);
+    var oldList = await getItemFromAsync('abc')
+    if(oldList===null){
+      oldList = []
+    }
+    // await AsyncStorage.setItem('bbb', JSON.stringify(['aaa','bbbb','cccc']))
+    console.log(oldList)
     if (soundObj === null) {
       const playbackObj = new Audio.Sound();
       Audio.setAudioModeAsync({
@@ -104,7 +114,8 @@ const RecordCard = (props) => {
       );
       await playbackObj.setVolumeAsync(volume < 0 ? 0 : volume / 10);
       const status = await playbackObj.setIsLoopingAsync(true);
-      // console.log(status);
+      oldList.push(fileName)
+      await AsyncStorage.setItem('abc',JSON.stringify(oldList)) 
       console.log("start playing");
       return (
         setPlaybackObj(playbackObj),
@@ -117,6 +128,13 @@ const RecordCard = (props) => {
     if (soundObj.isLoaded) {
       await playbackObj.setStatusAsync({ shouldPlay: false });
       const status = await playbackObj.setIsLoopingAsync(false);
+      // var idx = oldList.indexOf(fileName)
+      // console.log(idx)
+      // if (idx > -1){
+      //   oldList.slice(idx,1)
+      // }
+      oldList = oldList.filter((e)=> e !==fileName)
+      await AsyncStorage.setItem('abc',JSON.stringify(oldList))
       console.log("stop playing");
       return setPlaybackObj(playbackObj), setSoundObj(null);
     }
@@ -207,7 +225,6 @@ const RecordCard = (props) => {
     dispatch(setRecordList(soundList));
   };
 
-  const OFFSET = DEVICE_HEIGHT / 20;
   const _getMMSSFromMillis = (millis) => {
     const totalSeconds = millis / 1000;
     const milliSeconds = millis % 1000;
