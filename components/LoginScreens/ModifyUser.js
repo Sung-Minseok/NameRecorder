@@ -20,12 +20,14 @@ const ModifyUser = ({ navigation }) => {
   const [name, setName] = useState("");
   const [birth, setBirth] = useState("");
   const [phone, setPhone] = useState("");
+  const [uid, setUid] = useState("");
 
   useEffect(()=>{
     getInfo()
   },[])
 
   const updateInfo = async () => {
+    const user = auth.getAuth().currentUser
     try {
       db.updateDoc(doc(db.getFirestore(), "users", user.uid), {
         email: email,
@@ -36,15 +38,17 @@ const ModifyUser = ({ navigation }) => {
     } catch (error) {
       console.log("DB Error : " + error);
     }
+    auth.updateProfile(user, {displayName: name})
     dispatch(setCurrentUser(name))
     navigation.navigate("홈");
   };
 
   const getInfo = async () => {
+    const uid = auth.getAuth().currentUser.uid
     const docRef = db.doc(
       db.getFirestore(),
       "users",
-      auth.getAuth().currentUser.uid
+      uid
     );
     const docSnap = await db.getDoc(docRef);
     if (docSnap.exists()) {
@@ -56,6 +60,7 @@ const ModifyUser = ({ navigation }) => {
     setName(docSnap.data().name)
     setPhone(docSnap.data().phoneNum)
     setBirth(docSnap.data().birth)
+    setUid(uid)
   }
 
   return (
@@ -94,6 +99,7 @@ const ModifyUser = ({ navigation }) => {
           value={birth}
           onChangeText={(text) => setBirth(text)}
         />
+        <Text style={stlyes.uid}>회원ID : {uid}</Text>
 
         <Button raised onPress={() => updateInfo()} title="수정완료" />
       </View>
@@ -114,4 +120,10 @@ const stlyes = StyleSheet.create({
     width: 300,
   },
   button: { width: 200, marginTop: 10 },
+  uid: {
+    color: "grey",
+    fontSize: 12,
+    paddingHorizontal: 10,
+    paddingBottom: 30
+  }
 });

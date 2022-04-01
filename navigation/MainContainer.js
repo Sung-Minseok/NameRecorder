@@ -1,11 +1,11 @@
 import * as React from "react";
-import { View, Text } from "react-native";
+import { View, Platform } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Ionicons from "react-native-vector-icons/Ionicons";
 // Screens
 import HomeScreen from "./screens/HomeScreen";
 import RecordScreen from "./screens/RecordScreen";
+import CameraScreen from "./screens/CameraScreen";
 import FingerPrintScreen from "./screens/FingerPrintScreen";
 // import Login from "./screens/LoginScreen";
 import TabBar from "./TabBar";
@@ -24,6 +24,7 @@ const BACKGROUNDCOLOR = "#F4ECE6";
 const homeName = "홈";
 const recordName = "녹음";
 const settingName = "설정";
+const cameraName = "돋보기";
 const FingerPrintName = "지문";
 const LoginName = "로그인";
 const RegisterName = "회원가입";
@@ -33,6 +34,7 @@ const Tab = createBottomTabNavigator();
 
 export default function MainContainer() {
   return (
+    <View style={{flex:1, paddingBottom: Platform.OS=='ios' ? 40 : 0}}>
       <NavigationContainer>
         <Tab.Navigator
           tabBar={(props) => <TabBar {...props} />}
@@ -51,7 +53,7 @@ export default function MainContainer() {
               fontSize: 12,
               alignSelf: "center",
             },
-            tabBarStyle: { height: 0, },
+            tabBarStyle: { height: 0 },
             tabBarHideOnKeyboard: true,
             headerShown: true,
             header: (props) => <Header {...props} />,
@@ -60,11 +62,13 @@ export default function MainContainer() {
           <Tab.Screen name={homeName} component={HomeScreen} />
           <Tab.Screen name={recordName} component={RecordScreen} />
           <Tab.Screen name={settingName} component={RecordScreen} />
+          <Tab.Screen name={cameraName} component={CameraScreen} />
           <Tab.Screen name={FingerPrintName} component={FingerPrintScreen} />
           <Tab.Screen name={LoginName} component={Login} />
           <Tab.Screen name={RegisterName} component={Register} />
           <Tab.Screen name={ModifyUserName} component={ModifyUser} />
         </Tab.Navigator>
       </NavigationContainer>
+    </View>
   );
 }

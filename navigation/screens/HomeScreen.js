@@ -276,10 +276,18 @@ export default function HomeScreen({ navigation }) {
 					</TouchableOpacity>
 					<TouchableOpacity
 						underlayColor={"transparent"}
-						onPress={() => navigation.navigate("지문")}
+						onPress={() => navigation.navigate("돋보기")}
 					>
 						<View style={styles.menuButton}>
 							<Text style={styles.menuText}>돋보기 & 손전등</Text>
+						</View>
+					</TouchableOpacity>
+					<TouchableOpacity
+						underlayColor={"transparent"}
+						onPress={() => navigation.navigate("지문")}
+					>
+						<View style={styles.menuButton}>
+							<Text style={styles.menuText}>지문 등록</Text>
 						</View>
 					</TouchableOpacity>
 					<TouchableOpacity

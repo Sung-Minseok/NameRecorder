@@ -17,6 +17,11 @@ import { getStatusBarHeight } from "react-native-status-bar-height";
 import * as FileSystem from "expo-file-system";
 import * as MediaLibrary from "expo-media-library";
 
+
+//redux
+import { useDispatch, useSelector } from "react-redux";
+import { setPhotoList } from "../../redux/record";
+
 const pictureDirName = "expopTest1/";
 
 const DEVICE_WIDTH = Dimensions.get("window").width;
@@ -30,6 +35,8 @@ export default function AlbumScreen(props) {
 	const [photos, setPhotos] = useState(null);
 	const [currentPhoto, setCurrentPhoto] = useState(null);
 	const [modalVisible, setModalVisible] = useState(false);
+	const dispatch = useDispatch();
+	const reduxState = useSelector((state) => state);
 
 	useEffect(() => {
 		(async () => {
@@ -57,6 +64,7 @@ export default function AlbumScreen(props) {
 			FileSystem.documentDirectory + pictureDirName
 		);
 		// console.log(photoList)
+		dispatch(setPhotoList(photoList));
 		setPhotos(photoList);
 	};
 
@@ -177,10 +185,10 @@ export default function AlbumScreen(props) {
 			}}
 		>
 			<FlatList
-				data={photos}
+				data={reduxState.record.photoListState}
 				keyExtractor={(item) => item.id}
 				renderItem={({ item }) => <PhotoContainer item={item} />}
-				extraData={photos}
+				extraData={reduxState.record.photoListState}
 				numColumns={3}
 				key={"h"}
 			/>

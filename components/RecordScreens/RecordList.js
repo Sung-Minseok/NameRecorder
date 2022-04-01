@@ -107,7 +107,7 @@ export default function RecordList() {
         TouchableOpacity,
         {
           underlayColor: "BACKGROUND_COLOR",
-          onPress: () => _getRecordCount(),
+          onPressOut: () => _getRecordCount(),
         },
         React.createElement(
           View,

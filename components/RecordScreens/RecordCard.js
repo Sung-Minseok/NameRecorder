@@ -54,6 +54,68 @@ const RecordCard = (props) => {
   const dispatch = useDispatch();
   const reduxState = useSelector((state) => state);
 
+  useEffect(() => {
+    async function _getFileInfo() {
+      let name_arr = props.item.uri.split("/");
+      const name = name_arr[name_arr.length - 1];
+      const info = await FileSystem.getInfoAsync(
+        FileSystem.documentDirectory + DirName + name
+      );
+      const _date = new Date(info.modificationTime * 1000);
+      setFileDate(
+        _date.toISOString().split("T")[0] +
+        " " +
+        _date.toLocaleTimeString("en", { hour12: false }).slice(0, 5)
+      );
+      let size = (info.size / 1000000).toString();
+      setFileSize(size.slice(0, -4) + "Mb");
+      setFileName(decodeURI(name).slice(0, -4));
+      // setValue(fileName);
+      setFileDuration(_getMMSSFromMillis(props.item.durationMillis));
+      const uri = await FileSystem.documentDirectory + DirName + name
+      setFileUri(uri);
+      var storageList = await getItemFromAsync('abc')
+      if(storageList === null){
+        storageList = []
+      }
+      // console.log(decodeURI(name).slice(0, -4))
+      // console.log(storageList)
+      if(storageList.includes(decodeURI(name).slice(0, -4))){
+        console.log("uri : "+uri)
+        if (soundObj === null) {
+          const playbackObj = new Audio.Sound();
+          Audio.setAudioModeAsync({
+            allowsRecordingIOS: false,
+            interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_MIX_WITH_OTHERS,
+            playsInSilentModeIOS: true,
+            shouldDuckAndroid: true,
+            interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DUCK_OTHERS,
+            playThroughEarpieceAndroid: false,
+            staysActiveInBackground: true,
+            playThroughEarpieceAndroid: false,
+          });
+          await playbackObj.loadAsync(
+            { uri: uri },
+            { shouldPlay: true },
+            { isLooping: true }
+          );
+          await playbackObj.setVolumeAsync(volume < 0 ? 0 : volume / 10);
+          const status = await playbackObj.setIsLoopingAsync(true);
+          console.log("start playing");
+          return (
+            setPlaybackObj(playbackObj),
+            setSoundObj(status),
+            setSoundDuration(status.durationMillis),
+            setSoundPosition(2)
+          );
+        }
+      }
+    };
+
+    _getFileInfo();
+    _loadFont();
+  },[]);
+
   const _loadFont = async () => {
     await Font.loadAsync({
       SquareRound: require("../../assets/fonts/NanumSquareRound.otf"),
@@ -63,38 +125,14 @@ const RecordCard = (props) => {
     setIsFontLoading(true);
   };
 
-  const _getFileInfo = async () => {
-    let name_arr = props.item.uri.split("/");
-    const name = name_arr[name_arr.length - 1];
-    const info = await FileSystem.getInfoAsync(
-      FileSystem.documentDirectory + DirName + name
-    );
-    const _date = new Date(info.modificationTime * 1000);
-    setFileDate(
-      _date.toLocaleDateString("ko") +
-      " " +
-      _date.toLocaleTimeString("en", { hour12: false }).slice(0, 5)
-    );
-    let size = (info.size / 1000000).toString();
-    setFileSize(size.slice(0, -4) + "Mb");
-    setFileName(decodeURI(name).slice(0, -4));
-    // setValue(fileName);
-    setFileDuration(_getMMSSFromMillis(props.item.durationMillis));
-    setFileUri(FileSystem.documentDirectory + DirName + name);
-  };
-  useEffect(() => {
-    _getFileInfo();
-    _loadFont();
-    getItemFromAsync('abc').then((e)=>{console.log(e)})
-  });
+  
 
   const _playButtonPressed = async () => {
     var oldList = await getItemFromAsync('abc')
     if(oldList===null){
       oldList = []
     }
-    // await AsyncStorage.setItem('bbb', JSON.stringify(['aaa','bbbb','cccc']))
-    console.log(oldList)
+    // console.log(oldList)
     if (soundObj === null) {
       const playbackObj = new Audio.Sound();
       Audio.setAudioModeAsync({
@@ -298,11 +336,11 @@ const RecordCard = (props) => {
 
           }}
         >
-          <TouchableOpacity onPressOut={() => _playButtonPressed(props.item)}>
+          <TouchableOpacity onPress={() => _playButtonPressed(props.item)}>
             <View
               style={{
                 width: DEVICE_WIDTH * 0.18,
-                height: DEVICE_HEIGHT * 0.066,
+                height: DEVICE_HEIGHT * 0.07,
                 borderRadius: 5,
                 backgroundColor: soundObj === null ? "grey" : POINTCOLOR,
                 alignItems: "center",
@@ -382,7 +420,6 @@ const RecordCard = (props) => {
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              // borderWidth: 1,
               height: DEVICE_HEIGHT * 0.05,
               borderRadius: 5,
             }}
@@ -398,7 +435,7 @@ const RecordCard = (props) => {
               }}
             >
               <TouchableOpacity
-                onPressOut={() => _onPressDelete()}
+                onPress={() => _onPressDelete()}
                 style={styles.button}
               >
                 <Text
@@ -412,7 +449,7 @@ const RecordCard = (props) => {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPressOut={() => _onPressModify()}
+                onPress={() => _onPressModify()}
                 style={styles.button}
               >
                 <Text
@@ -457,7 +494,7 @@ const RecordCard = (props) => {
               </TouchableOpacity>
               <View
                 style={{
-                  // flex: 1,
+                  flex: 1.2,
                   alignSelf: "center",
                   justifyContent: "center",
                   margin: 5,
@@ -578,7 +615,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "grey",
     borderRadius: 7,
-    margin: 5,
+    marginRight: 5,
 
     // borderWidth: 1
   },

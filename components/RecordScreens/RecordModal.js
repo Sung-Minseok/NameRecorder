@@ -57,6 +57,7 @@ const RecordModal = (props) => {
         <View style={styles.modalContents}>
           <View style={styles.textInputContainer}>
             <TextInput
+              autoFocus={true}
               style={styles.textInput}
               onChangeText={(text) => {
                 var specialRule = /[`~!@#$%^&*|\\\'\";:\/?]/gi;

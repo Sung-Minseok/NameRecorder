@@ -351,19 +351,20 @@ class Recording extends React.Component {
   _saveButtonPressed() {
     const date = new Date();
     this.setState({
-      fileName:
-        date.getFullYear() +
-        "년" +
-        (date.getMonth() + 1) +
-        "월" +
-        date.getDate() +
-        "일 " +
-        date.getHours() +
-        "시" +
-        date.getMinutes() +
-        "분",
+      // fileName:
+      //   date.getFullYear() +
+      //   "년" +
+      //   (date.getMonth() + 1) +
+      //   "월" +
+      //   date.getDate() +
+      //   "일 " +
+      //   date.getHours() +
+      //   "시" +
+      //   date.getMinutes() +
+      //   "분",
+      fileName: "",
     });
-
+    
     this.setState({ modalVisible: true });
     console.log(this.state.fileName);
     if (this.recording === !null) {
@@ -384,7 +385,7 @@ class Recording extends React.Component {
     let fileNum = 0;
 
     if (this.state.fileName.trim() === "") {
-      return alert("파일 이름을 입력해주세요!");
+      return Alert.alert("경고","파일 이름을 입력해주세요!");
     }
 
     while (
@@ -947,7 +948,7 @@ class Recording extends React.Component {
           value={this.state.fileName}
           saveRecording={this._saveRecording.bind(this)}
         />
-      )
+      ),
     );
   }
 }

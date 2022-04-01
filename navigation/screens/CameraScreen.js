@@ -29,15 +29,15 @@ const renderScene2 = (props) => {
   // console.log(props)
   switch (props.route.key) {
     case "first":
-      return <FingerScreen {...props} />;
+      return <FlashScreen {...props} />;
     case "second":
-      return <FingerScreen {...props} />;
+      return <AlbumScreen {...props} />;
     default:
       return null;
   }
 };
 
-export default function FingerPrintScreen({ navigation }) {
+export default function CameraScreen({ navigation }) {
   //redux
   const dispatch = useDispatch();
   const reduxState = useSelector((state) => state);
@@ -45,7 +45,7 @@ export default function FingerPrintScreen({ navigation }) {
   const layout = useWindowDimensions();
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    { key: "first", title: "지문 등록" },
+    { key: "first", title: "돋보기/\n손전등" },
     { key: "second", title: "사진 확인" },
   ]);
   const [fontLoaded, setFontLoaded] = React.useState(false);
@@ -73,6 +73,14 @@ export default function FingerPrintScreen({ navigation }) {
   React.useEffect(() => {
     ensureDirExists();
     _loadFont();
+    navigation.addListener("focus", () => {
+      console.log("focus");
+      dispatch(setCameraLoad(true));
+    });
+    navigation.addListener("blur", () => {
+      console.log("blur");
+      dispatch(setCameraLoad(false));
+    });
   }, []);
   if (!fontLoaded) {
     return <View></View>;
@@ -84,6 +92,11 @@ export default function FingerPrintScreen({ navigation }) {
 	  swipeEnabled={false}
       onIndexChange={(idx) => {
         setIndex(idx);
+        if (idx === 0) {
+          dispatch(setCameraLoad(true));
+        } else {
+          dispatch(setCameraLoad(false));
+        }
       }}
       initialLayout={{ width: DEVICE_WIDTH }}
       renderTabBar={(props) => (

@@ -15,7 +15,9 @@ import {
     SET_RECORD_NUM,
     SetRecordNumAction,
     SET_CAMERA_LOAD,
-    SetCameraLoadAction
+    SetCameraLoadAction,
+    SET_PHOTO_LIST,
+    SetPhotoListAction,
 } from './record.type'
 
 
@@ -29,7 +31,8 @@ export const recordState: RecordState = {
     recordUsedCntState: 0,
     recordNumState: 10,
     currentUserState: "비회원",
-    cameraLoadState: false
+    cameraLoadState: false,
+    photoListState: [],
     
 };
 
@@ -91,6 +94,13 @@ export const setCameraLoad = (state: boolean): SetCameraLoadAction => {
     }
 }
 
+export const setPhotoList = (state: []): SetPhotoListAction => {
+    return{
+        type: SET_PHOTO_LIST,
+        photoListState: state
+    }
+}
+
 
 //reducer
 export const recordReducer = (state = recordState, action): RecordState => {
@@ -111,6 +121,8 @@ export const recordReducer = (state = recordState, action): RecordState => {
             return { ...state, currentUserState: action.currentUserState };
         case SET_CAMERA_LOAD:
             return { ...state, cameraLoadState: action.cameraLoadState };
+        case SET_PHOTO_LIST:
+            return { ...state, photoListState: action.photoListState };
         default:
             return state;
     }

@@ -101,6 +101,7 @@ export default function RecordScreen({ navigation }) {
       renderScene={renderScene2}
       onIndexChange={setIndex}
       initialLayout={{ width: layout.width }}
+      swipeEnabled={false}
       renderTabBar={(props) => (
         <TabBar
           {...props}

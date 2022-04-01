@@ -8,6 +8,7 @@ export interface RecordState {
     recordNumState : number | null;
     currentUserState : string | null;
     cameraLoadState: boolean | null;
+    photoListState: [] | null;
 }
 
 //action key type
@@ -19,6 +20,7 @@ export const SET_RECORD_USED_CNT = 'SET_RECORD_USED_CNT';
 export const SET_CURRENTUSER = 'SET_CURRENTUSER';
 export const SET_RECORD_NUM = 'SET_RECORD_NUM';
 export const SET_CAMERA_LOAD = 'SET_CAMERA_LOAD'
+export const SET_PHOTO_LIST = 'SET_PHOTO_LIST';
 
 //action type
 export interface SetRecordListAction {
@@ -60,4 +62,9 @@ export interface SetRecordNumAction{
 export interface SetCameraLoadAction {
     type: typeof SET_CAMERA_LOAD;
     cameraLoadState: boolean | null;
+}
+
+export interface SetPhotoListAction {
+    type: typeof SET_PHOTO_LIST;
+    photoListState: [] | null;
 }

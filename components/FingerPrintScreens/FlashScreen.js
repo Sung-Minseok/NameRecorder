@@ -15,6 +15,7 @@ import * as FileSystem from "expo-file-system";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
+import { setPhotoList } from "../../redux/record";
 
 const DEVICE_WIDTH = Dimensions.get("window").width;
 const DEVICE_HEIGHT = Dimensions.get("window").height - 70;
@@ -55,8 +56,17 @@ export default function LightScreen(props) {
 			from: photo.uri,
 			to: newURI
 		})
+    updatePhotoList();
 		Alert.alert("알림", "사진 저장완료")
 	  }
+  }
+
+  const updatePhotoList = async () => {
+    const photoList = await FileSystem.readDirectoryAsync(
+			FileSystem.documentDirectory + pictureDirName
+		);
+		// console.log(photoList)
+		dispatch(setPhotoList(photoList));
   }
 
 
