@@ -20,12 +20,10 @@ const Login = ({navigation}) => {
   useEffect(()=>{
       _getDynamicLink();
       const unsubscribe = auth.getAuth().onAuthStateChanged((authUser)=>{
-        //   console.log(authUser)
-          if(authUser) {
-            navigation.navigate("홈")
-          }
+          // if(!authUser.isAnonymous) {
+          //   navigation.navigate("홈")
+          // }
       });
-      
       return unsubscribe;
   }, [])
 
@@ -55,7 +53,6 @@ const Login = ({navigation}) => {
         }
         // navigation.navigate("회원가입");
       }
-      
     })
   }
 

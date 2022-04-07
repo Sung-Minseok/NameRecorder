@@ -2,7 +2,7 @@
   "expo": {
     "name": "자미원학당",
     "slug": "NameRecorder",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/jmw_icon.png",
     "splash": {
@@ -27,6 +27,7 @@
       "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
+      "versionCode": 2,
       "adaptiveIcon": {
         "foregroundImage": "./assets/jmw_adapted_icon.png",
         "backgroundColor": "#FFFFFF"

@@ -79,7 +79,6 @@ const ModifyUser = ({ navigation }) => {
           placeholder="아이디(이메일)"
           textContentType="name"
           value={email}
-          onChangeText={(text) => setEmail(text)}
         />
         {/* <Input
           placeholder="비밀번호"
@@ -87,12 +86,12 @@ const ModifyUser = ({ navigation }) => {
           value={password}
           onChangeText={(text) => setPassword(text)}
         /> */}
-        <Input
+        {/* <Input
           placeholder="전화번호"
           textContentType="telephoneNumber"
           value={phone}
           onChangeText={(text) => setPhone(text)}
-        />
+        /> */}
         <Input
           placeholder="생년월일(8자리 숫자)"
           textContentType="name"

@@ -18,6 +18,7 @@ import * as FileSystem from "expo-file-system";
 import * as Font from "expo-font";
 import * as Icons from "../Icons";
 import RecordModal from "./RecordModal";
+import RecordwayModal from "./RecordWayModal";
 import BlinkingText from "../BlinkingText";
 import * as actions from "../../redux/record";
 import { connect } from "react-redux";
@@ -161,6 +162,7 @@ class Recording extends React.Component {
       volume: 1.0,
       rate: 1.0,
       modalVisible: false,
+      wayMoadlVisible: false,
       fileName: "",
       animateValue: new Animated.Value(0),
       animateLoop: false,
@@ -364,7 +366,7 @@ class Recording extends React.Component {
       //   "분",
       fileName: "",
     });
-    
+
     this.setState({ modalVisible: true });
     console.log(this.state.fileName);
     if (this.recording === !null) {
@@ -414,9 +416,10 @@ class Recording extends React.Component {
     await FileSystem.copyAsync({
       from: this.recording.getURI(),
       to: newURI,
+    }).finally(()=>{
+      this.setState({ modalVisible: false });
+      this.props.jumpTo("first");
     });
-    this.setState({ modalVisible: false });
-    this.props.jumpTo("first");
   }
 
   async _createLink() {
@@ -777,20 +780,6 @@ class Recording extends React.Component {
                   </Text>
                 )
               )
-              // React.createElement(
-              //   TouchableHighlight,
-              //   {
-              //     underlayColor: BACKGROUND_COLOR,
-              //     style: styles.wrapper,
-              //     onPress: this._onStopPressed,
-              //     disabled:
-              //       !this.state.isPlaybackAllowed || this.state.isLoading,
-              //   },
-              //   React.createElement(Image, {
-              //     style: styles.image,
-              //     source: Icons.STOP_BUTTON.module,
-              //   })
-              // )
             )
           ),
           // 저장, 볼륨 버튼
@@ -860,7 +849,7 @@ class Recording extends React.Component {
                     if (storeRecordNum - storeRecordUsedCnt <= 0) {
                       return Alert.alert(
                         "녹음파일 부족",
-                        "녹음 가능한 파일 개수가 없습니다.\n 우측 상단의 [공유하기]버튼을 통해 녹음파일을 늘려주세요."
+                        "녹음 가능한 파일 개수가 없습니다.\n우측 상단의 [공유하기]버튼을 통해 녹음파일을 늘려주세요. \n\n공유된 링크를 통해 상대방이 어플 설치 후 실행을 완료하면 녹음가능한 파일 5개가 추가됩니다."
                       );
                     }
                     this._saveButtonPressed();
@@ -906,7 +895,7 @@ class Recording extends React.Component {
             top: DEVICE_HEIGHT * 0.09,
             left: 20,
           },
-          onPress: () => Alert.alert("알림", "업데이트 예정."),
+          onPress: () => this.setState({wayMoadlVisible: true}),
         },
         React.createElement(
           View,
@@ -947,6 +936,18 @@ class Recording extends React.Component {
           onChangeText={(text) => this.setState({ fileName: text })}
           value={this.state.fileName}
           saveRecording={this._saveRecording.bind(this)}
+        />
+      ),
+      React.createElement(
+        Modal,
+        {
+          visible: this.state.wayMoadlVisible,
+          useNativeDriver: true,
+          hideModalContentWhileAnimating: true,
+          transparent: false,
+        },
+        <RecordwayModal
+          onPressCancle={() => this.setState({ wayMoadlVisible: false })}
         />
       ),
     );

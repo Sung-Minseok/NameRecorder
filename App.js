@@ -6,8 +6,6 @@ import MainContainer from "./navigation/MainContainer";
 import { Provider as StoreProvider } from "react-redux";
 import store from "./redux/store";
 
-//firebase
-import Firebase from './Firebase';
 
 Text.defaultProps = Text.defaultProps || {};
 Text.defaultProps.allowFontScaling = false;
@@ -24,8 +22,6 @@ const height = Dimensions.get("window").height;
 // blueColor = "#2D89DF"
 // 터콰이즈 = "#0bcacc"
 function App() {
-  // console.log(Firebase)
-  
   return (
     <StoreProvider store={store}>
       <MainContainer />

@@ -24,6 +24,7 @@ import { setRecordList, setRecordUsedCnt } from "../../redux/record";
 
 import DeleteModal from "./RecordListDeleteModal.js";
 import ModifyModal from "./RecordListModifyModal.js";
+import LoadingModal from "./RecordLoadingModal.js";
 import { getItemFromAsync, setItemToAsync } from "../CustomFunctions";
 
 const DEVICE_WIDTH = Dimensions.get("window").width;
@@ -48,6 +49,7 @@ const RecordCard = (props) => {
   const [soundDuration, setSoundDuration] = useState(null);
   const [modifyModalVisible, setModifyModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
   const [value, setValue] = useState("");
   // const [fileNum, setFileNum] = useState(0);
   // const [modifyFileName, setModifyFileName] = useState("");
@@ -210,9 +212,10 @@ const RecordCard = (props) => {
     await FileSystem.moveAsync({
       from: fileUri,
       to: newURI,
-    });
-    _updateList();
-    setModifyModalVisible(false);
+    }).finally(()=>{
+      _updateList();
+      setModifyModalVisible(false);
+    })
     console.log("edit file name");
   };
 
@@ -229,9 +232,16 @@ const RecordCard = (props) => {
   };
 
   const _deleteFile = async () => {
-    await FileSystem.deleteAsync(fileUri);
-    _updateList();
     setDeleteModalVisible(false);
+    setModalVisible(true)
+    await FileSystem.deleteAsync(fileUri).finally(()=>{
+      setTimeout(()=>{
+        _updateList();
+        setModalVisible(false)
+      },2000)
+      
+      console.log("delete complete")
+    });
     console.log("delete file successfully");
   };
 
@@ -573,6 +583,9 @@ const RecordCard = (props) => {
           onChangeText={(text) => setValue(text)}
         />
       </Modal>
+      <Modal visible={modalVisible} transparent={true}>
+        <LoadingModal/>
+      </Modal>
     </View>
   );
 };
@@ -628,4 +641,15 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     // paddingRight: 10
   },
+  loadingModal : {
+    backgroundColor: 'white',
+    height: 40,
+    width : 100,
+    borderRadius: 5,
+    borderWidth: 2,
+    borderColor: GROUNDCOLOR,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
 });

@@ -42,7 +42,7 @@ const Register = ({ navigation }) => {
           db.setDoc(doc(db.getFirestore(), "users", user.uid), {
             email: user.email,
             name: name,
-            phoneNum: phone,
+            // phoneNum: phone,
             birth: birth,
             recordNum: docSnap.data().recordNum,
           });
@@ -55,7 +55,11 @@ const Register = ({ navigation }) => {
       })
       .catch((error) => {
         console.log("계정 연결 오류", error);
-        Alert.alert("회원가입 오류","아이디 형식(이메일)을 확인해주세요.")
+        if(error.toString().includes("email-already-in-use")){
+          Alert.alert("회원가입 오류","이미 존재하는 아이디(이메일)입니다.")
+        }else{
+          Alert.alert("회원가입 오류","아이디 형식(이메일)을 확인해주세요.")
+        }        
       });
   };
 
@@ -83,12 +87,12 @@ const Register = ({ navigation }) => {
           value={password}
           onChangeText={(text) => setPassword(text)}
         />
-        <Input
+        {/* <Input
           placeholder="전화번호"
           textContentType="telephoneNumber"
           value={phone}
           onChangeText={(text) => setPhone(text)}
-        />
+        /> */}
         <Input
           placeholder="생년월일(8자리 숫자)"
           textContentType="name"
