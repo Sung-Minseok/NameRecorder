@@ -268,7 +268,7 @@ export default function HomeScreen({ navigation }) {
 					</TouchableOpacity>
 					<TouchableOpacity
 						underlayColor={"transparent"}
-						onPress={() => Alert.alert("알림","추후 업데이트 에정")}
+						onPress={() => Alert.alert("알림","추후 업데이트 예정")}
 					>
 						<View style={styles.menuButton}>
 							<Text style={styles.menuText}>오늘의 운세</Text>
@@ -277,7 +277,7 @@ export default function HomeScreen({ navigation }) {
 					<TouchableOpacity
 						underlayColor={"transparent"}
 						// onPress={() => navigation.navigate("돋보기")}
-						onPress={() => Alert.alert("알림","추후 업데이트 에정")}
+						onPress={() => Alert.alert("알림","추후 업데이트 예정")}
 					>
 						<View style={styles.menuButton}>
 							<Text style={styles.menuText}>돋보기 & 손전등</Text>
@@ -285,8 +285,8 @@ export default function HomeScreen({ navigation }) {
 					</TouchableOpacity>
 					<TouchableOpacity
 						underlayColor={"transparent"}
-						// onPress={() => navigation.navigate("지문")}
-						onPress={() => Alert.alert("알림","추후 업데이트 에정")}
+						onPress={() => navigation.navigate("지문")}
+						// onPress={() => Alert.alert("알림","추후 업데이트 예정")}
 					>
 						<View style={styles.menuButton}>
 							<Text style={styles.menuText}>지문 등록</Text>
@@ -294,7 +294,7 @@ export default function HomeScreen({ navigation }) {
 					</TouchableOpacity>
 					<TouchableOpacity
 						underlayColor={"transparent"}
-						onPress={() => Alert.alert("알림","추후 업데이트 에정")}
+						onPress={() => Alert.alert("알림","추후 업데이트 예정")}
 					>
 						<View style={styles.menuButton}>
 							<Text style={styles.menuText}>성명학 상담신청</Text>
@@ -302,7 +302,7 @@ export default function HomeScreen({ navigation }) {
 					</TouchableOpacity>
 					<TouchableOpacity
 						underlayColor={"transparent"}
-						onPress={() => Alert.alert("알림","추후 업데이트 에정")}
+						onPress={() => Alert.alert("알림","추후 업데이트 예정")}
 					>
 						<View style={styles.menuButton}>
 							<Text style={styles.menuText}>
@@ -310,14 +310,6 @@ export default function HomeScreen({ navigation }) {
 							</Text>
 						</View>
 					</TouchableOpacity>
-					{/* <TouchableOpacity
-            underlayColor={"transparent"}
-            onPress={() => navigation.navigate("로그인")}
-          >
-            <View style={styles.menuButton}>
-              <Text style={styles.menuText}>로그인/회원가입</Text>
-            </View>
-          </TouchableOpacity> */}
 					<TouchableOpacity
 						underlayColor={"transparent"}
 						// onPress={() => _share()}
@@ -330,7 +322,8 @@ export default function HomeScreen({ navigation }) {
 				</View>
 				<TouchableOpacity
 					underlayColor={"transparent"}
-					onPress={() => Alert.alert("알림","추후 업데이트 에정")}
+					onPress={() => navigation.navigate("게시판")}
+					// onPress={() => Alert.alert("알림","추후 업데이트 예정")}
 					style={styles.menuButton2}
 				>
 					<View>

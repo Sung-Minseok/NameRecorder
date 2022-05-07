@@ -65,7 +65,7 @@ const ModifyUser = ({ navigation }) => {
 
   return (
     <View style={stlyes.container}>
-      <Text style={{ marginBottom: 50, fontSize: 20, fontWeight: "bold" }}>
+      <Text style={{ marginBottom: 50, fontSize: 24, fontWeight: "bold" }}>
         회원정보 수정
       </Text>
       <View style={stlyes.inputContainer}>
@@ -79,6 +79,7 @@ const ModifyUser = ({ navigation }) => {
           placeholder="아이디(이메일)"
           textContentType="name"
           value={email}
+          editable={false}
         />
         {/* <Input
           placeholder="비밀번호"
@@ -98,7 +99,7 @@ const ModifyUser = ({ navigation }) => {
           value={birth}
           onChangeText={(text) => setBirth(text)}
         />
-        <Text style={stlyes.uid}>회원ID : {uid}</Text>
+        <Text style={stlyes.uid}>회원UID : {uid}</Text>
 
         <Button raised onPress={() => updateInfo()} title="수정완료" />
       </View>

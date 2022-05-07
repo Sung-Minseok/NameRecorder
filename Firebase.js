@@ -2,6 +2,7 @@
 import * as firebase from "firebase/app";
 import * as firebaseAuth from 'firebase/auth';
 import * as firebaseDB from "firebase/firestore";
+import * as fireStorage from "firebase/storage";
 // import {getMessaging} from "firebase/messaging";
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -29,4 +30,5 @@ const firebaseConfig = {
 export default firebase.initializeApp(firebaseConfig);
 export const auth = firebaseAuth
 export const db = firebaseDB
+export const storage = fireStorage
 // export const msg = getMessaging(firebase.initializeApp(firebaseConfig));

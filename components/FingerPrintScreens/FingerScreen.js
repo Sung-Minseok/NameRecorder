@@ -12,12 +12,14 @@ import {
   Platform,
   FlatList,
 } from "react-native";
+import * as ImagePicker from "expo-image-picker"
+import { auth, db, storage } from "../../Firebase";
 
 import * as FileSystem from "expo-file-system";
 import { getStatusBarHeight } from "react-native-status-bar-height";
 import { Camera } from "expo-camera";
 import { useSelector } from "react-redux";
-const FingerDir = "fingerPrint/";
+const FingerDir = "fingerPrint2/";
 
 const DEVICE_WIDTH = Dimensions.get("window").width;
 const DEVICE_HEIGHT = Dimensions.get("window").height - 70;
@@ -48,6 +50,8 @@ export default function FingerPrintScreen(props) {
   const [right3, setRight3] = useState(null);
   const [right4, setRight4] = useState(null);
   const [right5, setRight5] = useState(null);
+  const [fingerCount, setFingerCount] = useState(0);
+  const [uid, setUid] = useState("");
 
   useEffect(() => {
     // console.log(props)
@@ -56,7 +60,9 @@ export default function FingerPrintScreen(props) {
       setHasPermission(status === "granted");
       ensureDirExists();
       getFingerUser();
-      getFingers();
+      getFingers("");
+      const u = await auth.getAuth().currentUser.uid;
+      setUid(u);
     })();
   }, []);
 
@@ -70,6 +76,112 @@ export default function FingerPrintScreen(props) {
       console.log("directory alreay exists");
     }
   };
+
+  const uploadFingerPrint = async () => {
+    const metadata = {
+      contentType: 'image/jpg',
+    };
+    const s = storage.getStorage();
+    for(var i=1; i<6; i++){
+      const picture = await FileSystem.getInfoAsync(
+        FileSystem.documentDirectory + FingerDir + encodeURI(currentName)+'/left'+i+'.jpg'
+      );
+      const file = await fetch(FileSystem.documentDirectory + FingerDir + encodeURI(currentName)+'/left'+i+'.jpg')
+      const sRef = storage.ref(s, uid+'/'+currentName+'/'+'left'+i+'.jpg')
+      // console.log(file)
+      const upload = storage.uploadBytes(sRef, file, metadata)
+    }
+    for(var i=1; i<6; i++){
+      const picture = await FileSystem.getInfoAsync(
+        FileSystem.documentDirectory + FingerDir + encodeURI(currentName)+'/right'+i+'.jpg'
+      );
+      // console.log(picture)
+      const sRef = storage.ref(s, uid+'/'+currentName+'/'+'right'+i+'.jpg')
+      const upload = storage.uploadBytes(sRef, picture.uri, metadata)
+    }
+    console.log('upload file complete')
+  }
+
+  const uploadPrint = async () => {
+    const metadata = {
+      contentType: 'image/jpg',
+    };
+    const s = storage.getStorage();
+    for(var i=1; i<6; i++){
+      const localPath = FileSystem.documentDirectory + FingerDir + encodeURI(currentName)+'/right'+i+'.jpg'
+      const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        resolve(xhr.response)
+      };
+      xhr.onerror = function(e) {
+        reject(new TypeError("Network request failed"));
+      }
+      xhr.responseType = "blob";
+      xhr.open("GET", localPath, true);
+      xhr.send(null);
+    })
+    const sRef = storage.ref(s, uid+'/'+currentName+'/'+'right'+i+'.jpg')
+    const upload = storage.uploadBytes(sRef, blob, metadata)
+    blob.close();
+    }
+    for(var i=1; i<6; i++){
+      const localPath = FileSystem.documentDirectory + FingerDir + encodeURI(currentName)+'/left'+i+'.jpg'
+      const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        resolve(xhr.response)
+      };
+      xhr.onerror = function(e) {
+        reject(new TypeError("Network request failed"));
+      }
+      xhr.responseType = "blob";
+      xhr.open("GET", localPath, true);
+      xhr.send(null);
+    })
+    const sRef = storage.ref(s, uid+'/'+currentName+'/'+'left'+i+'.jpg')
+    const upload = storage.uploadBytes(sRef, blob, metadata)
+    blob.close();
+    }
+    console.log('upload file complete')
+  }
+
+  const submitBoard = async () => {
+    const uid = auth.getAuth().currentUser.uid
+    let name = "";
+    const docRef = db.doc(
+      db.getFirestore(),
+      "users",
+      uid
+    );
+    const docSnap = await db.getDoc(docRef);
+    if (docSnap.exists()) {
+      console.log("Document data:", docSnap.data());
+      name = docSnap.data().name;
+    } else {
+      console.log("No such document!");
+      name="비회원"
+    }
+    
+    try {
+      await db.addDoc(db.collection(db.getFirestore(), "fingerprint"), {
+        check: false,
+        contents: '문의 내용',
+        date: '01/22',
+        reply: '',
+        replier: '',
+        birth: '',
+        title: currentName,
+        uid: uid,
+        user: name
+      });
+    } catch (error) {
+      console.log("DB error : "+error)
+    }
+    // Alert.alert("알림", "문의글 작성완료.")
+  }
+
+
   const getFingerUser = async () => {
     const users = await FileSystem.readDirectoryAsync(
       FileSystem.documentDirectory + FingerDir
@@ -82,12 +194,26 @@ export default function FingerPrintScreen(props) {
     setUserList(userlist);
   };
 
-  const getFingers = async () => {
+  const countFingerPrint = async (name) => {
+    const users = await FileSystem.readDirectoryAsync(
+      FileSystem.documentDirectory + FingerDir + encodeURI(name)
+    );
+    const fingerprint = await Promise.all(
+      users.map((e) => {
+        return e;
+      })
+    );
+    setFingerCount(fingerprint.length)
+    // const count = fingerprint.length
+    // return count;
+  };
+
+  const getFingers = async (currentName2) => {
     setLeft1(
       await FileSystem.getInfoAsync(
         FileSystem.documentDirectory +
           FingerDir +
-          encodeURI(currentName) +
+          encodeURI(currentName2) +
           "/" +
           "left1.jpg"
       )
@@ -96,7 +222,7 @@ export default function FingerPrintScreen(props) {
       await FileSystem.getInfoAsync(
         FileSystem.documentDirectory +
           FingerDir +
-          encodeURI(currentName) +
+          encodeURI(currentName2) +
           "/" +
           "left2.jpg"
       )
@@ -105,7 +231,7 @@ export default function FingerPrintScreen(props) {
       await FileSystem.getInfoAsync(
         FileSystem.documentDirectory +
           FingerDir +
-          encodeURI(currentName) +
+          encodeURI(currentName2) +
           "/" +
           "left3.jpg"
       )
@@ -114,7 +240,7 @@ export default function FingerPrintScreen(props) {
       await FileSystem.getInfoAsync(
         FileSystem.documentDirectory +
           FingerDir +
-          encodeURI(currentName) +
+          encodeURI(currentName2) +
           "/" +
           "left4.jpg"
       )
@@ -123,7 +249,7 @@ export default function FingerPrintScreen(props) {
       await FileSystem.getInfoAsync(
         FileSystem.documentDirectory +
           FingerDir +
-          encodeURI(currentName) +
+          encodeURI(currentName2) +
           "/" +
           "left5.jpg"
       )
@@ -132,7 +258,7 @@ export default function FingerPrintScreen(props) {
       await FileSystem.getInfoAsync(
         FileSystem.documentDirectory +
           FingerDir +
-          encodeURI(currentName) +
+          encodeURI(currentName2) +
           "/" +
           "right1.jpg"
       )
@@ -141,7 +267,7 @@ export default function FingerPrintScreen(props) {
       await FileSystem.getInfoAsync(
         FileSystem.documentDirectory +
           FingerDir +
-          encodeURI(currentName) +
+          encodeURI(currentName2) +
           "/" +
           "right2.jpg"
       )
@@ -150,7 +276,7 @@ export default function FingerPrintScreen(props) {
       await FileSystem.getInfoAsync(
         FileSystem.documentDirectory +
           FingerDir +
-          encodeURI(currentName) +
+          encodeURI(currentName2) +
           "/" +
           "right3.jpg"
       )
@@ -159,7 +285,7 @@ export default function FingerPrintScreen(props) {
       await FileSystem.getInfoAsync(
         FileSystem.documentDirectory +
           FingerDir +
-          encodeURI(currentName) +
+          encodeURI(currentName2) +
           "/" +
           "right4.jpg"
       )
@@ -168,7 +294,7 @@ export default function FingerPrintScreen(props) {
       await FileSystem.getInfoAsync(
         FileSystem.documentDirectory +
           FingerDir +
-          encodeURI(currentName) +
+          encodeURI(currentName2) +
           "/" +
           "right5.jpg"
       )
@@ -243,8 +369,8 @@ export default function FingerPrintScreen(props) {
           <TouchableOpacity
             onPress={() => {
               FileSystem.deleteAsync(URI);
-              getFingers();
-              Alert.alert("알림", "사진 삭제완료.");
+              getFingers(currentName);
+              // Alert.alert("알림", "사진 삭제완료.");
 			  setModalVisible(true)
               setPhotoModalVisible(false);
             }}
@@ -293,7 +419,8 @@ export default function FingerPrintScreen(props) {
 
   const snap = async () => {
     if (cam) {
-      const photo = await cam.takePictureAsync();
+      const options = { quality: 0.3}
+      const photo = await cam.takePictureAsync(options);
       const newURI =
         FileSystem.documentDirectory +
         FingerDir +
@@ -303,12 +430,13 @@ export default function FingerPrintScreen(props) {
         ".jpg";
       console.log(photo);
       console.log("new uri : " + newURI);
+      // await FileSystem.deleteAsync(newURI);
       await FileSystem.moveAsync({
         from: photo.uri,
         to: newURI,
       });
       // Alert.alert("알림", "사진 저장완료");
-      getFingers();
+      getFingers(currentName);
       setCameraModalVisible(false);
       setPhotoModalVisible(true);
     }
@@ -350,7 +478,7 @@ export default function FingerPrintScreen(props) {
               //Directory 삭제
               console.log("delete directory");
               await FileSystem.deleteAsync(
-                FileSystem.documentDirectory + FingerDir + currentName + "/"
+                FileSystem.documentDirectory + FingerDir + encodeURI(currentName) + "/"
               );
               getFingerUser();
               setModalVisible(false);
@@ -418,12 +546,22 @@ export default function FingerPrintScreen(props) {
         <TouchableOpacity
           underlayColor={"transparent"}
           onPress={() => {
-            getFingerUser();
-            setModalVisible(false);
+            countFingerPrint(currentName);
+            console.log(fingerCount)
+            if(fingerCount === 10){
+              // uploadFingerPrint();
+              uploadPrint();
+              // submitBoard();
+              getFingerUser();
+              setModalVisible(false);
+            }else{
+              Alert.alert("알림","10개의 지문을 모두 등록해주세요.")
+            }
+            
           }}
         >
           <View style={styles.menuButton}>
-            <Text style={styles.menuText}>저장하기</Text>
+            <Text style={styles.menuText}>상담등록</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -466,6 +604,9 @@ export default function FingerPrintScreen(props) {
               underlayColor={"transparent"}
               onPress={() => {
                 setCurrentName(item.item);
+                console.log(item.item)
+                getFingers(item.item);
+                countFingerPrint(item.item);
                 setModalVisible(true);
               }}
             >
@@ -491,7 +632,7 @@ export default function FingerPrintScreen(props) {
         visible={nameModlaVisible}
         transparent={true}
         useNativeDriver={true}
-        hideModalContentWhileAnimating={true}
+        // hideModalContentWhileAnimating={true}
       >
         <View style={styles.modalContainer2}>
           <View style={styles.modalCon2}>
@@ -536,6 +677,7 @@ export default function FingerPrintScreen(props) {
                           intermediates: true,
                         });
                         setNameModalVisible(false);
+                        getFingers(currentName);
                         setModalVisible(true);
                       }
                     }
@@ -581,7 +723,7 @@ export default function FingerPrintScreen(props) {
             <TouchableOpacity
               onPress={() => {
                 setCameraModalVisible(false);
-				setModalVisible(true)
+			        	setModalVisible(true)
               }}
             >
               <View

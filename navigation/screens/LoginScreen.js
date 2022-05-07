@@ -27,8 +27,6 @@ const POINTCOLOR = "#ff6781";
 
 //redux
 import { useDispatch, useSelector } from "react-redux";
-import { setExampleString } from "../../redux/record";
-import { set } from "react-native-reanimated";
 
 export default function LoginScreen({ navigation }) {
   const [init, setInit] = useState(false);

@@ -45,6 +45,7 @@ const Register = ({ navigation }) => {
             // phoneNum: phone,
             birth: birth,
             recordNum: docSnap.data().recordNum,
+            admin: 'user'
           });
         } catch (error) {
           console.log("DB Error : " + error);

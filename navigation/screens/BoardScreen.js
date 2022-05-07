@@ -12,14 +12,11 @@ import * as Font from "expo-font";
 
 // import TabBar from "../TabBar";
 //routes
-import FlashScreen from "../../components/FingerPrintScreens/FlashScreen";
-import AlbumScreen from "../../components/FingerPrintScreens/AlbumScreen";
-import FingerScreen from "../../components/FingerPrintScreens/FingerScreen";
-import FingerBoardScreen from "../../components/FingerPrintScreens/FingerBoardScreen";
+import MyBoardScreen from "../../components/BoardScreens/MyBoardScreen";
+import BoardMainScreen from "../../components/BoardScreens/BoardMainScreen";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
-import { setCameraLoad } from "../../redux/record";
 
 const GROUNDCOLOR = "#0bcacc";
 const POINTCOLOR = "#ff6781";
@@ -30,15 +27,15 @@ const renderScene2 = (props) => {
   // console.log(props)
   switch (props.route.key) {
     case "first":
-      return <FingerScreen {...props} />;
+      return <BoardMainScreen {...props} />;
     case "second":
-      return <FingerBoardScreen {...props} />;
+      return <MyBoardScreen {...props} />;
     default:
       return null;
   }
 };
 
-export default function FingerPrintScreen({ navigation }) {
+export default function BoardScreen({ navigation }) {
   //redux
   const dispatch = useDispatch();
   const reduxState = useSelector((state) => state);
@@ -46,8 +43,8 @@ export default function FingerPrintScreen({ navigation }) {
   const layout = useWindowDimensions();
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    { key: "first", title: "지문 등록" },
-    { key: "second", title: "상담 신청내역" },
+    { key: "first", title: "문의하기" },
+    { key: "second", title: "내 문의글" },
   ]);
   const [fontLoaded, setFontLoaded] = React.useState(false);
 
@@ -60,19 +57,8 @@ export default function FingerPrintScreen({ navigation }) {
     setFontLoaded(true);
   };
 
-  const ensureDirExists = async () => {
-    const dir = FileSystem.documentDirectory + DirName;
-    const dirInfo = await FileSystem.getInfoAsync(dir);
-    if (!dirInfo.exists) {
-      console.log("directory doesn't exist, creating...");
-      await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
-    } else {
-      console.log("directory alreay exists");
-    }
-  };
 
   React.useEffect(() => {
-    ensureDirExists();
     _loadFont();
   }, []);
   if (!fontLoaded) {
