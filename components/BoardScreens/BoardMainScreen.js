@@ -52,28 +52,34 @@ export default function BoardMainScreen(props) {
     const docSnap = await db.getDoc(docRef);
     if (docSnap.exists()) {
       console.log("Document data:", docSnap.data());
-      name = docSnap.data().name;
-    } else {
-      console.log("No such document!");
-      name="비회원"
+      if (docSnap.data().name === undefined) {
+				name = "비회원";
+			} else {
+				name = docSnap.data().name;
+			}
     }
-    
     try {
+      let now = Date.now()
       await db.addDoc(db.collection(db.getFirestore(), "board"), {
         check: false,
         contents: contents,
-        date: '01/22',
+        date: now,
         reply: '',
         title: title,
         uid: uid,
-        user: name
+        user: name,
+        replier_name: "",
+        replier_uid: "",
       });
     } catch (error) {
       console.log("DB error : "+error)
     }
+    setContents("")
+    setTitle("")
     Alert.alert("알림", "문의글 작성완료.")
   }
 
+ 
 
   return (
     <View

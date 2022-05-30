@@ -45,7 +45,8 @@ const Register = ({ navigation }) => {
             // phoneNum: phone,
             birth: birth,
             recordNum: docSnap.data().recordNum,
-            admin: 'user'
+            admin: 'user',
+            uid: user.uid
           });
         } catch (error) {
           console.log("DB Error : " + error);
@@ -59,7 +60,7 @@ const Register = ({ navigation }) => {
         if(error.toString().includes("email-already-in-use")){
           Alert.alert("회원가입 오류","이미 존재하는 아이디(이메일)입니다.")
         }else{
-          Alert.alert("회원가입 오류","아이디 형식(이메일)을 확인해주세요.")
+          Alert.alert("회원가입 오류","아이디(이메일) 또는 비밀번호 형식을 확인해주세요.")
         }        
       });
   };
@@ -83,7 +84,7 @@ const Register = ({ navigation }) => {
           onChangeText={(text) => setEmail(text)}
         />
         <Input
-          placeholder="비밀번호"
+          placeholder="비밀번호(6자리 이상)"
           textContentType="password"
           value={password}
           onChangeText={(text) => setPassword(text)}

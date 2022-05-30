@@ -241,7 +241,7 @@ export default function HomeScreen({ navigation }) {
 					</Text>
 					{auth.getAuth()?.currentUser?.isAnonymous ? (
 						<TouchableOpacity
-							onPress={() => navigation.navigate("로그인")}
+							onPressOut={() => navigation.navigate("로그인")}
 						>
 							<View style={styles.userButton}>
 								<Text style={styles.menuText2}>회원가입</Text>
@@ -249,7 +249,7 @@ export default function HomeScreen({ navigation }) {
 						</TouchableOpacity>
 					) : (
 						<TouchableOpacity
-							onPress={() => navigation.navigate("회원정보")}
+							onPressOut={() => navigation.navigate("회원정보")}
 						>
 							<View style={styles.userButton}>
 								<Text style={styles.menuText2}>회원정보</Text>
@@ -268,7 +268,7 @@ export default function HomeScreen({ navigation }) {
 					</TouchableOpacity>
 					<TouchableOpacity
 						underlayColor={"transparent"}
-						onPress={() => Alert.alert("알림","추후 업데이트 예정")}
+						onPress={() => navigation.navigate("운세")}
 					>
 						<View style={styles.menuButton}>
 							<Text style={styles.menuText}>오늘의 운세</Text>
@@ -276,8 +276,7 @@ export default function HomeScreen({ navigation }) {
 					</TouchableOpacity>
 					<TouchableOpacity
 						underlayColor={"transparent"}
-						// onPress={() => navigation.navigate("돋보기")}
-						onPress={() => Alert.alert("알림","추후 업데이트 예정")}
+						onPress={() => navigation.navigate("돋보기")}
 					>
 						<View style={styles.menuButton}>
 							<Text style={styles.menuText}>돋보기 & 손전등</Text>
@@ -285,16 +284,17 @@ export default function HomeScreen({ navigation }) {
 					</TouchableOpacity>
 					<TouchableOpacity
 						underlayColor={"transparent"}
-						onPress={() => navigation.navigate("지문")}
-						// onPress={() => Alert.alert("알림","추후 업데이트 예정")}
+						onPress={() =>
+							navigation.navigate("지문")
+						}
 					>
 						<View style={styles.menuButton}>
-							<Text style={styles.menuText}>지문 등록</Text>
+							<Text style={styles.menuText}>지문 적성검사 등록</Text>
 						</View>
 					</TouchableOpacity>
 					<TouchableOpacity
 						underlayColor={"transparent"}
-						onPress={() => Alert.alert("알림","추후 업데이트 예정")}
+						onPress={() => Alert.alert("추후 업데이트")}
 					>
 						<View style={styles.menuButton}>
 							<Text style={styles.menuText}>성명학 상담신청</Text>
@@ -302,7 +302,7 @@ export default function HomeScreen({ navigation }) {
 					</TouchableOpacity>
 					<TouchableOpacity
 						underlayColor={"transparent"}
-						onPress={() => Alert.alert("알림","추후 업데이트 예정")}
+						onPress={() => Alert.alert("추후 업데이트")}
 					>
 						<View style={styles.menuButton}>
 							<Text style={styles.menuText}>
@@ -322,12 +322,24 @@ export default function HomeScreen({ navigation }) {
 				</View>
 				<TouchableOpacity
 					underlayColor={"transparent"}
-					onPress={() => navigation.navigate("게시판")}
-					// onPress={() => Alert.alert("알림","추후 업데이트 예정")}
+					onPress={() => {
+						navigation.navigate("게시판")
+					}}
 					style={styles.menuButton2}
 				>
 					<View>
 						<Text style={styles.menuText2}>문의 하기</Text>
+					</View>
+				</TouchableOpacity>
+				<TouchableOpacity
+					underlayColor={"transparent"}
+					onPress={() => {
+						navigation.navigate("관리자페이지");
+					}}
+					style={styles.menuButton3}
+				>
+					<View>
+						<Text style={styles.menuText3}>관리자 메뉴</Text>
 					</View>
 				</TouchableOpacity>
 			</View>
@@ -389,6 +401,20 @@ const styles = StyleSheet.create({
 		bottom: 0,
 		right: 0,
 	},
+	menuButton3: {
+		backgroundColor: "grey",
+		height: DEVICE_HEIGHT * 0.06,
+		width: DEVICE_WIDTH * 0.4,
+		borderWidth: 2,
+		borderColor: 'grey',
+		borderRadius: 10,
+		alignItems: "center",
+		justifyContent: "center",
+		margin: 10,
+		position: "absolute",
+		bottom: 0,
+		left: 0,
+	},
 	menuText: {
 		fontSize: 20,
 		color: "white",
@@ -398,6 +424,12 @@ const styles = StyleSheet.create({
 	menuText2: {
 		fontSize: 20,
 		color: "black",
+		fontFamily: "SquareRound",
+		fontWeight: "bold",
+	},
+	menuText3: {
+		fontSize: 20,
+		color: "white",
 		fontFamily: "SquareRound",
 		fontWeight: "bold",
 	},

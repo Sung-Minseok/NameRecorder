@@ -7,7 +7,9 @@ import HomeScreen from "./screens/HomeScreen";
 import RecordScreen from "./screens/RecordScreen";
 import CameraScreen from "./screens/CameraScreen";
 import FingerPrintScreen from "./screens/FingerPrintScreen";
-import BoardScreen from "./screens/BoardScreen"
+import BoardScreen from "./screens/BoardScreen";
+import AdminScreen from "./screens/AdminScreen";
+import FortuneScreen from "./screens/FortuneScreen";
 // import Login from "./screens/LoginScreen";
 import TabBar from "./TabBar";
 import Header from "./Header";
@@ -31,6 +33,8 @@ const FingerPrintName = "지문";
 const LoginName = "로그인";
 const RegisterName = "회원가입";
 const ModifyUserName = "회원정보";
+const AdminName = "관리자페이지";
+const FortuneName = "운세"
 
 const Tab = createBottomTabNavigator();
 
@@ -70,6 +74,8 @@ export default function MainContainer() {
           <Tab.Screen name={RegisterName} component={Register} />
           <Tab.Screen name={ModifyUserName} component={ModifyUser} />
           <Tab.Screen name={boardName} component={BoardScreen} />
+          <Tab.Screen name={AdminName} component={AdminScreen} />
+          <Tab.Screen name={FortuneName} component={FortuneScreen} />
         </Tab.Navigator>
       </NavigationContainer>
     </View>

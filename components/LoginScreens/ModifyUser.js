@@ -58,7 +58,6 @@ const ModifyUser = ({ navigation }) => {
     }
     setEmail(docSnap.data().email)
     setName(docSnap.data().name)
-    setPhone(docSnap.data().phoneNum)
     setBirth(docSnap.data().birth)
     setUid(uid)
   }

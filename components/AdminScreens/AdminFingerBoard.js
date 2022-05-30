@@ -25,7 +25,7 @@ const GROUNDCOLOR = "#0bcacc";
 const POINTCOLOR = "#ff6781";
 const BACKGROUNDCOLOR = "#F4ECE6";
 
-export default function FingerBoardScreen(props) {
+export default function AdminFingerBoard(props) {
 	useEffect(() => {
 		(async () => {
 			getPhoto();
@@ -35,9 +35,9 @@ export default function FingerBoardScreen(props) {
 	const [modalVisible, setModalVisible] = useState(false);
 
 	const Item = ({ item }) => {
-		let date_before = new Date(item.date);
+        let date_before = new Date(item.date);
 		let date = date_before.getMonth() + 1 + "/" + date_before.getDate();
-		return(
+        return(
 		<TouchableOpacity
 			onPress={() => {
 				setBoardItem(item);
@@ -92,6 +92,25 @@ export default function FingerBoardScreen(props) {
 						{date}
 					</Text>
 				</View>
+                <View
+						style={{
+                            borderRightWidth: 1,
+							flex: 1,
+							justifyContent: "center",
+							alignItems: "center",
+							height: 40,
+						}}
+					>
+						<Text
+							style={{
+								fontSize: 18,
+								fontWeight: "500",
+								color: item.replier_uid === "" ? "black" : "blue",
+							}}
+						>
+							{item.replier_uid === "" ? "미정" : "완료"}
+						</Text>
+					</View>
 				<View
 					style={{
 						flex: 1,
@@ -255,7 +274,7 @@ export default function FingerBoardScreen(props) {
 		const uid = auth.getAuth().currentUser.uid;
 		setUserUID(uid);
 		const boardRef = collection(db.getFirestore(), "fingerprint");
-		const q = query(boardRef, where("uid", "==", uid),orderBy("date", "desc"));
+		const q = query(boardRef,orderBy("date", "desc"));
 		const querySnapshot = await db.getDocs(q);
 		let list = [];
 		querySnapshot.forEach((doc) => {
@@ -382,6 +401,19 @@ export default function FingerBoardScreen(props) {
 					>
 						<Text style={{ fontSize: 18, fontWeight: "bold" }}>
 							작성일
+						</Text>
+					</View>
+                    <View
+						style={{
+							borderRightWidth: 2,
+							flex: 1,
+							justifyContent: "center",
+							alignItems: "center",
+							height: 40,
+						}}
+					>
+						<Text style={{ fontSize: 18, fontWeight: "bold" }}>
+							배정
 						</Text>
 					</View>
 					<View

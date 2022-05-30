@@ -25,7 +25,7 @@ const GROUNDCOLOR = "#0bcacc";
 const POINTCOLOR = "#ff6781";
 const BACKGROUNDCOLOR = "#F4ECE6";
 
-export default function FingerBoardScreen(props) {
+export default function AdminUser(props) {
 	useEffect(() => {
 		(async () => {
 			getPhoto();
@@ -35,84 +35,75 @@ export default function FingerBoardScreen(props) {
 	const [modalVisible, setModalVisible] = useState(false);
 
 	const Item = ({ item }) => {
-		let date_before = new Date(item.date);
-		let date = date_before.getMonth() + 1 + "/" + date_before.getDate();
-		return(
-		<TouchableOpacity
-			onPress={() => {
-				setBoardItem(item);
-				// console.log(boardItem)
-				getPhoto();
-				setModalVisible(true);
-			}}
-		>
-			<View
-				style={{
-					borderBottomWidth: 1,
-					height: 40,
-					flexDirection: "row",
-					justifyContent: "center",
-					alignItems: "center",
+		return (
+			<TouchableOpacity
+				onPress={() => {
+					setBoardItem(item);
+					setModalVisible(true);
 				}}
 			>
-				{/* <View
-          style={{
-            borderRightWidth: 1,
-            flex: 0.75,
-            justifyContent: "center",
-            alignItems: "center",
-            height: 40,
-          }}
-        >
-          <Text style={{ fontSize: 18, fontWeight: "500" }}>{"번호"}</Text>
-        </View> */}
 				<View
 					style={{
-						borderRightWidth: 1,
-						flex: 3,
+						borderBottomWidth: 1,
+						height: 40,
+						flexDirection: "row",
 						justifyContent: "center",
 						alignItems: "center",
-						height: 40,
 					}}
 				>
-					<Text style={{ fontSize: 18, fontWeight: "500" }}>
-						{item.title}
-					</Text>
-				</View>
-				<View
-					style={{
-						borderRightWidth: 1,
-						flex: 1,
-						justifyContent: "center",
-						alignItems: "center",
-						height: 40,
-					}}
-				>
-					<Text style={{ fontSize: 18, fontWeight: "500" }}>
-						{date}
-					</Text>
-				</View>
-				<View
-					style={{
-						flex: 1,
-						justifyContent: "center",
-						alignItems: "center",
-						height: 40,
-					}}
-				>
-					<Text
+					<View
 						style={{
-							fontSize: 18,
-							fontWeight: "500",
-							color: item.check === false ? "black" : "blue",
+							borderRightWidth: 1,
+							flex: 1.5,
+							justifyContent: "center",
+							alignItems: "center",
+							height: 40,
 						}}
 					>
-						{item.check === false ? "대기중" : "답변완료"}
-					</Text>
+						<Text style={{ fontSize: 18, fontWeight: "500" }}>
+							{item.name}
+						</Text>
+					</View>
+					<View
+						style={{
+							borderRightWidth: 1,
+							flex: 3,
+							justifyContent: "center",
+							alignItems: "center",
+							height: 40,
+						}}
+					>
+						<Text
+							style={{
+								fontSize: 18,
+								fontWeight: "500",
+							}}
+						>
+							{item.email}
+						</Text>
+					</View>
+					<View
+						style={{
+							flex: 1,
+							justifyContent: "center",
+							alignItems: "center",
+							height: 40,
+						}}
+					>
+						<Text
+							style={{
+								fontSize: 18,
+								fontWeight: "500",
+								color: item.admin === 0 ? "blue" : item.admin === 1 ? "green" : "black",
+							}}
+						>
+							{item.admin}
+						</Text>
+					</View>
 				</View>
-			</View>
-		</TouchableOpacity>
-	);}
+			</TouchableOpacity>
+		);
+	};
 
 	const BoardModal = () => {
 		// getPhoto();
@@ -171,72 +162,18 @@ export default function FingerBoardScreen(props) {
 								fontWeight: "bold",
 								alignItems: "flex-start",
 								alignSelf: "flex-start",
-                // width: DEVICE_WIDTH-20,
+								// width: DEVICE_WIDTH-20,
 								borderBottomWidth: 1.5,
 								borderBottomColor: "grey",
 							}}
 						>
 							{"상담 고객명"}
 						</Text>
-						<Text style={{ fontSize: 18 }}>{boardItem.title}</Text>
-						<Text
-							style={{
-								fontSize: 20,
-								fontWeight: "bold",
-								alignItems: "flex-start",
-								justifyContent: "center",
-                // width: DEVICE_WIDTH-20,
-								borderBottomWidth: 1.5,
-								borderBottomColor: "grey",
-							}}
-						>
-							{"별도 문의사항"}
-						</Text>
-						<Text style={{ fontSize: 18 }}>
-							{boardItem.contents == ""
-								? "없음"
-								: boardItem.contents}
-						</Text>
 					</View>
-					<View
-						style={{
-							borderTopWidth: 2,
-              borderColor:'grey',
-							flexDirection: "row",
-							width: DEVICE_WIDTH,
-							justifyContent: "space-around",
-							alignItems: "center",
-							marginTop: 20,
-						}}
-					>
-						<Text style={{ fontSize: 18, fontWeight:'bold' }}>왼손</Text>
-						<Text style={{ fontSize: 18, fontWeight:'bold' }}>오른손</Text>
-					</View>
-					<FlatList
-						data={photoList}
-						extraData={photoList}
-						renderItem={renderItem2}
-						keyExtractor={(item) => item}
-						numColumns={2}
-					/>
 				</View>
 			</View>
 		);
 	};
-	const Item2 = ({ url }) => (
-		<View>
-			<Image
-				style={{
-					width: DEVICE_WIDTH * 0.45,
-					height: DEVICE_WIDTH * 0.6,
-					margin: 5,
-				}}
-				source={{ uri: url }}
-			/>
-			{/* <Text>{'sss'}</Text> */}
-		</View>
-	);
-	const renderItem2 = ({ item }) => <Item2 url={item} />;
 
 	const OS = Platform.OS;
 	const reduxState = useSelector((state) => state);
@@ -254,8 +191,11 @@ export default function FingerBoardScreen(props) {
 	const getInfo = async () => {
 		const uid = auth.getAuth().currentUser.uid;
 		setUserUID(uid);
-		const boardRef = collection(db.getFirestore(), "fingerprint");
-		const q = query(boardRef, where("uid", "==", uid),orderBy("date", "desc"));
+		const boardRef = collection(db.getFirestore(), "users");
+		const q = query(
+			boardRef,
+			orderBy("admin", "desc")
+		);
 		const querySnapshot = await db.getDocs(q);
 		let list = [];
 		querySnapshot.forEach((doc) => {
@@ -265,7 +205,7 @@ export default function FingerBoardScreen(props) {
 		});
 		setBoardList(list);
 	};
-	
+
 	const getPhoto = async () => {
 		// const uid = auth.getAuth().currentUser.uid;
 		const s = storage.getStorage();
@@ -361,6 +301,19 @@ export default function FingerBoardScreen(props) {
 					<View
 						style={{
 							borderRightWidth: 2,
+							flex: 1.5,
+							justifyContent: "center",
+							alignItems: "center",
+							height: 40,
+						}}
+					>
+						<Text style={{ fontSize: 18, fontWeight: "bold" }}>
+							회원명
+						</Text>
+					</View>
+					<View
+						style={{
+							borderRightWidth: 2,
 							flex: 3,
 							justifyContent: "center",
 							alignItems: "center",
@@ -368,20 +321,7 @@ export default function FingerBoardScreen(props) {
 						}}
 					>
 						<Text style={{ fontSize: 18, fontWeight: "bold" }}>
-							상담 고객명
-						</Text>
-					</View>
-					<View
-						style={{
-							borderRightWidth: 2,
-							flex: 1,
-							justifyContent: "center",
-							alignItems: "center",
-							height: 40,
-						}}
-					>
-						<Text style={{ fontSize: 18, fontWeight: "bold" }}>
-							작성일
+							아이디
 						</Text>
 					</View>
 					<View
@@ -393,7 +333,7 @@ export default function FingerBoardScreen(props) {
 						}}
 					>
 						<Text style={{ fontSize: 18, fontWeight: "bold" }}>
-							답변
+							등급
 						</Text>
 					</View>
 				</View>
@@ -404,10 +344,7 @@ export default function FingerBoardScreen(props) {
 					extraData={boardList}
 				/>
 			</View>
-			<Modal 
-        visible={modalVisible}
-        onShow={()=>getPhoto()}
-      >
+			<Modal visible={modalVisible} onShow={() => getPhoto()}>
 				<BoardModal />
 			</Modal>
 		</View>
