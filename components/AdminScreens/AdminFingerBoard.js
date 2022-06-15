@@ -1,3 +1,5 @@
+//22-06-15
+
 import React, { useEffect, useState } from "react";
 import {
 	View,
@@ -266,7 +268,7 @@ export default function AdminFingerBoard(props) {
 	useEffect(() => {
 		// console.log(props)
 		getInfo();
-	}, []);
+	}, []); 
 
 	const renderItem = ({ item }) => <Item item={item} />;
 
