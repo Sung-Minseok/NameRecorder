@@ -1,5 +1,5 @@
 Arguments: 
-  /Users/minseok/.nvm/versions/node/v16.13.1/bin/node /usr/local/Cellar/yarn/1.22.17_2/libexec/bin/yarn.js add firebase/messaging/sw
+  /Users/minseok/.nvm/versions/node/v16.13.1/bin/node /usr/local/Cellar/yarn/1.22.17_2/libexec/bin/yarn.js add expo-file-system@~13.1.4
 
 PATH: 
   /Users/minseok/.nvm/versions/node/v16.13.1/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/VMware Fusion.app/Contents/Public:/opt/X11/bin:/Library/Apple/usr/bin:/Applications/Visual Studio Code.app/Contents/Resources/app/bin
@@ -14,17 +14,7 @@ Platform:
   darwin x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/firebase%2fmessaging/sw: Request "https://registry.yarnpkg.com/firebase%2fmessaging/sw" returned a 405
-      at Request.params.callback [as _callback] (/usr/local/Cellar/yarn/1.22.17_2/libexec/lib/cli.js:67038:18)
-      at Request.self.callback (/usr/local/Cellar/yarn/1.22.17_2/libexec/lib/cli.js:140883:22)
-      at Request.emit (node:events:390:28)
-      at Request.<anonymous> (/usr/local/Cellar/yarn/1.22.17_2/libexec/lib/cli.js:141855:10)
-      at Request.emit (node:events:390:28)
-      at IncomingMessage.<anonymous> (/usr/local/Cellar/yarn/1.22.17_2/libexec/lib/cli.js:141777:12)
-      at Object.onceWrapper (node:events:509:28)
-      at IncomingMessage.emit (node:events:402:35)
-      at endReadableNT (node:internal/streams/readable:1343:12)
-      at processTicksAndRejections (node:internal/process/task_queues:83:21)
+  Error: EACCES: permission denied, unlink '/Users/minseok/Projects/ReactNativeWorkspace/NameRecorder/node_modules/.yarn-integrity'
 
 npm manifest: 
   {
@@ -57,6 +47,7 @@ npm manifest:
       "expo-file-system": "~13.1.4",
       "expo-firebase-links": "^2.0.0",
       "expo-font": "^10.0.4",
+      "expo-image-picker": "~12.0.1",
       "expo-media-library": "~14.0.0",
       "expo-permissions": "~13.1.0",
       "expo-status-bar": "~1.2.0",
@@ -5536,6 +5527,14 @@ Lockfile:
     integrity sha512-ieEsT6tD6yD6qT7WUzzJ5el0UvACr53RqICu0GI9GUiWuwDFPM2Oi5WfWwYFFStCRuaP6kEtpkJDUZ9cjT5F+w==
     dependencies:
       fontfaceobserver "^2.1.0"
+  
+  expo-image-picker@~12.0.1:
+    version "12.0.2"
+    resolved "https://registry.yarnpkg.com/expo-image-picker/-/expo-image-picker-12.0.2.tgz#4789c5419208ff8ede557784368a7f18f3878c30"
+    integrity sha512-rAoNGtofV5cg3UN+cdIGDVfbMvbutBX6uNV7jCIEw/WZxZlbW+R7HC8l5lGDFtoLVqcpkHE/6JpAXvESxVSAOA==
+    dependencies:
+      "@expo/config-plugins" "^4.0.2"
+      uuid "7.0.2"
   
   expo-json-utils@~0.2.0:
     version "0.2.1"
@@ -12246,6 +12245,11 @@ Lockfile:
     version "1.0.1"
     resolved "https://registry.npmjs.org/utils-merge/-/utils-merge-1.0.1.tgz"
     integrity sha1-n5VxD1CiZ5R7LMwSR0HBAoQn5xM=
+  
+  uuid@7.0.2:
+    version "7.0.2"
+    resolved "https://registry.yarnpkg.com/uuid/-/uuid-7.0.2.tgz#7ff5c203467e91f5e0d85cfcbaaf7d2ebbca9be6"
+    integrity sha512-vy9V/+pKG+5ZTYKf+VcphF5Oc6EFiu3W8Nv3P3zIh0EqVI80ZxOzuPfe9EHjkFNvf8+xuTHVeei4Drydlx4zjw==
   
   uuid@^3.1.0, uuid@^3.3.2, uuid@^3.4.0:
     version "3.4.0"
