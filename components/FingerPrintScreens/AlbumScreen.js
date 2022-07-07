@@ -175,7 +175,7 @@ export default function AlbumScreen(props) {
 		<View
 			style={{
 				flex: 1,
-				alignItems: "center",
+				// alignItems: "center",
 				justifyContent: "flex-start",
 				flexDirection: "column",
 				backgroundColor: "white",

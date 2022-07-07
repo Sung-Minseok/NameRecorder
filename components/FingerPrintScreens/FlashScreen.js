@@ -7,22 +7,23 @@ import {
 	Dimensions,
 	TouchableOpacity,
 	Platform,
-	Alert
+	Alert,
 } from "react-native";
 import { Camera } from "expo-camera";
-import * as MediaLibrary from "expo-media-library"
+import * as MediaLibrary from "expo-media-library";
 import * as FileSystem from "expo-file-system";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
 import { setPhotoList } from "../../redux/record";
+import { Image } from "react-native-elements";
 
 const DEVICE_WIDTH = Dimensions.get("window").width;
 const DEVICE_HEIGHT = Dimensions.get("window").height - 70;
 const GROUNDCOLOR = "#0bcacc";
 const POINTCOLOR = "#ff6781";
 
-const pictureDirName = "expopTest1/" 
+const pictureDirName = "expopTest1/";
 
 export default function LightScreen(props) {
 	//redux
@@ -32,43 +33,45 @@ export default function LightScreen(props) {
 	const [hasPermission, setHasPermission] = useState(null);
 	const [type, setType] = useState(Camera.Constants.Type.back);
 	const [flash, setFlash] = useState(Camera.Constants.FlashMode.torch);
- 	const [cam, setCam] = useState(null);
+	const [cam, setCam] = useState(null);
 	const OS = Platform.OS;
 
 	useEffect(() => {
 		(async () => {
 			const { status } = await Camera.requestCameraPermissionsAsync();
-			const res = await MediaLibrary.requestPermissionsAsync()
+			const res = await MediaLibrary.requestPermissionsAsync();
 			setHasPermission(status === "granted" || res.granted);
 		})();
 	}, []);
 
-  const snap = async () => {
-	  if(cam){
-		const photo = await cam.takePictureAsync();
-		let fileName_arr = photo.uri.split("/");
-		const fileName = fileName_arr[fileName_arr.length-1]
-		const newURI = FileSystem.documentDirectory+pictureDirName+encodeURI(fileName)
-		console.log(photo)
-		// console.log(fileName)
-		console.log("new uri : "+newURI)
-		await FileSystem.copyAsync({
-			from: photo.uri,
-			to: newURI
-		})
-    updatePhotoList();
-		Alert.alert("알림", "사진 저장완료")
-	  }
-  }
+	const snap = async () => {
+		if (cam) {
+			const photo = await cam.takePictureAsync();
+			let fileName_arr = photo.uri.split("/");
+			const fileName = fileName_arr[fileName_arr.length - 1];
+			const newURI =
+				FileSystem.documentDirectory +
+				pictureDirName +
+				encodeURI(fileName);
+			console.log(photo);
+			// console.log(fileName)
+			console.log("new uri : " + newURI);
+			await FileSystem.copyAsync({
+				from: photo.uri,
+				to: newURI,
+			});
+			updatePhotoList();
+			Alert.alert("알림", "사진 저장완료");
+		}
+	};
 
-  const updatePhotoList = async () => {
-    const photoList = await FileSystem.readDirectoryAsync(
+	const updatePhotoList = async () => {
+		const photoList = await FileSystem.readDirectoryAsync(
 			FileSystem.documentDirectory + pictureDirName
 		);
 		// console.log(photoList)
 		dispatch(setPhotoList(photoList));
-  }
-
+	};
 
 	if (hasPermission === null) {
 		return (
@@ -88,7 +91,7 @@ export default function LightScreen(props) {
 		<View
 			style={{
 				flex: 1,
-       			width: DEVICE_WIDTH,
+				width: DEVICE_WIDTH,
 				alignItems: "center",
 				justifyContent: "flex-start",
 				flexDirection: "column",
@@ -96,22 +99,20 @@ export default function LightScreen(props) {
 				paddingTop: 5,
 			}}
 		>
-      
 			{reduxState.record.cameraLoadState && (
 				<Camera
 					style={styles.camera}
 					type={type}
 					flashMode={flash}
-					ratio={'16:9'}
+					ratio={"16:9"}
 					zoom={OS === "android" ? 0.6 : 0.03}
 					autoFocus={Camera.Constants.AutoFocus.on}
-          ref={(ref)=>{
-            setCam(ref)
-          }}
+					ref={(ref) => {
+						setCam(ref);
+					}}
 				>
-					<View style={styles.buttonContainer}>
+					<View style={styles.captureButton}>
 						<TouchableOpacity
-							style={styles.button}
 							onPress={() => {
 								setType(
 									type === Camera.Constants.Type.back
@@ -120,12 +121,49 @@ export default function LightScreen(props) {
 								);
 							}}
 						>
-							<Text style={styles.text}> Flip </Text>
+							<View
+								style={{
+									height: 50,
+									width: 50,
+									justifyContent: "center",
+									alignItems: "center",
+								}}
+							>
+								<Image
+									source={require("../../assets/images/photo/flipIcon.png")}
+									style={{
+										width: 30,
+										height: 30,
+										tintColor: "white",
+									}}
+								/>
+							</View>
 						</TouchableOpacity>
-					</View>
-					<View style={styles.buttonContainer}>
 						<TouchableOpacity
-							style={styles.button}
+							onPress={() => {
+								console.log("caputred");
+								snap();
+							}}
+						>
+							<View
+								style={{
+									height: 50,
+									width: 50,
+									justifyContent: "center",
+									alignItems: "center",
+								}}
+							>
+								<Image
+									source={require("../../assets/images/photo/cameraIcon.png")}
+									style={{
+										width: 50,
+										height: 45,
+										tintColor: "white",
+									}}
+								/>
+							</View>
+						</TouchableOpacity>
+						<TouchableOpacity
 							onPress={() => {
 								setFlash(
 									flash === Camera.Constants.FlashMode.torch
@@ -134,15 +172,27 @@ export default function LightScreen(props) {
 								);
 							}}
 						>
-							<Text style={styles.text}> Flash </Text>
+							<View
+								style={{
+									height: 50,
+									width: 50,
+									justifyContent: "center",
+									alignItems: "center",
+								}}
+							>
+								<Image
+									source={require("../../assets/images/photo/flashIcon.png")}
+									style={{
+										width: 30,
+										height: 30,
+										tintColor: "yellow",
+									}}
+								/>
+							</View>
 						</TouchableOpacity>
 					</View>
 				</Camera>
 			)}
-        <TouchableOpacity onPress={()=>{
-          console.log("caputred")
-          snap();
-        }} style={styles.captureButton}><View></View></TouchableOpacity>
 		</View>
 	);
 }
@@ -158,16 +208,20 @@ const styles = StyleSheet.create({
 		flex: 1,
 		width: DEVICE_WIDTH,
 	},
-  captureButton:{
-    width: 50,
-    height: 50,
-    backgroundColor: 'white',
-    borderRadius: 100,
-    borderWidth: 2,
-    position: "absolute",
-    bottom: 30,
-    left: DEVICE_WIDTH*0.5 -25
-  },
+	captureButton: {
+		width: DEVICE_WIDTH,
+		height: DEVICE_HEIGHT * 0.12,
+		backgroundColor: "black",
+		// borderRadius: 100,
+		borderWidth: 2,
+		position: "absolute",
+		bottom: 0,
+		opacity: 0.5,
+		alignItems: "center",
+		justifyContent: "space-between",
+		flexDirection: "row",
+		paddingHorizontal: 25,
+	},
 	row: {
 		flexDirection: "row",
 		alignItems: "center",

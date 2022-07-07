@@ -457,9 +457,9 @@ class Recording extends React.Component {
       // console.log(response.json().then((e)=>console.log(e)))
       const json = await response.json();
       const result = await Share.share({
-        message: json.shortLink,
+        message: "자미원학당\n이름녹음 어플",
         url: json.shortLink,
-        title: `Checkout my apps: asdf`,
+        title: `자미원학당`,
       });
       if (result.action === Share.sharedAction) {
         if (result.activityType) {

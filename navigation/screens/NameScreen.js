@@ -10,13 +10,10 @@ import {
 	Linking,
 	Modal,
 	Image,
-	Platform,
 } from "react-native";
+
 import * as Font from "expo-font";
-import ExpoFastImage from "expo-fast-image";
-
-import { getStatusBarHeight } from "react-native-status-bar-height";
-
+import * as Hangul from "hangul-js";
 // Screen Size
 const DEVICE_WIDTH = Dimensions.get("window").width;
 const DEVICE_HEIGHT = Dimensions.get("window").height;
@@ -25,15 +22,14 @@ const DEVICE_HEIGHT = Dimensions.get("window").height;
 const GROUNDCOLOR = "#0bcacc";
 const POINTCOLOR = "#ff6781";
 
-import DATA from "../../assets/Data/FortuneData.js";
 import { auth, db } from "../../Firebase";
 
 //redux
 import { useDispatch, useSelector } from "react-redux";
-import { setCurrentUser, setExampleString } from "../../redux/record";
 import { doc } from "firebase/firestore";
+import { TextInput } from "react-native-gesture-handler";
 
-export default function FortuneScreen({ navigation }) {
+export default function NameScreen({ navigation }) {
 	const [fontLoaded, setFontLoaded] = useState(false);
 	const dispatch = useDispatch();
 	const reduxState = useSelector((state) => state);
@@ -43,6 +39,8 @@ export default function FortuneScreen({ navigation }) {
 	const [subModalVisible, setSubModalVisible] = useState(false);
 	const [data, setData] = useState([]);
 	const [category, setCategory] = useState("");
+	const [currentName, setCurrentName] = useState("");
+    const [birth, setBirth] = useState("");
 	useEffect(async () => {
 		_loadFont();
 	}, []);
@@ -56,21 +54,64 @@ export default function FortuneScreen({ navigation }) {
 		setFontLoaded(true);
 	};
 
+    // const process_name = () => {
+
+    // }
+	const aaa = {
+		'ㄱ': 1,
+		'ㄴ': 1,
+		'ㄷ': 2,
+		'ㄹ': 2,
+		'ㅁ': 3,
+		'ㅂ': 3,
+		'ㅅ': 2,
+		'ㅇ': 1,
+		'ㅈ': 3,
+		'ㅊ': 4,
+		'ㅋ': 2,
+		'ㅌ': 3,
+		'ㅍ': 4,
+		'ㅎ': 3,
+		'ㄲ': 2,
+		'ㄸ': 4,
+		'ㅃ': 6,
+		'ㅆ': 4,
+		'ㅉ': 5
+	}
+	const bbb = {
+		'ㅏ': 2,
+		'ㅑ': 3,
+		'ㅓ': 2,
+		'ㅕ': 3,
+		'ㅗ': 2,
+		'ㅛ': 3,
+		'ㅜ': 2,
+		'ㅠ': 3,
+		'ㅡ': 1,
+		'ㅣ': 1,
+		'ㅢ': 2,
+		'ㅚ': 3,
+		'ㅘ': 4,
+		'ㅙ': 5,
+		'ㅟ': 3,
+		'ㅝ': 4,
+		'ㅞ': 5
+	}
+
 	const clickItem = (item) => {
-		setCategory(item);
-		const num = Math.floor(Math.random() * 384);
-		console.log(item);
-		setData(DATA[num][item]);
-		console.log(num);
-		setSubModalVisible(true);
-		console.log("submodal on");
-		setTimeout(() => {
-			setSubModalVisible(false);
-			console.log("submodal off");
-			setMainModalVisible(true);
-			console.log("mainmodal on");
-		}, 3000);
-	};
+		let name = "";
+		if (currentName.length > 2) {
+			name = currentName.substring(0, 3);
+		} else {
+			name = currentName;
+		}
+		const af_name = Hangul.d(name, true);
+		console.log(bbb[af_name[1][1]]);
+
+        let birth2 = "";
+        birth2 = birth.substring(0,4);
+        console.log(birth2)
+    };
 
 	return (
 		<View style={styles.container}>
@@ -88,163 +129,34 @@ export default function FortuneScreen({ navigation }) {
 				}}
 			>
 				<Text style={{ fontSize: 26, fontWeight: "bold" }}>
-					{"오늘의 어떤 운세를\n보기를 원하시나요?"}
+					{"성명학"}
 				</Text>
 			</View>
 			<View style={styles.buttonContainer}>
-				<View style={{ flexDirection: "row" }}>
-					<TouchableOpacity
-						underlayColor={"transparent"}
-						onPress={() => {
-							console.log("click item");
-							clickItem("연애");
-						}}
-					>
-						<View style={styles.menuButton}>
-							<Text style={styles.menuText}>연애</Text>
-						</View>
-					</TouchableOpacity>
-					<TouchableOpacity
-						underlayColor={"transparent"}
-						onPress={() => {
-							console.log("click item");
-							clickItem("사업");
-						}}
-					>
-						<View style={styles.menuButton}>
-							<Text style={styles.menuText}>사업</Text>
-						</View>
-					</TouchableOpacity>
-				</View>
-				<View style={{ flexDirection: "row" }}>
-					<TouchableOpacity
-						underlayColor={"transparent"}
-						onPress={() => {
-							console.log("click item");
-							clickItem("소망");
-						}}
-					>
-						<View style={styles.menuButton}>
-							<Text style={styles.menuText}>소망</Text>
-						</View>
-					</TouchableOpacity>
-					<TouchableOpacity
-						underlayColor={"transparent"}
-						onPress={() => {
-							console.log("click item");
-							clickItem("승진");
-						}}
-					>
-						<View style={styles.menuButton}>
-							<Text style={styles.menuText}>승진</Text>
-						</View>
-					</TouchableOpacity>
-				</View>
-				<View style={{ flexDirection: "row" }}>
-					<TouchableOpacity
-						underlayColor={"transparent"}
-						onPress={() => {
-							console.log("click item");
-							clickItem("시험");
-						}}
-					>
-						<View style={styles.menuButton}>
-							<Text style={styles.menuText}>시험</Text>
-						</View>
-					</TouchableOpacity>
-					<TouchableOpacity
-						underlayColor={"transparent"}
-						onPress={() => {
-							console.log("click item");
-							clickItem("매매");
-						}}
-					>
-						<View style={styles.menuButton}>
-							<Text style={styles.menuText}>매매</Text>
-						</View>
-					</TouchableOpacity>
-				</View>
-				<View style={{ flexDirection: "row" }}>
-					<TouchableOpacity
-						underlayColor={"transparent"}
-						onPress={() => {
-							console.log("click item");
-							clickItem("개업");
-						}}
-					>
-						<View style={styles.menuButton}>
-							<Text style={styles.menuText}>개업</Text>
-						</View>
-					</TouchableOpacity>
-					<TouchableOpacity
-						underlayColor={"transparent"}
-						onPress={() => {
-							console.log("click item");
-							clickItem("소송");
-						}}
-					>
-						<View style={styles.menuButton}>
-							<Text style={styles.menuText}>소송</Text>
-						</View>
-					</TouchableOpacity>
-				</View>
-				<View style={{ flexDirection: "row" }}>
-					<TouchableOpacity
-						underlayColor={"transparent"}
-						onPress={() => {
-							console.log("click item");
-							clickItem("증권");
-						}}
-					>
-						<View style={styles.menuButton}>
-							<Text style={styles.menuText}>증권</Text>
-						</View>
-					</TouchableOpacity>
-					<TouchableOpacity
-						underlayColor={"transparent"}
-						onPress={() => {
-							console.log("click item");
-							clickItem("여행");
-						}}
-					>
-						<View style={styles.menuButton}>
-							<Text style={styles.menuText}>여행</Text>
-						</View>
-					</TouchableOpacity>
-				</View>
-				<View style={{ flexDirection: "row" }}>
-					<TouchableOpacity
-						underlayColor={"transparent"}
-						onPress={() => {
-							console.log("click item");
-							clickItem("길한방향");
-						}}
-					>
-						<View style={styles.menuButton}>
-							<Text style={styles.menuText}>길한방향</Text>
-						</View>
-					</TouchableOpacity>
-					<TouchableOpacity
-						underlayColor={"transparent"}
-						onPress={() => {
-							console.log("click how to way");
-						}}
-					>
-						<View
-							style={{
-								backgroundColor: POINTCOLOR,
-								height: DEVICE_HEIGHT * 0.06,
-								width: DEVICE_WIDTH * 0.35,
-								borderRadius: 10,
-								alignItems: "center",
-								justifyContent: "center",
-								margin: 10,
-							}}
-						>
-							<Text style={styles.menuText}>이용방법</Text>
-						</View>
-					</TouchableOpacity>
-				</View>
+				<Text>메인 기능 들어갈 부분</Text>
+				<TextInput
+                    placeholder="이름을 입력해주세요."
+					style={styles.textInput}
+					onChangeText={(text) => {
+						setCurrentName(text);
+					}}
+					value={currentName}
+				></TextInput>
+                <TextInput
+                    placeholder="생년월일을 입력해주세요(예: 19880912)"
+					style={styles.textInput}
+					onChangeText={(text) => {
+						setBirth(text);
+					}}
+					value={birth}
+				></TextInput>
+				<TouchableOpacity
+					onPress={() => {
+						clickItem();
+					}}
+				>
+					<Text>버튼</Text>
+				</TouchableOpacity>
 			</View>
 			<Modal visible={mainModalVisible}>
 				<View style={styles.container}>
@@ -254,11 +166,10 @@ export default function FortuneScreen({ navigation }) {
 							justifyContent: "center",
 							alignItems: "center",
 							width: DEVICE_WIDTH,
-							height: Platform.OS==="ios"? DEVICE_HEIGHT * 0.07 + getStatusBarHeight() : DEVICE_HEIGHT * 0.07,
+							height: DEVICE_HEIGHT * 0.07,
 							padding: 10,
 							paddingHorizontal: 10,
 							backgroundColor: GROUNDCOLOR,
-							paddingTop: Platform.OS === "ios" ? getStatusBarHeight() : 0,
 						}}
 					>
 						<View style={{ flex: 1 }}>

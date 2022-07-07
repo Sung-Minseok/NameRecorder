@@ -177,9 +177,9 @@ export default function HomeScreen({ navigation }) {
 			// console.log(response.json().then((e)=>console.log(e)))
 			const json = await response.json();
 			const result = await Share.share({
-				message: json.shortLink,
+				message: "자미원학당\n이름녹음 어플",
 				url: json.shortLink,
-				title: `Checkout my apps: asdf`,
+				title: `자미원학당`,
 			});
 			if (result.action === Share.sharedAction) {
 				if (result.activityType) {
@@ -276,13 +276,24 @@ export default function HomeScreen({ navigation }) {
 					</TouchableOpacity>
 					<TouchableOpacity
 						underlayColor={"transparent"}
+						onPress={() => 
+							// navigation.navigate("성명학")
+							Alert.alert("알림","업데이트 예정")
+					}
+					>
+						<View style={styles.menuButton}>
+							<Text style={styles.menuText}>성명학 상담신청</Text>
+						</View>
+					</TouchableOpacity>
+					<TouchableOpacity
+						underlayColor={"transparent"}
 						onPress={() => navigation.navigate("돋보기")}
 					>
 						<View style={styles.menuButton}>
 							<Text style={styles.menuText}>돋보기 & 손전등</Text>
 						</View>
 					</TouchableOpacity>
-					<TouchableOpacity
+					{/* <TouchableOpacity
 						underlayColor={"transparent"}
 						onPress={() =>
 							navigation.navigate("지문")
@@ -297,19 +308,11 @@ export default function HomeScreen({ navigation }) {
 						onPress={() => Alert.alert("추후 업데이트")}
 					>
 						<View style={styles.menuButton}>
-							<Text style={styles.menuText}>성명학 상담신청</Text>
-						</View>
-					</TouchableOpacity>
-					<TouchableOpacity
-						underlayColor={"transparent"}
-						onPress={() => Alert.alert("추후 업데이트")}
-					>
-						<View style={styles.menuButton}>
 							<Text style={styles.menuText}>
 								모든 가능하게 하는 힘
 							</Text>
 						</View>
-					</TouchableOpacity>
+					</TouchableOpacity> */}
 					<TouchableOpacity
 						underlayColor={"transparent"}
 						// onPress={() => _share()}
