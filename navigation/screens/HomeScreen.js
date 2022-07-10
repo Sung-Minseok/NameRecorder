@@ -334,7 +334,8 @@ export default function HomeScreen({ navigation }) {
 						<Text style={styles.menuText2}>문의 하기</Text>
 					</View>
 				</TouchableOpacity>
-				<TouchableOpacity
+				
+				{/* <TouchableOpacity
 					underlayColor={"transparent"}
 					onPress={() => {
 						navigation.navigate("관리자페이지");
@@ -344,7 +345,7 @@ export default function HomeScreen({ navigation }) {
 					<View>
 						<Text style={styles.menuText3}>관리자 메뉴</Text>
 					</View>
-				</TouchableOpacity>
+				</TouchableOpacity> */}
 			</View>
 		);
 	}

@@ -227,7 +227,7 @@ export default function FortuneScreen({ navigation }) {
 					<TouchableOpacity
 						underlayColor={"transparent"}
 						onPress={() => {
-							console.log("click how to way");
+							Alert.alert("알림","업데이트 예정")
 						}}
 					>
 						<View

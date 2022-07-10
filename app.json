@@ -2,7 +2,7 @@
   "expo": {
     "name": "자미원학당",
     "slug": "NameRecorder",
-    "version": "3.0.0",
+    "version": "5.0.0",
     "orientation": "portrait",
     "icon": "./assets/jmw_icon.png",
     "splash": {
