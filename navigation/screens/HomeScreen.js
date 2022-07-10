@@ -153,7 +153,8 @@ export default function HomeScreen({ navigation }) {
 			const payload = {
 				dynamicLinkInfo: {
 					domainUriPrefix: "https://jmwschool.page.link",
-					link: `https://jmwschool.page.link/newUser/${UID}`,
+					link: `https://jmwschool.page.link/UkMX/${UID}`,
+					// link: `https://jmwschool.page.link/aaaa`,
 					androidInfo: {
 						androidPackageName: "host.exp.jmwschool",
 					},
@@ -177,9 +178,9 @@ export default function HomeScreen({ navigation }) {
 			// console.log(response.json().then((e)=>console.log(e)))
 			const json = await response.json();
 			const result = await Share.share({
-				message: "자미원학당\n이름녹음 어플",
+				message: "아이폰 전용 링크 :\nhttps://jmwschool.page.link/UkMX",
 				url: json.shortLink,
-				title: `자미원학당`,
+				title: `자미원학당 - 이름녹음 어플`,
 			});
 			if (result.action === Share.sharedAction) {
 				if (result.activityType) {
