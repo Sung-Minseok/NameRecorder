@@ -23,6 +23,7 @@ import BlinkingText from "../BlinkingText";
 import * as actions from "../../redux/record";
 import { connect } from "react-redux";
 import { auth, db } from "../../Firebase";
+import { doc } from "firebase/firestore";
 
 const DEVICE_WIDTH = Dimensions.get("window").width;
 const DEVICE_HEIGHT = Dimensions.get("window").height;
@@ -423,57 +424,86 @@ class Recording extends React.Component {
   }
 
   async _createLink() {
-    if(auth.getAuth().currentUser.isAnonymous){
-      return Alert.alert("비회원 사용자","홈화면에서 [회원가입]을 진행해주세요.")
-    }
-    const UID = auth.getAuth().currentUser.uid;
-    console.log("user : " + UID);
-    try {
-      const payload = {
-        dynamicLinkInfo: {
-          domainUriPrefix: "https://jmwschool.page.link",
-          // link: `https://jmwschool.page.link/newUser/njUdT0j9VuR7cSLCAekUEzAQS6z2`,
-          link: `https://jmwschool.page.link/newUser/${UID}`,
-          androidInfo: {
-            androidPackageName: "host.exp.jmwschool",
-          },
-          iosInfo: {
-            iosBundleId: "host.exp.jmwschool",
-          },
-          // socialMetaTagInfo: {
-          //   socailTitle: 'Test the title',
-          //   socialDescription: 'Testing the description.'
-          // }
-        },
-      };
-      const url = `https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyAj2uJrWehb1MqSPb00eFFXk4BR_g4zDJU`;
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-      // console.log(response.json().then((e)=>console.log(e)))
-      const json = await response.json();
-      const result = await Share.share({
-        message: "자미원학당\n이름녹음 어플",
-        url: json.shortLink,
-        title: `자미원학당`,
-      });
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          console.log("action if");
-        } else {
-          console.log("action else");
-        }
-      } else if (result.action === Share.dismissedAction) {
-        console.log("dismissed");
-      }
-    } catch (error) {
-      console.log("Linking Errors: " + error);
-    }
-  };
+		if (auth.getAuth().currentUser.isAnonymous) {
+			return Alert.alert(
+				"비회원 사용자",
+				"[회원가입]진행 후 이용해주세요."
+			);
+		}
+		const UID = auth.getAuth().currentUser.uid;
+		console.log("user : " + UID);
+		try {
+			const payload = {
+				dynamicLinkInfo: {
+					domainUriPrefix: "https://jmwschool.page.link",
+					link: `https://jmwschool.page.link/UkMX`,
+					// link: `https://jmwschool.page.link/aaaa`,
+					androidInfo: {
+						androidPackageName: "host.exp.jmwschool",
+					},
+					iosInfo: {
+						iosBundleId: "host.exp.jmwschool",
+					},
+					// socialMetaTagInfo: {
+					//   socailTitle: 'Test the title',
+					//   socialDescription: 'Testing the description.'
+					// }
+				},
+			};
+			const url = `https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyAj2uJrWehb1MqSPb00eFFXk4BR_g4zDJU`;
+			const response = await fetch(url, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(payload),
+			});
+			// console.log(response.json().then((e)=>console.log(e)))
+			const json = await response.json();
+			const result = await Share.share({
+				// message: "자미원학당 - 이름녹음 어플",
+				message: "",
+				url: json.shortLink,
+				title: `자미원학당 - 이름녹음 어플`,
+			});
+			if (result.action === Share.sharedAction) {
+				if (result.activityType) {
+					console.log("공유하기 완료");
+					const uid = auth.getAuth().currentUser.uid
+					const docRef0 = db.doc(
+						db.getFirestore(),
+						"users",
+						uid
+					);
+					const docSnap0 = await db.getDoc(docRef0);
+					if (docSnap0.exists()) {
+						const docRef = db.doc(db.getFirestore(), "users", uid);
+						const docSnap = await db.getDoc(docRef);
+						if (docSnap.exists()) {
+							console.log("Document data:", docSnap.data());
+						} else {
+							// doc.data() will be undefined in this case
+							console.log("No such document!");
+						}
+						try {
+							db.updateDoc(doc(db.getFirestore(), "users", uid), {
+								recordNum: docSnap.data().recordNum + 5,
+							});
+						} catch (error) {
+							console.log("DB Error : " + error);
+							// Alert.alert("오류","공유하기 업데이트 오류");
+						}
+					}
+				} else {
+					console.log("action else");
+				}
+			} else if (result.action === Share.dismissedAction) {
+				console.log("공유하기 실행 취소");
+			}
+		} catch (error) {
+			console.log("Linking Errors: " + error);
+		}
+	};
 
   //redux function
   _setRecordList = (list) => {

@@ -10,10 +10,16 @@ import {
 	Linking,
 	Modal,
 	Image,
+	ScrollView,
 } from "react-native";
 
 import * as Font from "expo-font";
 import * as Hangul from "hangul-js";
+import { getStatusBarHeight } from "react-native-status-bar-height";
+import {RadioButton} from 'react-native-paper';
+//Data
+import * as Data from "../../assets/Data/NameData.js";
+import RadioButtonRN from "radio-buttons-react-native"
 // Screen Size
 const DEVICE_WIDTH = Dimensions.get("window").width;
 const DEVICE_HEIGHT = Dimensions.get("window").height;
@@ -36,11 +42,15 @@ export default function NameScreen({ navigation }) {
 	// const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [userName, setUserName] = useState("");
 	const [mainModalVisible, setMainModalVisible] = useState(false);
-	const [subModalVisible, setSubModalVisible] = useState(false);
-	const [data, setData] = useState([]);
-	const [category, setCategory] = useState("");
 	const [currentName, setCurrentName] = useState("");
-    const [birth, setBirth] = useState("");
+	const [birth, setBirth] = useState("");
+	const [firstName, setFirstName] = useState(["", "", "", ""]);
+	const [secondName, setSecondName] = useState(["", "", "", ""]);
+	const [thirdName, setThirdName] = useState(["", "", "", ""]);
+	const [yearName, setYearName] = useState("");
+	const [core1, setCore1] = useState("ㅏ");
+	const [core2, setCore2] = useState("ㅏ");
+	const [buttonChecked, setButtonChecked] = useState("male")
 	useEffect(async () => {
 		_loadFont();
 	}, []);
@@ -54,64 +64,206 @@ export default function NameScreen({ navigation }) {
 		setFontLoaded(true);
 	};
 
-    // const process_name = () => {
-
-    // }
-	const aaa = {
-		'ㄱ': 1,
-		'ㄴ': 1,
-		'ㄷ': 2,
-		'ㄹ': 2,
-		'ㅁ': 3,
-		'ㅂ': 3,
-		'ㅅ': 2,
-		'ㅇ': 1,
-		'ㅈ': 3,
-		'ㅊ': 4,
-		'ㅋ': 2,
-		'ㅌ': 3,
-		'ㅍ': 4,
-		'ㅎ': 3,
-		'ㄲ': 2,
-		'ㄸ': 4,
-		'ㅃ': 6,
-		'ㅆ': 4,
-		'ㅉ': 5
-	}
-	const bbb = {
-		'ㅏ': 2,
-		'ㅑ': 3,
-		'ㅓ': 2,
-		'ㅕ': 3,
-		'ㅗ': 2,
-		'ㅛ': 3,
-		'ㅜ': 2,
-		'ㅠ': 3,
-		'ㅡ': 1,
-		'ㅣ': 1,
-		'ㅢ': 2,
-		'ㅚ': 3,
-		'ㅘ': 4,
-		'ㅙ': 5,
-		'ㅟ': 3,
-		'ㅝ': 4,
-		'ㅞ': 5
-	}
-
-	const clickItem = (item) => {
-		let name = "";
-		if (currentName.length > 2) {
-			name = currentName.substring(0, 3);
-		} else {
-			name = currentName;
+	const radioButton = [
+		{
+			label: '남',
+			accessibilityLabel: 'male'
+		},
+		{
+			label: '녀',
+			accessibilityLabel: 'female'
 		}
-		const af_name = Hangul.d(name, true);
-		console.log(bbb[af_name[1][1]]);
+	];
 
-        let birth2 = "";
-        birth2 = birth.substring(0,4);
-        console.log(birth2)
-    };
+	const vowel1 = Data.vowel1;
+	const vowel2 = Data.vowel2;
+	const year1 = Data.year1;
+	const year2 = Data.year2;
+
+	const check1 = Data.check1;
+	const check2 = Data.check2;
+	const check3 = Data.check3;
+	const getConstantVowel = (kor) => {
+		let sum = 0;
+		const f = [
+			"ㄱ",
+			"ㄲ",
+			"ㄴ",
+			"ㄷ",
+			"ㄸ",
+			"ㄹ",
+			"ㅁ",
+			"ㅂ",
+			"ㅃ",
+			"ㅅ",
+			"ㅆ",
+			"ㅇ",
+			"ㅈ",
+			"ㅉ",
+			"ㅊ",
+			"ㅋ",
+			"ㅌ",
+			"ㅍ",
+			"ㅎ",
+		];
+		const s = [
+			"ㅏ",
+			"ㅐ",
+			"ㅑ",
+			"ㅒ",
+			"ㅓ",
+			"ㅔ",
+			"ㅕ",
+			"ㅖ",
+			"ㅗ",
+			"ㅘ",
+			"ㅙ",
+			"ㅚ",
+			"ㅛ",
+			"ㅜ",
+			"ㅝ",
+			"ㅞ",
+			"ㅟ",
+			"ㅠ",
+			"ㅡ",
+			"ㅢ",
+			"ㅣ",
+		];
+		const t = [
+			"",
+			"ㄱ",
+			"ㄲ",
+			"ㄳ",
+			"ㄴ",
+			"ㄵ",
+			"ㄶ",
+			"ㄷ",
+			"ㄹ",
+			"ㄺ",
+			"ㄻ",
+			"ㄼ",
+			"ㄽ",
+			"ㄾ",
+			"ㄿ",
+			"ㅀ",
+			"ㅁ",
+			"ㅂ",
+			"ㅄ",
+			"ㅅ",
+			"ㅆ",
+			"ㅇ",
+			"ㅈ",
+			"ㅊ",
+			"ㅋ",
+			"ㅌ",
+			"ㅍ",
+			"ㅎ",
+		];
+
+		const ga = 44032;
+		let uni = kor.charCodeAt(0);
+
+		uni = uni - ga;
+
+		let fn = parseInt(uni / 588);
+		let sn = parseInt((uni - fn * 588) / 28);
+		let tn = parseInt(uni % 28);
+		sum = vowel1[f[fn]] + vowel2[s[sn]] + vowel1[t[tn]];
+		return {
+			f: f[fn],
+			s: s[sn],
+			t: t[tn],
+			x: sum,
+		};
+	};
+	const result1 = Data.result1;
+	const result2 = Data.result2;
+
+	const processResult = (pos, x, y) => {
+		if (x == "") {
+			return "";
+		}
+		let a = check1[y];
+		let b = check2[x];
+		if (pos == 1) {
+			return result1[a][b];
+		} else {
+			return result2[a][b];
+		}
+	};
+
+	const processName2 = (vowel, y1, y2) => {
+		let vPos = vowel["x"] % 2 == 0 ? -1 : 1;
+		let posLeft = check3[y1] * vPos;
+		let posRight = check3[y2] * vPos;
+		let left1 = processResult(posLeft, vowel["f"], y1);
+		let left2 = processResult(posLeft, vowel["t"], y1);
+		let right1 = processResult(posRight, vowel["f"], y2);
+		let right2 = processResult(posRight, vowel["t"], y2);
+
+		return [left1, left2, right1, right2];
+	};
+
+	const processName = (text) => {
+		let birth2 = birth;
+		birth2 = birth2.substring(0, 4);
+		let y1 = year1[birth2[3] - 1];
+		let y2 = year2[((birth2 - 1683) % 12) - 1];
+		let year = y1 + y2;
+		setYearName(year);
+		console.log(year);
+
+		let name = "";
+		if (text.length > 2) {
+			name = text.substring(0, 3);
+		} else {
+			name = text;
+		}
+		let first = getConstantVowel(name[0]);
+		let second = getConstantVowel(name[1]);
+		let third = {
+			f: "",
+			s: "",
+			t: "",
+			x: 0,
+		};
+		let f = processName2(first, y1, y2);
+		let s = processName2(second, y1, y2);
+		let t = ["","","",""];
+		if(name.length === 3){
+			third = getConstantVowel(name[2]);
+			t = processName2(third, y1, y2);
+		}
+		console.log("f : " + f);
+		console.log("s : " + s);
+		console.log("t : " + t);
+
+		setCore1(s[0]);
+		setCore2(s[2]);
+
+		setFirstName(f);
+		setSecondName(s);
+		setThirdName(t);
+
+		return [first, second, third];
+	};
+
+	const clickItem = () => {
+		if(currentName==="" || currentName.length<2){
+			return Alert.alert("알림","이름을 입력해주세요.")
+		}
+		if(!Hangul.isCompleteAll(currentName)){
+			return Alert.alert("알림","이름을 정확히 입력해주세요.")
+		}
+		let pattern = /^[0-9]+$/;
+		if(!pattern.test(birth) || birth.length != 8 || birth.substring(0,4)-1683 < 1){
+			return Alert.alert("알림","생년월일을 확인해주세요.")
+		} 
+		
+		const name_af = processName(currentName);
+		console.log(name_af);
+		setMainModalVisible(true);
+	};
 
 	return (
 		<View style={styles.container}>
@@ -129,33 +281,62 @@ export default function NameScreen({ navigation }) {
 				}}
 			>
 				<Text style={{ fontSize: 26, fontWeight: "bold" }}>
-					{"성명학"}
+					{"결과를 위해 이름, 생년월일, 성별을 정확히 입력해주세요"}
 				</Text>
 			</View>
-			<View style={styles.buttonContainer}>
-				<Text>메인 기능 들어갈 부분</Text>
+			<View
+				style={{
+					width: DEVICE_WIDTH * 0.8,
+					flex: 1,
+					marginVertical: 10,
+				}}
+			>
+				<Text style={{ fontSize: 25, fontWeight: "bold" }}>성명</Text>
 				<TextInput
-                    placeholder="이름을 입력해주세요."
-					style={styles.textInput}
+					placeholder="이름을 입력해주세요."
+					style={{
+						fontSize: 20,
+						borderBottomWidth: 2,
+						borderColor: GROUNDCOLOR,
+					}}
 					onChangeText={(text) => {
 						setCurrentName(text);
 					}}
 					value={currentName}
 				></TextInput>
-                <TextInput
-                    placeholder="생년월일을 입력해주세요(예: 19880912)"
-					style={styles.textInput}
+				<Text style={{ fontSize: 25, fontWeight: "bold", marginTop:20 }}>
+					생년월일
+				</Text>
+				<TextInput
+					placeholder="예시) 19880912"
+					style={{
+						fontSize: 20,
+						borderBottomWidth: 2,
+						borderColor: GROUNDCOLOR,
+					}}
 					onChangeText={(text) => {
 						setBirth(text);
 					}}
 					value={birth}
 				></TextInput>
+				<RadioButtonRN
+					data={radioButton}
+					activeColor={GROUNDCOLOR}
+					textStyle={{fontSize: 18, fontWeight: 'bold', fontFamily: 'SquareRound'}}
+					boxStyle={{borderWidth:2}}
+					selectedBtn={(e)=> {
+						setButtonChecked(e.accessibilityLabel)
+					}}
+				/>
 				<TouchableOpacity
+					style={{alignItems: 'center', justifyContent:'center', marginTop: 30}}
 					onPress={() => {
 						clickItem();
 					}}
 				>
-					<Text>버튼</Text>
+					<View style={{width: DEVICE_WIDTH*0.5,height: DEVICE_WIDTH*0.12, borderWidth:2, borderColor: GROUNDCOLOR,backgroundColor:GROUNDCOLOR, borderRadius:5, justifyContent:'center',alignItems:'center'}}>
+						<Text style={{fontSize: 22, fontFamily: 'SquareRound', fontWeight:'bold', color:'white'}}>확인하기</Text>
+					</View>
 				</TouchableOpacity>
 			</View>
 			<Modal visible={mainModalVisible}>
@@ -166,10 +347,18 @@ export default function NameScreen({ navigation }) {
 							justifyContent: "center",
 							alignItems: "center",
 							width: DEVICE_WIDTH,
-							height: DEVICE_HEIGHT * 0.07,
-							padding: 10,
+							height:
+								Platform.OS === "ios"
+									? DEVICE_HEIGHT * 0.07 +
+									  getStatusBarHeight()
+									: DEVICE_HEIGHT * 0.07,
+							// padding: 10,
 							paddingHorizontal: 10,
 							backgroundColor: GROUNDCOLOR,
+							paddingTop:
+								Platform.OS === "ios"
+									? getStatusBarHeight()
+									: 0,
 						}}
 					>
 						<View style={{ flex: 1 }}>
@@ -179,6 +368,9 @@ export default function NameScreen({ navigation }) {
 									alignItems: "center",
 								}}
 								onPress={() => {
+									setBirth("");
+									setYearName("");
+									setCurrentName("");
 									setMainModalVisible(false);
 								}}
 							>
@@ -213,42 +405,379 @@ export default function NameScreen({ navigation }) {
 									fontFamily: "SquareRound",
 								}}
 							>
-								운세
+								성명학
 							</Text>
 						</View>
 						<View style={{ flex: 1 }} />
 					</View>
-					<View
-						style={{
-							flexDirection: "row",
-							justifyContent: "center",
-							alignItems: "center",
-							width: DEVICE_WIDTH,
-							height: DEVICE_HEIGHT * 0.15,
-							padding: 10,
-							paddingHorizontal: 10,
-							borderWidth: 2,
-							borderColor: GROUNDCOLOR,
-						}}
-					>
-						<Text style={{ fontSize: 26, fontWeight: "bold" }}>
-							{"오늘의 " + category + " 운세"}
-						</Text>
-					</View>
-					<View style={styles.buttonContainer}>
-						<Text
+					<ScrollView>
+						<View
 							style={{
-								fontSize: 22,
-								fontWeight: "600",
-								fontFamily: "SquareRound",
+								flexDirection: "row",
+								justifyContent: "center",
+								alignItems: "center",
+								width: DEVICE_WIDTH,
+								height: DEVICE_HEIGHT * 0.15,
+								padding: 10,
+								paddingHorizontal: 10,
+								borderWidth: 2,
+								borderColor: GROUNDCOLOR,
 							}}
 						>
-							{data}
-						</Text>
-					</View>
+							<Text style={{ fontSize: 40, fontWeight: "bold" }}>
+								{birth.substring(0, 4) +
+									"-" +
+									yearName +
+									"년생"}
+							</Text>
+						</View>
+						<View
+							style={{
+								alignItems: "center",
+								justifyContent: "space-between",
+								flex: 1,
+								// borderWidth: 1,
+								// borderColor: GROUNDCOLOR,
+								width: DEVICE_WIDTH,
+							}}
+						>
+							<View
+								style={{
+									flexDirection: "row",
+									justifyContent: "space-around",
+									alignItems: "center",
+									width: DEVICE_WIDTH,
+									height: DEVICE_HEIGHT * 0.1,
+									borderWidth: 2,
+									borderColor: GROUNDCOLOR,
+									flex: 1,
+								}}
+							>
+								<View
+									style={{
+										justifyContent: "center",
+										alignItems: "center",
+										flex: 1,
+									}}
+								>
+									<View
+										style={{
+											flex: 1,
+											borderRightWidth: 2,
+											borderBottomWidth: 2,
+											width: DEVICE_WIDTH * 0.3,
+											justifyContent: "center",
+											alignItems: "center",
+										}}
+									>
+										<Text style={{ fontSize: 30 }}>
+											{firstName[0]}
+										</Text>
+									</View>
+									<View
+										style={{
+											flex: 1,
+											borderRightWidth: 2,
+											width: DEVICE_WIDTH * 0.3,
+											justifyContent: "center",
+											alignItems: "center",
+										}}
+									>
+										<Text style={{ fontSize: 30 }}>
+											{firstName[1]}
+										</Text>
+									</View>
+								</View>
+								<View
+									style={{
+										justifyContent: "center",
+										alignItems: "center",
+										flex: 1,
+									}}
+								>
+									<Text
+										style={{
+											fontSize: 40,
+											fontWeight: "bold",
+										}}
+									>
+										{currentName[0]}
+									</Text>
+								</View>
+								<View
+									style={{
+										justifyContent: "center",
+										alignItems: "center",
+										flex: 1,
+									}}
+								>
+									<View
+										style={{
+											flex: 1,
+											borderLeftWidth: 2,
+											borderBottomWidth: 2,
+											width: DEVICE_WIDTH * 0.3,
+											justifyContent: "center",
+											alignItems: "center",
+										}}
+									>
+										<Text style={{ fontSize: 30 }}>
+											{firstName[2]}
+										</Text>
+									</View>
+									<View
+										style={{
+											flex: 1,
+											borderLeftWidth: 2,
+											width: DEVICE_WIDTH * 0.3,
+											justifyContent: "center",
+											alignItems: "center",
+										}}
+									>
+										<Text style={{ fontSize: 30 }}>
+											{firstName[3]}
+										</Text>
+									</View>
+								</View>
+							</View>
+							<View
+								style={{
+									flexDirection: "row",
+									justifyContent: "space-around",
+									alignItems: "center",
+									width: DEVICE_WIDTH,
+									height: DEVICE_HEIGHT * 0.1,
+									borderWidth: 2,
+									borderColor: GROUNDCOLOR,
+									flex: 1,
+								}}
+							>
+								<View
+									style={{
+										justifyContent: "center",
+										alignItems: "center",
+										flex: 1,
+									}}
+								>
+									<View
+										style={{
+											flex: 1,
+											borderRightWidth: 2,
+											borderBottomWidth: 2,
+											width: DEVICE_WIDTH * 0.3,
+											justifyContent: "center",
+											alignItems: "center",
+										}}
+									>
+										<Text style={{ fontSize: 30 }}>
+											{secondName[0]}
+										</Text>
+									</View>
+									<View
+										style={{
+											flex: 1,
+											borderRightWidth: 2,
+											width: DEVICE_WIDTH * 0.3,
+											justifyContent: "center",
+											alignItems: "center",
+										}}
+									>
+										<Text style={{ fontSize: 30 }}>
+											{secondName[1]}
+										</Text>
+									</View>
+								</View>
+								<View
+									style={{
+										justifyContent: "center",
+										alignItems: "center",
+										flex: 1,
+									}}
+								>
+									<Text
+										style={{
+											fontSize: 40,
+											fontWeight: "bold",
+										}}
+									>
+										{currentName[1]}
+									</Text>
+								</View>
+								<View
+									style={{
+										justifyContent: "center",
+										alignItems: "center",
+										flex: 1,
+									}}
+								>
+									<View
+										style={{
+											flex: 1,
+											borderLeftWidth: 2,
+											borderBottomWidth: 2,
+											width: DEVICE_WIDTH * 0.3,
+											justifyContent: "center",
+											alignItems: "center",
+										}}
+									>
+										<Text style={{ fontSize: 30 }}>
+											{secondName[2]}
+										</Text>
+									</View>
+									<View
+										style={{
+											flex: 1,
+											borderLeftWidth: 2,
+											width: DEVICE_WIDTH * 0.3,
+											justifyContent: "center",
+											alignItems: "center",
+										}}
+									>
+										<Text style={{ fontSize: 30 }}>
+											{secondName[3]}
+										</Text>
+									</View>
+								</View>
+							</View>
+							<View
+								style={{
+									flexDirection: "row",
+									justifyContent: "space-around",
+									alignItems: "center",
+									width: DEVICE_WIDTH,
+									height: DEVICE_HEIGHT * 0.1,
+									borderWidth: 2,
+									borderBottomWidth: 4,
+									borderColor: GROUNDCOLOR,
+									flex: 1,
+								}}
+							>
+								<View
+									style={{
+										justifyContent: "center",
+										alignItems: "center",
+										flex: 1,
+									}}
+								>
+									<View
+										style={{
+											flex: 1,
+											borderRightWidth: 2,
+											borderBottomWidth: 2,
+											width: DEVICE_WIDTH * 0.3,
+											justifyContent: "center",
+											alignItems: "center",
+										}}
+									>
+										<Text style={{ fontSize: 30 }}>
+											{thirdName[0]}
+										</Text>
+									</View>
+									<View
+										style={{
+											flex: 1,
+											borderRightWidth: 2,
+											width: DEVICE_WIDTH * 0.3,
+											justifyContent: "center",
+											alignItems: "center",
+										}}
+									>
+										<Text style={{ fontSize: 30 }}>
+											{thirdName[1]}
+										</Text>
+									</View>
+								</View>
+								<View
+									style={{
+										justifyContent: "center",
+										alignItems: "center",
+										flex: 1,
+									}}
+								>
+									<Text
+										style={{
+											fontSize: 40,
+											fontWeight: "bold",
+										}}
+									>
+										{currentName[2]}
+									</Text>
+								</View>
+								<View
+									style={{
+										justifyContent: "center",
+										alignItems: "center",
+										flex: 1,
+									}}
+								>
+									<View
+										style={{
+											flex: 1,
+											borderLeftWidth: 2,
+											borderBottomWidth: 2,
+											width: DEVICE_WIDTH * 0.3,
+											justifyContent: "center",
+											alignItems: "center",
+										}}
+									>
+										<Text style={{ fontSize: 30 }}>
+											{thirdName[2]}
+										</Text>
+									</View>
+									<View
+										style={{
+											flex: 1,
+											borderLeftWidth: 2,
+											width: DEVICE_WIDTH * 0.3,
+											justifyContent: "center",
+											alignItems: "center",
+										}}
+									>
+										<Text style={{ fontSize: 30 }}>
+											{thirdName[3]}
+										</Text>
+									</View>
+								</View>
+							</View>
+						</View>
+						<View style={{ marginBottom: 30 }}>
+							<Text style={{ fontSize: 20, fontWeight: "bold" }}>
+								{"중심 에너지 : " + core1}
+							</Text>
+							<Text
+								style={{
+									fontSize: 17,
+									marginVertical: 5,
+									marginHorizontal: 5,
+								}}
+							>
+								{
+									Data.coreName[core1.toString()][
+										core2.toString()
+									]["main"]
+								}
+							</Text>
+							<Text style={{ fontSize: 20, fontWeight: "bold" }}>
+								{"보조 에너지 : " + core2}
+							</Text>
+							<Text
+								style={{
+									fontSize: 17,
+									marginVertical: 5,
+									marginHorizontal: 5,
+								}}
+							>
+								{
+									Data.coreName[core1.toString()][
+										core2.toString()
+									]["sub"]
+								}
+							</Text>
+						</View>
+					</ScrollView>
 				</View>
 			</Modal>
-			<Modal visible={subModalVisible} transparent={true}>
+			{/* <Modal visible={subModalVisible} transparent={true}>
 				<View style={styles.modalContainer}>
 					<View style={styles.modalCon}>
 						<TouchableOpacity
@@ -260,14 +789,10 @@ export default function NameScreen({ navigation }) {
 								style={{ width: 300, height: 300 }}
 								source={require("../../assets/images/dice.gif")}
 							/>
-							{/* <ExpoFastImage
-				uri={require('../../assets/images/dice.gif')}
-				style={{width: 300, height: 300}}
-			/> */}
 						</TouchableOpacity>
 					</View>
 				</View>
-			</Modal>
+			</Modal> */}
 		</View>
 	);
 }

@@ -91,6 +91,11 @@ const ModifyUser = ({ navigation }) => {
 		setUid(uid);
 	};
 
+	const logOut = () => {
+		auth.signOut(auth.getAuth());
+		navigation.navigate("홈")
+	}
+
 	return (
 		<View style={styles.container}>
 			<Text
@@ -132,6 +137,8 @@ const ModifyUser = ({ navigation }) => {
 				<Text style={styles.uid}>회원UID : {uid}</Text>
 
 				<Button raised onPress={() => updateInfo()} title="수정완료" />
+				<Text> </Text>
+				<Button raised onPress={() => logOut()} title="로그아웃" />
 				<Text> </Text>
 				<Button
 					raised

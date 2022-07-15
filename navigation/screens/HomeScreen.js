@@ -47,15 +47,15 @@ export default function HomeScreen({ navigation }) {
 					setCurrentUser(auth.getAuth().currentUser.displayName)
 				);
 				setInitRegist(true);
-				Linking.getInitialURL().then(async (url) => {
-					console.log(url);
-					_processUrl(url);
-				});
+				// Linking.getInitialURL().then(async (url) => {
+				// 	console.log(url);
+				// 	_processUrl(url);
+				// });
 
-				Linking.addEventListener("url", (e) => {
-					const url = e.url;
-					_processUrl(url);
-				});
+				// Linking.addEventListener("url", (e) => {
+				// 	const url = e.url;
+				// 	_processUrl(url);
+				// });
 
 				return () => {
 					Linking.removeEventListener("url", (e) => {
@@ -98,47 +98,47 @@ export default function HomeScreen({ navigation }) {
 			});
 	};
 
-	const _processUrl = async (url) => {
-		if (url != null && url.includes("https://jmwschool.page.link")) {
-			const paramArray = url.split("/");
-			const userUID = paramArray[paramArray.length - 1];
-			console.log(userUID);
-			const docRef0 = db.doc(
-				db.getFirestore(),
-				"users",
-				auth.getAuth().currentUser.uid
-			);
-			const docSnap0 = await db.getDoc(docRef0);
-			if (docSnap0.exists() && docSnap0.data().recommended == 0) {
-				const docRef = db.doc(db.getFirestore(), "users", userUID);
-				const docSnap = await db.getDoc(docRef);
-				if (docSnap.exists()) {
-					console.log("Document data:", docSnap.data());
-				} else {
-					// doc.data() will be undefined in this case
-					console.log("No such document!");
-				}
-				try {
-					db.updateDoc(doc(db.getFirestore(), "users", userUID), {
-						recordNum: docSnap.data().recordNum + 5,
-					});
-					db.updateDoc(
-						doc(
-							db.getFirestore(),
-							"users",
-							auth.getAuth().currentUser.uid
-						),
-						{
-							recommended: 1,
-						}
-					);
-				} catch (error) {
-					console.log("DB Error : " + error);
-					Alert.alert("DB error", error);
-				}
-			}
-		}
-	};
+	// const _processUrl = async (url) => {
+	// 	if (url != null && url.includes("https://jmwschool.page.link")) {
+	// 		const paramArray = url.split("/");
+	// 		const userUID = paramArray[paramArray.length - 1];
+	// 		console.log(userUID);
+	// 		const docRef0 = db.doc(
+	// 			db.getFirestore(),
+	// 			"users",
+	// 			auth.getAuth().currentUser.uid
+	// 		);
+	// 		const docSnap0 = await db.getDoc(docRef0);
+	// 		if (docSnap0.exists() && docSnap0.data().recommended == 0) {
+	// 			const docRef = db.doc(db.getFirestore(), "users", userUID);
+	// 			const docSnap = await db.getDoc(docRef);
+	// 			if (docSnap.exists()) {
+	// 				console.log("Document data:", docSnap.data());
+	// 			} else {
+	// 				// doc.data() will be undefined in this case
+	// 				console.log("No such document!");
+	// 			}
+	// 			try {
+	// 				db.updateDoc(doc(db.getFirestore(), "users", userUID), {
+	// 					recordNum: docSnap.data().recordNum + 5,
+	// 				});
+	// 				db.updateDoc(
+	// 					doc(
+	// 						db.getFirestore(),
+	// 						"users",
+	// 						auth.getAuth().currentUser.uid
+	// 					),
+	// 					{
+	// 						recommended: 1,
+	// 					}
+	// 				);
+	// 			} catch (error) {
+	// 				console.log("DB Error : " + error);
+	// 				Alert.alert("DB error", error);
+	// 			}
+	// 		}
+	// 	}
+	// };
 
 	const createLink = async () => {
 		if (auth.getAuth().currentUser.isAnonymous) {
@@ -153,7 +153,7 @@ export default function HomeScreen({ navigation }) {
 			const payload = {
 				dynamicLinkInfo: {
 					domainUriPrefix: "https://jmwschool.page.link",
-					link: `https://jmwschool.page.link/UkMX/${UID}`,
+					link: `https://jmwschool.page.link/UkMX`,
 					// link: `https://jmwschool.page.link/aaaa`,
 					androidInfo: {
 						androidPackageName: "host.exp.jmwschool",
@@ -178,18 +178,44 @@ export default function HomeScreen({ navigation }) {
 			// console.log(response.json().then((e)=>console.log(e)))
 			const json = await response.json();
 			const result = await Share.share({
-				message: "아이폰 전용 링크 :\nhttps://jmwschool.page.link/UkMX",
+				// message: "자미원학당 - 이름녹음 어플",
+				message: "",
 				url: json.shortLink,
 				title: `자미원학당 - 이름녹음 어플`,
 			});
 			if (result.action === Share.sharedAction) {
 				if (result.activityType) {
-					console.log("action if");
+					console.log("공유하기 완료");
+					const uid = auth.getAuth().currentUser.uid
+					const docRef0 = db.doc(
+						db.getFirestore(),
+						"users",
+						uid
+					);
+					const docSnap0 = await db.getDoc(docRef0);
+					if (docSnap0.exists()) {
+						const docRef = db.doc(db.getFirestore(), "users", uid);
+						const docSnap = await db.getDoc(docRef);
+						if (docSnap.exists()) {
+							console.log("Document data:", docSnap.data());
+						} else {
+							// doc.data() will be undefined in this case
+							console.log("No such document!");
+						}
+						try {
+							db.updateDoc(doc(db.getFirestore(), "users", uid), {
+								recordNum: docSnap.data().recordNum + 5,
+							});
+						} catch (error) {
+							console.log("DB Error : " + error);
+							// Alert.alert("오류","공유하기 업데이트 오류");
+						}
+					}
 				} else {
 					console.log("action else");
 				}
 			} else if (result.action === Share.dismissedAction) {
-				console.log("dismissed");
+				console.log("공유하기 실행 취소");
 			}
 		} catch (error) {
 			console.log("Linking Errors: " + error);
@@ -278,8 +304,8 @@ export default function HomeScreen({ navigation }) {
 					<TouchableOpacity
 						underlayColor={"transparent"}
 						onPress={() => 
-							// navigation.navigate("성명학")
-							Alert.alert("알림","업데이트 예정")
+							navigation.navigate("성명학")
+							// Alert.alert("알림","업데이트 예정")
 					}
 					>
 						<View style={styles.menuButton}>
