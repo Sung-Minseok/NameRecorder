@@ -66,11 +66,11 @@ export default function NameScreen({ navigation }) {
 
 	const radioButton = [
 		{
-			label: '남',
+			label: '남성',
 			accessibilityLabel: 'male'
 		},
 		{
-			label: '녀',
+			label: '여성',
 			accessibilityLabel: 'female'
 		}
 	];
@@ -207,6 +207,24 @@ export default function NameScreen({ navigation }) {
 	const processName = (text) => {
 		let birth2 = birth;
 		birth2 = birth2.substring(0, 4);
+		let birth3 = birth.substring(4, 8);
+		let birthCheck = 4
+		// if(Data.season23.includes(birth2)){
+		// 	console.log("입춘일 변경")
+		// 	birthCheck = 3
+		// }else if(Data.season25.includes(birth2)){
+		// 	console.log("입춘일 변경")
+		// 	birthCheck = 5
+		// }
+
+		// if(birth3[1]<3 && birth3.substring(2,4)<birthCheck){
+		// 	console.log("출생년도 -1")
+		// 	birth2 = birth2 - 1
+		// }
+
+		console.log(Data.season23)
+		console.log(birth2)
+		console.log(Data.season23.includes(birth2)
 		let y1 = year1[birth2[3] - 1];
 		let y2 = year2[((birth2 - 1683) % 12) - 1];
 		let year = y1 + y2;
@@ -280,8 +298,8 @@ export default function NameScreen({ navigation }) {
 					borderColor: GROUNDCOLOR,
 				}}
 			>
-				<Text style={{ fontSize: 26, fontWeight: "bold" }}>
-					{"결과를 위해 이름, 생년월일, 성별을 정확히 입력해주세요"}
+				<Text style={{ fontSize: 22, fontWeight: "bold" }}>
+					{"결과를 위해 이름, 생년월일, 성별을 정확히 입력해주세요."}
 				</Text>
 			</View>
 			<View

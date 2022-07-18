@@ -8,6 +8,7 @@ import {
 	Alert,
 	Share,
 	Linking,
+	Platform,
 } from "react-native";
 import * as Font from "expo-font";
 
@@ -179,12 +180,13 @@ export default function HomeScreen({ navigation }) {
 			const json = await response.json();
 			const result = await Share.share({
 				// message: "자미원학당 - 이름녹음 어플",
-				message: "",
+				message: Platform.OS === 'ios'? "" : "자미원학당 - 이름녹음 어플\nhttps://jmwschool.page.link/UkMX",
 				url: json.shortLink,
 				title: `자미원학당 - 이름녹음 어플`,
 			});
 			if (result.action === Share.sharedAction) {
-				if (result.activityType) {
+				console.log(result)
+				if (result.activityType || Platform.OS==='android') {
 					console.log("공유하기 완료");
 					const uid = auth.getAuth().currentUser.uid
 					const docRef0 = db.doc(
