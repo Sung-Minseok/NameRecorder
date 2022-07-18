@@ -48,8 +48,9 @@ export const vowel2 = {
     "": 0
 };
 
-export const year1 = ["辛", "壬", "癸", "甲", "乙", "丙", "丁", "戊", "己", "庚"];
+export const year1 = ["庚", "辛", "壬", "癸", "甲", "乙", "丙", "丁", "戊", "己"];
 export const year2 = [
+    "壬",
     "癸",
     "己",
     "甲",
@@ -61,7 +62,6 @@ export const year2 = [
     "庚",
     "辛",
     "戊",
-    "壬",
 ];
 
 export const check1 = {

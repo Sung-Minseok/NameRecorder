@@ -44,6 +44,7 @@ export default function NameScreen({ navigation }) {
 	const [mainModalVisible, setMainModalVisible] = useState(false);
 	const [currentName, setCurrentName] = useState("");
 	const [birth, setBirth] = useState("");
+	const [birthDisplay, setBirthDisplay] = useState("00000000")
 	const [firstName, setFirstName] = useState(["", "", "", ""]);
 	const [secondName, setSecondName] = useState(["", "", "", ""]);
 	const [thirdName, setThirdName] = useState(["", "", "", ""]);
@@ -209,24 +210,24 @@ export default function NameScreen({ navigation }) {
 		birth2 = birth2.substring(0, 4);
 		let birth3 = birth.substring(4, 8);
 		let birthCheck = 4
-		// if(Data.season23.includes(birth2)){
-		// 	console.log("입춘일 변경")
-		// 	birthCheck = 3
-		// }else if(Data.season25.includes(birth2)){
-		// 	console.log("입춘일 변경")
-		// 	birthCheck = 5
-		// }
+		if(Data.season23.includes(Number(birth2))){
+			console.log("입춘일 변경")
+			birthCheck = 3
+		}else if(Data.season25.includes(Number(birth2))){
+			console.log("입춘일 변경")
+			birthCheck = 5
+		}
 
-		// if(birth3[1]<3 && birth3.substring(2,4)<birthCheck){
-		// 	console.log("출생년도 -1")
-		// 	birth2 = birth2 - 1
-		// }
-
-		console.log(Data.season23)
-		console.log(birth2)
-		console.log(Data.season23.includes(birth2)
-		let y1 = year1[birth2[3] - 1];
-		let y2 = year2[((birth2 - 1683) % 12) - 1];
+		if(birth3[1]==1){
+			console.log("출생년도 -1")
+			birth2 = birth2 - 1
+		}else if(birth3[1]==2 && Number(birth3.substring(2,4))<birthCheck){
+			console.log("출생년도 -1")
+			birth2 = birth2 - 1
+		}
+		setBirthDisplay(birth2)
+		let y1 = year1[birth2.toString()[3]];
+		let y2 = year2[((birth2 - 1683) % 12)];
 		let year = y1 + y2;
 		setYearName(year);
 		console.log(year);
@@ -443,7 +444,7 @@ export default function NameScreen({ navigation }) {
 							}}
 						>
 							<Text style={{ fontSize: 40, fontWeight: "bold" }}>
-								{birth.substring(0, 4) +
+								{birthDisplay+
 									"-" +
 									yearName +
 									"년생"}
