@@ -462,7 +462,7 @@ class Recording extends React.Component {
 			const json = await response.json();
 			const result = await Share.share({
 				// message: "자미원학당 - 이름녹음 어플",
-				message: "",
+				message: Platform.OS === 'ios'? "" : "자미원학당 - 이름녹음 어플\nhttps://jmwschool.page.link/UkMX",
 				url: json.shortLink,
 				title: `자미원학당 - 이름녹음 어플`,
 			});
@@ -932,6 +932,8 @@ class Recording extends React.Component {
           {
             style: {
               borderRadius: 7,
+              borderWidth: 2,
+              borderColor: POINTCOLOR,
               backgroundColor: GROUNDCOLOR,
               width: DEVICE_WIDTH * 0.23,
               height: DEVICE_WIDTH * 0.1,

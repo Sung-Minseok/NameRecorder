@@ -27,9 +27,9 @@ const renderScene2 = (props) => {
   // console.log(props)
   switch (props.route.key) {
     case 'first':
-      return <RecordListscreen {...props}/>;
-    case 'second':
       return <RecordingScreen {...props}/>;
+    case 'second':
+      return <RecordListscreen {...props}/>;
     default:
       return null;
   }
@@ -44,8 +44,8 @@ export default function RecordScreen({ navigation }) {
 
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    { key: "first", title: "녹음목록" },
-    { key: "second", title: "녹음하기" },
+    { key: "first", title: "녹음하기" },
+    { key: "second", title: "재생목록" },
   ]);
   const [fontLoaded, setFontLoaded] = React.useState(false);
 

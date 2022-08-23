@@ -34,6 +34,7 @@ export default function HomeScreen({ navigation }) {
 	// const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [userName, setUserName] = useState("");
 	const [initRegist, setInitRegist] = useState(false);
+	const [adminCheck, setAdminCheck] = useState(true)
 
 	useEffect(async () => {
 		_loadFont();
@@ -44,6 +45,7 @@ export default function HomeScreen({ navigation }) {
 				console.log("3");
 				setInitRegist(true);
 			} else {
+				getAdminCheck();
 				dispatch(
 					setCurrentUser(auth.getAuth().currentUser.displayName)
 				);
@@ -97,6 +99,25 @@ export default function HomeScreen({ navigation }) {
 				}
 				console.error(error);
 			});
+	};
+
+	const getAdminCheck = async () => {
+		const uid = auth.getAuth().currentUser.uid;
+		const docRef = db.doc(db.getFirestore(),"users",uid);
+		const docSnap = await db.getDoc(docRef);
+		if (docSnap.exists()) {
+			console.log("Document data:", docSnap.data());
+		} else {
+			console.log("No such document!");
+		}
+		const check = docSnap?.data()?.admin || "anonymous"
+		if(check==="admin"){
+			console.log("admin : true")
+			setAdminCheck(true)
+		}else{
+			console.log("admin : false")
+			setAdminCheck(false)
+		}
 	};
 
 	// const _processUrl = async (url) => {
@@ -250,6 +271,134 @@ export default function HomeScreen({ navigation }) {
 				<Text>Loading Page</Text>
 			</View>
 		);
+	} else if(adminCheck){
+		
+		return (
+			<View style={styles.container}>
+				<View
+					style={{
+						flexDirection: "row",
+						justifyContent: "space-between",
+						alignItems: "center",
+						width: DEVICE_WIDTH,
+						padding: 10,
+						paddingHorizontal: 10,
+						borderWidth: 2,
+						borderColor: GROUNDCOLOR,
+					}}
+				>
+					<Text style={{ fontSize: 26, fontWeight: "bold" }}>
+						{reduxState.record.currentUserState + " 사용자님"}
+					</Text>
+					{auth.getAuth()?.currentUser?.isAnonymous ? (
+						<TouchableOpacity
+							onPressOut={() => navigation.navigate("로그인")}
+						>
+							<View style={styles.userButton}>
+								<Text style={styles.menuText2}>회원가입</Text>
+							</View>
+						</TouchableOpacity>
+					) : (
+						<TouchableOpacity
+							onPressOut={() => navigation.navigate("회원정보")}
+						>
+							<View style={styles.userButton}>
+								<Text style={styles.menuText2}>회원정보</Text>
+							</View>
+						</TouchableOpacity>
+					)}
+				</View>
+				<View style={styles.buttonContainer}>
+					<TouchableOpacity
+						underlayColor={"transparent"}
+						onPress={() => navigation.navigate("녹음")}
+					>
+						<View style={styles.menuButton}>
+							<Text style={styles.menuText}>녹음기능</Text>
+						</View>
+					</TouchableOpacity>
+					<TouchableOpacity
+						underlayColor={"transparent"}
+						onPress={() => navigation.navigate("운세")}
+					>
+						<View style={styles.menuButton}>
+							<Text style={styles.menuText}>오늘의 운세</Text>
+						</View>
+					</TouchableOpacity>
+					<TouchableOpacity
+						underlayColor={"transparent"}
+						onPress={() => 
+							navigation.navigate("성명학")
+							// Alert.alert("알림","업데이트 예정")
+					}
+					>
+						<View style={styles.menuButton}>
+							<Text style={styles.menuText}>성명학 상담신청</Text>
+						</View>
+					</TouchableOpacity>
+					<TouchableOpacity
+						underlayColor={"transparent"}
+						onPress={() => navigation.navigate("돋보기")}
+					>
+						<View style={styles.menuButton}>
+							<Text style={styles.menuText}>돋보기 & 손전등</Text>
+						</View>
+					</TouchableOpacity>
+					{/* <TouchableOpacity
+						underlayColor={"transparent"}
+						onPress={() =>
+							navigation.navigate("지문")
+						}
+					>
+						<View style={styles.menuButton}>
+							<Text style={styles.menuText}>지문 적성검사 등록</Text>
+						</View>
+					</TouchableOpacity>
+					<TouchableOpacity
+						underlayColor={"transparent"}
+						onPress={() => Alert.alert("추후 업데이트")}
+					>
+						<View style={styles.menuButton}>
+							<Text style={styles.menuText}>
+								모든 가능하게 하는 힘
+							</Text>
+						</View>
+					</TouchableOpacity> */}
+					<TouchableOpacity
+						underlayColor={"transparent"}
+						// onPress={() => _share()}
+						onPress={() => createLink()}
+					>
+						<View style={styles.shareButton}>
+							<Text style={styles.menuText}>앱 공유하기</Text>
+						</View>
+					</TouchableOpacity>
+				</View>
+				<TouchableOpacity
+					underlayColor={"transparent"}
+					onPress={() => {
+						navigation.navigate("게시판")
+					}}
+					style={styles.menuButton2}
+				>
+					<View>
+						<Text style={styles.menuText2}>문의 하기</Text>
+					</View>
+				</TouchableOpacity>
+				<TouchableOpacity
+					underlayColor={"transparent"}
+					onPress={() => {
+						navigation.navigate("관리자페이지");
+					}}
+					style={styles.menuButton3}
+				>
+					<View>
+						<Text style={styles.menuText3}>관리자 메뉴</Text>
+					</View>
+				</TouchableOpacity>
+			</View>
+		);
+	
 	} else {
 		return (
 			<View style={styles.container}>
@@ -363,18 +512,6 @@ export default function HomeScreen({ navigation }) {
 						<Text style={styles.menuText2}>문의 하기</Text>
 					</View>
 				</TouchableOpacity>
-				
-				{/* <TouchableOpacity
-					underlayColor={"transparent"}
-					onPress={() => {
-						navigation.navigate("관리자페이지");
-					}}
-					style={styles.menuButton3}
-				>
-					<View>
-						<Text style={styles.menuText3}>관리자 메뉴</Text>
-					</View>
-				</TouchableOpacity> */}
 			</View>
 		);
 	}

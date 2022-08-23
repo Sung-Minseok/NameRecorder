@@ -51,6 +51,7 @@ export default function NameScreen({ navigation }) {
 	const [yearName, setYearName] = useState("");
 	const [core1, setCore1] = useState("ㅏ");
 	const [core2, setCore2] = useState("ㅏ");
+	const [cons, setCons] = useState(["","","","",""]);
 	const [buttonChecked, setButtonChecked] = useState("male")
 	useEffect(async () => {
 		_loadFont();
@@ -256,16 +257,59 @@ export default function NameScreen({ navigation }) {
 		console.log("f : " + f);
 		console.log("s : " + s);
 		console.log("t : " + t);
-
 		setCore1(s[0]);
 		setCore2(s[2]);
 
+		const convert = {
+			목: 0,
+			화: 2,
+			토: 4,
+			금: 6,
+			수: 8,
+			"": -1
+		}
+		let nameCons = [first['f'],first['t'],second['f'],second['t'],third['f'],third['t']]
+		let nameCons2 = [Data.check2[nameCons[0]],Data.check2[nameCons[1]],Data.check2[nameCons[2]],Data.check2[nameCons[3]],Data.check2[nameCons[4]],Data.check2[nameCons[5]]]
+		let nameCons3 = [convert[nameCons2[0]],convert[nameCons2[1]],convert[nameCons2[2]],convert[nameCons2[3]],convert[nameCons2[4]],convert[nameCons2[5]]]
+		console.log("nameCons : "+ nameCons3)
+		let pn = [];
+		for( let i=0; i<5; i++){
+			if(nameCons3[i+1]===-1){
+				pn.push("")
+				if(i!=4){
+					pn.push(checkPN(nameCons3[i], nameCons3[i+2]))
+					i++
+				}
+			}else{
+				pn.push(checkPN(nameCons3[i], nameCons3[i+1]))
+			}
+		}
+		console.log("PN : "+ pn)
+		setCons(pn)
 		setFirstName(f);
 		setSecondName(s);
 		setThirdName(t);
 
 		return [first, second, third];
 	};
+	
+	
+
+	const checkPN = (a, b) => {
+		if(a-b === 2 || a-b === 8){
+			return 'p1'
+		}else if(a-b === -2 || a-b=== -8){
+			return 'p2'
+		}else if(a-b === -6){
+			return 'n1'
+		}else if(a-b === 4 || a-b === 6){
+			return 'n2'
+		}else if(a-b === 0){
+			return 's'
+		}else{
+			return 'x'
+		}
+	}
 
 	const clickItem = () => {
 		if(currentName==="" || currentName.length<2){
@@ -341,8 +385,9 @@ export default function NameScreen({ navigation }) {
 				<RadioButtonRN
 					data={radioButton}
 					activeColor={GROUNDCOLOR}
-					textStyle={{fontSize: 18, fontWeight: 'bold', fontFamily: 'SquareRound'}}
-					boxStyle={{borderWidth:2}}
+					style={{flexDirection: 'row', justifyContent: 'space-between'}}
+					textStyle={{fontSize: 18, fontWeight: 'bold', fontFamily: 'SquareRound', alignSelf: 'center'}}
+					boxStyle={{borderWidth:2, width: DEVICE_WIDTH*0.35, borderColor: GROUNDCOLOR}}
 					selectedBtn={(e)=> {
 						setButtonChecked(e.accessibilityLabel)
 					}}
@@ -522,6 +567,11 @@ export default function NameScreen({ navigation }) {
 									>
 										{currentName[0]}
 									</Text>
+									<View style={{position: 'absolute', right: 10}}>
+										<Text style={{fontSize: 35, fontWeight:'500', color: cons[0]==='p1'||cons[0]==='p2'? 'blue': cons[0]==='n1'||cons[0]==='n2'?'red':'black'}}>
+										{cons[0]===''?'－':('p1'||'n1')? '↑': '↓'}
+										</Text>
+									</View>
 								</View>
 								<View
 									style={{
@@ -621,6 +671,16 @@ export default function NameScreen({ navigation }) {
 									>
 										{currentName[1]}
 									</Text>
+									<View style={{position: 'absolute', right: 10}}>
+										<Text style={{fontSize: 35, fontWeight:'500', color: cons[2]==='p1'||cons[2]==='p2'? 'blue': cons[2]==='n1'||cons[2]==='n2'?'red':'black'}}>
+										{cons[2]===''?'－':('p1'||'n1')? '↑': '↓'}
+										</Text>
+									</View>
+									<View style={{position: 'absolute', right: 10, bottom: 40}}>
+										<Text style={{fontSize: 35, fontWeight:'500', color: cons[1]==='p1'||cons[1]==='p2'? 'blue': cons[1]==='n1'||cons[1]==='n2'?'red':'black'}}>
+										{cons[1]===''?'－':('p1'||'n1')? '↑': '↓'}
+										</Text>
+									</View>
 								</View>
 								<View
 									style={{
@@ -721,6 +781,16 @@ export default function NameScreen({ navigation }) {
 									>
 										{currentName[2]}
 									</Text>
+									<View style={{position: 'absolute', right: 10}}>
+										<Text style={{fontSize: 35, fontWeight:'500', color: cons[4]==='p1'||cons[4]==='p2'? 'blue': cons[4]==='n1'||cons[4]==='n2'?'red':'black'}}>
+										{cons[4]===''?'－':('p1'||'n1')? '↑': '↓'}
+										</Text>
+									</View>
+									<View style={{position: 'absolute', right: 10, bottom: 40}}>
+										<Text style={{fontSize: 35, fontWeight:'500', color: cons[3]==='p1'||cons[3]==='p2'? 'blue': cons[3]==='n1'||cons[3]==='n2'?'red':'black'}}>
+										{cons[3]===''?'－':('p1'||'n1')? '↑': '↓'}
+										</Text>
+									</View>
 								</View>
 								<View
 									style={{
@@ -761,7 +831,7 @@ export default function NameScreen({ navigation }) {
 						</View>
 						<View style={{ marginBottom: 30 }}>
 							<Text style={{ fontSize: 20, fontWeight: "bold" }}>
-								{"중심 에너지 : " + core1}
+								{"상생 중심 에너지 : " + core1}
 							</Text>
 							<Text
 								style={{
@@ -777,7 +847,7 @@ export default function NameScreen({ navigation }) {
 								}
 							</Text>
 							<Text style={{ fontSize: 20, fontWeight: "bold" }}>
-								{"보조 에너지 : " + core2}
+								{"상생 보조 에너지 : " + core2}
 							</Text>
 							<Text
 								style={{
@@ -790,6 +860,20 @@ export default function NameScreen({ navigation }) {
 									Data.coreName[core1.toString()][
 										core2.toString()
 									]["sub"]
+								}
+							</Text>
+							<Text style={{ fontSize: 20, fontWeight: "bold" }}>
+								{"상극 중심 에너지 : " + core1}
+							</Text>
+							<Text
+								style={{
+									fontSize: 17,
+									marginVertical: 5,
+									marginHorizontal: 5,
+								}}
+							>
+								{
+									Data.coreNameNeg[core1.toString()]
 								}
 							</Text>
 						</View>
