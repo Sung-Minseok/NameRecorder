@@ -53,6 +53,9 @@ export default function NameScreen({ navigation }) {
 	const [core2, setCore2] = useState("ㅏ");
 	const [cons, setCons] = useState(["","","","",""]);
 	const [buttonChecked, setButtonChecked] = useState("male")
+	const [familyN, setFamilyN] = useState([]);
+	const [familyP, setFamilyP] = useState([]);
+	const [organ, setOrgan] = useState([]);
 	useEffect(async () => {
 		_loadFont();
 	}, []);
@@ -286,6 +289,118 @@ export default function NameScreen({ navigation }) {
 		}
 		console.log("PN : "+ pn)
 		setCons(pn)
+		let familyP =[];
+		let familyN =[];
+		if(pn[0]==='p1' || pn[0]==='p2'){
+			familyP.push(f[0])
+			familyP.push(f[1])
+			familyP.push(f[2])
+			familyP.push(f[3])
+		}else if(pn[0]==='n1' || pn[0]==='n2'){
+			familyN.push(f[0])
+			familyN.push(f[1])
+			familyN.push(f[2])
+			familyN.push(f[3])
+		}
+		if(pn[1]==='p1' || pn[1]==='p2'){
+			familyP.push(f[1])
+			familyP.push(f[3])
+			familyP.push(s[0])
+			familyP.push(s[2])
+		}else if(pn[1]==='n1' || pn[1]==='n2'){
+			familyN.push(f[1])
+			familyN.push(f[3])
+			familyN.push(s[0])
+			familyN.push(s[2])
+		}
+		if(pn[2]==='p1' || pn[2]==='p2'){
+			familyP.push(s[0])
+			familyP.push(s[1])
+			familyP.push(s[2])
+			familyP.push(s[3])
+		}else if(pn[2]==='n1' || pn[2]==='n2'){
+			familyN.push(s[0])
+			familyN.push(s[1])
+			familyN.push(s[2])
+			familyN.push(s[3])
+		}
+		if(pn[3]==='p1' || pn[3]==='p2'){
+			familyP.push(s[1])
+			familyP.push(s[3])
+			familyP.push(t[0])
+			familyP.push(t[2])
+		}else if(pn[3]==='n1' || pn[3]==='n2'){
+			familyN.push(s[1])
+			familyN.push(s[3])
+			familyN.push(t[0])
+			familyN.push(t[2])
+		}
+		if(pn[4]==='p1' || pn[4]==='p2'){
+			familyP.push(t[0])
+			familyP.push(t[1])
+			familyP.push(t[2])
+			familyP.push(t[3])
+		}else if(pn[4]==='n1' || pn[4]==='n2'){
+			familyN.push(t[0])
+			familyN.push(t[1])
+			familyN.push(t[2])
+			familyN.push(t[3])
+		}
+		const setP = new Set(familyP)
+		const setN = new Set(familyN)
+		const arrP = [...setP]
+		const arrN = [...setN]
+		console.log("FamilyP : "+ arrP)
+		console.log("FmailyN : "+ arrN)
+
+		let FP = [];
+		let FN = [];
+
+		if(buttonChecked==='male'){
+			for(let i=0; i<arrP.length; i++){
+				FP.push(Data.familyM[arrP[i]])
+			}
+			for(let i=0; i<arrN.length; i++){
+				FN.push(Data.familyM[arrN[i]])
+			}
+		}else{
+			for(let i=0; i<arrP.length; i++){
+				FP.push(Data.familyF[arrP[i]])
+			}
+			for(let i=0; i<arrN.length; i++){
+				FN.push(Data.familyF[arrN[i]])
+			}
+		}
+		setFamilyP(FP)
+		setFamilyN(FN)
+		console.log("상생 대인관계 : "+FP)
+		console.log("상극 대인관계 : "+FN)
+		console.log(nameCons3[0])
+		let organ = [];
+		if(pn[0]==='n1' || pn[0]==='n2'){
+			organ.push(Data.organ[nameCons3[0]])
+			organ.push(Data.organ[nameCons3[1]])
+		}
+		if(pn[1]==='n1' || pn[1]==='n2'){
+			organ.push(Data.organ[nameCons3[1]])
+			organ.push(Data.organ[nameCons3[2]])
+		}
+		if(pn[2]==='n1' || pn[2]==='n2'){
+			organ.push(Data.organ[nameCons3[2]])
+			organ.push(Data.organ[nameCons3[3]])
+		}
+		if(pn[3]==='n1' || pn[3]==='n2'){
+			organ.push(Data.organ[nameCons3[3]])
+			organ.push(Data.organ[nameCons3[4]])
+		}
+		if(pn[4]==='n1' || pn[4]==='n2'){
+			organ.push(Data.organ[nameCons3[4]])
+			organ.push(Data.organ[nameCons3[5]])
+		}
+		const organSet = new Set(organ);
+		const organArr = [...organSet]
+		setOrgan(organArr);
+
 		setFirstName(f);
 		setSecondName(s);
 		setThirdName(t);
@@ -298,16 +413,16 @@ export default function NameScreen({ navigation }) {
 	const checkPN = (a, b) => {
 		if(a-b === 2 || a-b === 8){
 			return 'p1'
-		}else if(a-b === -2 || a-b=== -8){
+		}else if(a-b === -2 || a-b === -8){
 			return 'p2'
-		}else if(a-b === -6){
+		}else if(a-b === -4 || a-b === -6){
 			return 'n1'
 		}else if(a-b === 4 || a-b === 6){
 			return 'n2'
 		}else if(a-b === 0){
-			return 's'
+			return ''
 		}else{
-			return 'x'
+			return ''
 		}
 	}
 
@@ -569,7 +684,7 @@ export default function NameScreen({ navigation }) {
 									</Text>
 									<View style={{position: 'absolute', right: 10}}>
 										<Text style={{fontSize: 35, fontWeight:'500', color: cons[0]==='p1'||cons[0]==='p2'? 'blue': cons[0]==='n1'||cons[0]==='n2'?'red':'black'}}>
-										{cons[0]===''?'－':('p1'||'n1')? '↑': '↓'}
+										{cons[0]===''?'－':cons[0]==='p1' || cons[0]==='n1'? '↑': '↓'}
 										</Text>
 									</View>
 								</View>
@@ -673,12 +788,12 @@ export default function NameScreen({ navigation }) {
 									</Text>
 									<View style={{position: 'absolute', right: 10}}>
 										<Text style={{fontSize: 35, fontWeight:'500', color: cons[2]==='p1'||cons[2]==='p2'? 'blue': cons[2]==='n1'||cons[2]==='n2'?'red':'black'}}>
-										{cons[2]===''?'－':('p1'||'n1')? '↑': '↓'}
+										{cons[2]===''?'－':cons[2]==='p1' || cons[2]==='n1'? '↑': '↓'}
 										</Text>
 									</View>
 									<View style={{position: 'absolute', right: 10, bottom: 40}}>
 										<Text style={{fontSize: 35, fontWeight:'500', color: cons[1]==='p1'||cons[1]==='p2'? 'blue': cons[1]==='n1'||cons[1]==='n2'?'red':'black'}}>
-										{cons[1]===''?'－':('p1'||'n1')? '↑': '↓'}
+										{cons[1]===''?'－':cons[1]==='p1' || cons[1]==='n1'? '↑': '↓'}
 										</Text>
 									</View>
 								</View>
@@ -783,12 +898,12 @@ export default function NameScreen({ navigation }) {
 									</Text>
 									<View style={{position: 'absolute', right: 10}}>
 										<Text style={{fontSize: 35, fontWeight:'500', color: cons[4]==='p1'||cons[4]==='p2'? 'blue': cons[4]==='n1'||cons[4]==='n2'?'red':'black'}}>
-										{cons[4]===''?'－':('p1'||'n1')? '↑': '↓'}
+										{cons[4]===''?'－':cons[4]==='p1' || cons[4]==='n1'? '↑': '↓'}
 										</Text>
 									</View>
 									<View style={{position: 'absolute', right: 10, bottom: 40}}>
 										<Text style={{fontSize: 35, fontWeight:'500', color: cons[3]==='p1'||cons[3]==='p2'? 'blue': cons[3]==='n1'||cons[3]==='n2'?'red':'black'}}>
-										{cons[3]===''?'－':('p1'||'n1')? '↑': '↓'}
+										{cons[3]===''?'－':cons[3]==='p1' || cons[3]==='n1'? '↑': '↓'}
 										</Text>
 									</View>
 								</View>
@@ -874,6 +989,48 @@ export default function NameScreen({ navigation }) {
 							>
 								{
 									Data.coreNameNeg[core1.toString()]
+								}
+							</Text>
+							<Text style={{ fontSize: 20, fontWeight: "bold" }}>
+								{"상생 대인관계"}
+							</Text>
+							<Text
+								style={{
+									fontSize: 17,
+									marginVertical: 5,
+									marginHorizontal: 5,
+								}}
+							>
+								{
+									""+familyP
+								}
+							</Text>
+							<Text style={{ fontSize: 20, fontWeight: "bold" }}>
+								{"상극 대인관계"}
+							</Text>
+							<Text
+								style={{
+									fontSize: 17,
+									marginVertical: 5,
+									marginHorizontal: 5,
+								}}
+							>
+								{
+									""+familyN
+								}
+							</Text>
+							<Text style={{ fontSize: 20, fontWeight: "bold" }}>
+								{"안좋을 수 있는 신체부위"}
+							</Text>
+							<Text
+								style={{
+									fontSize: 17,
+									marginVertical: 5,
+									marginHorizontal: 5,
+								}}
+							>
+								{
+									""+organ
 								}
 							</Text>
 						</View>

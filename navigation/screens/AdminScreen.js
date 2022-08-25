@@ -31,9 +31,7 @@ const renderScene2 = (props) => {
     case "first":
       return <AdminBoard {...props} />;
     case "second":
-      return <AdminFingerBoard {...props} />;
-    case "third":
-        return <AdminUser {...props} />;
+      return <AdminUser {...props} />;
     default:
       return null;
   }
@@ -48,8 +46,7 @@ export default function AdminScreen({ navigation }) {
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
     { key: "first", title: "문의글" },
-    { key: "second", title: "상담내역" },
-    { key: "third", title: "유저관리"},
+    { key: "second", title: "회원관리" },
   ]);
   const [fontLoaded, setFontLoaded] = React.useState(false);
 

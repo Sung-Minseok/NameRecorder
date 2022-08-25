@@ -26,12 +26,6 @@ const POINTCOLOR = "#ff6781";
 const BACKGROUNDCOLOR = "#F4ECE6";
 
 export default function AdminUser(props) {
-	useEffect(() => {
-		(async () => {
-			getPhoto();
-		})();
-	}, [modalVisible]);
-
 	const [modalVisible, setModalVisible] = useState(false);
 
 	const Item = ({ item }) => {
@@ -39,7 +33,7 @@ export default function AdminUser(props) {
 			<TouchableOpacity
 				onPress={() => {
 					setBoardItem(item);
-					setModalVisible(true);
+					// setModalVisible(true);
 				}}
 			>
 				<View
@@ -194,7 +188,7 @@ export default function AdminUser(props) {
 		const boardRef = collection(db.getFirestore(), "users");
 		const q = query(
 			boardRef,
-			orderBy("admin", "desc")
+			orderBy("admin", "asc")
 		);
 		const querySnapshot = await db.getDocs(q);
 		let list = [];
@@ -204,22 +198,6 @@ export default function AdminUser(props) {
 			list.push(doc.data());
 		});
 		setBoardList(list);
-	};
-
-	const getPhoto = async () => {
-		// const uid = auth.getAuth().currentUser.uid;
-		const s = storage.getStorage();
-		const listRef = storage.ref(s, userUID + "/" + boardItem.title);
-		const folderList = storage.listAll(listRef);
-		const list = await Promise.all(
-			(
-				await folderList
-			).items.map((e) => {
-				return storage.getDownloadURL(storage.ref(e));
-			})
-		);
-		console.log(list);
-		setPhotoList(list);
 	};
 
 	return (
@@ -344,7 +322,7 @@ export default function AdminUser(props) {
 					extraData={boardList}
 				/>
 			</View>
-			<Modal visible={modalVisible} onShow={() => getPhoto()}>
+			<Modal visible={modalVisible}>
 				<BoardModal />
 			</Modal>
 		</View>
