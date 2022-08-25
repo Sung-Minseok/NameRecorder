@@ -2,7 +2,7 @@
   "expo": {
     "name": "자미원학당",
     "slug": "NameRecorder",
-    "version": "14.0.0",
+    "version": "15.0.0",
     "orientation": "portrait",
     "icon": "./assets/jmw_icon.png",
     "splash": {
@@ -27,11 +27,11 @@
         "NSPhotoLibraryUsageDescription": "This app uses photoLibrary permission to check the photos taken using the magnifying lens function in the app"
       },
       "bundleIdentifier": "host.exp.jmwschool",
-      "buildNumber": "14.0.0",
+      "buildNumber": "15.0.0",
       "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
-      "versionCode": 14,
+      "versionCode": 15,
       "adaptiveIcon": {
         "foregroundImage": "./assets/jmw_adapted_icon.png",
         "backgroundColor": "#FFFFFF"
